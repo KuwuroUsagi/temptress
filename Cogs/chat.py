@@ -53,7 +53,7 @@ class Chat(commands.Cog):
             roles = '>'
             for r in database.get_config('chat', message.guild.id):
                 roles = f"{roles} <@&{r}>\n>"
-            embed = discord.Embed(description=f"you don't have any of the folloing roles to talk to me.\n{roles}", color=0xF2A2C0)
+            embed = discord.Embed(description=f"you don't have any of the folloing roles to talk to me.\n{roles[:-2]}", color=0xF2A2C0)
             await message.channel.send(embed=embed)
             return
 

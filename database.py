@@ -52,23 +52,23 @@ with con:
 
 def insert_config(name, guild, value):
     with con:
-        cur.execute("DELETE FROM Config WHERE name = %s AND guildid = %s", (name, guild))
-        cur.execute("INSERT INTO Config (name, guildid, value) VALUES (%s, %s, %s)", (name, guild, value))
+        cur.execute("DELETE FROM Config WHERE name = %s AND guildid = %s", (name, int(guild)))
+        cur.execute("INSERT INTO Config (name, guildid, value) VALUES (%s, %s, %s)", (name, int(guild), str(value)))
 
 
 def append_config(name, guild, value):
     with con:
-        cur.execute("UPDATE Config SET value = value || %s WHERE name = %s AND guildid = %s", (value, name, guild))
+        cur.execute("UPDATE Config SET value = value || %s WHERE name = %s AND guildid = %s", (str(value), name, int(guild)))
 
 
 def clear_config(name, guild):
     with con:
-        cur.execute("DELETE FROM Config WHERE name = %s AND guildid = %s", (name, guild))
+        cur.execute("DELETE FROM Config WHERE name = %s AND guildid = %s", (name, int(guild)))
 
 
 def get_config(name, guild):
     try:
-        cur.execute("SELECT value FROM Config WHERE name =%s AND guildid = %s", (name, guild))
+        cur.execute("SELECT value FROM Config WHERE name =%s AND guildid = %s", (name, int(guild)))
         value = []
         data = cur.fetchall()[0][0]
         for i in range(int(len(data) / 18)):
@@ -210,25 +210,8 @@ def set_slave_rank(member, rank, guild):
 def get_lines_leaderboard(guild):
     cur.execute("SELECT * FROM SlaveDB WHERE guildid = %s ORDER BY lines DESC", (guild,))
     data = cur.fetchall()
-    data = [(line[0], line[6]) for line in data if line[6] != 0]
-    try:
-        lead = int(data[0][1])
-    except IndexError:
-        return []
-    segment = []
-    new_data = []
-    for i in data:
-        if int(i[1]) == lead:
-            segment.append(int(i[0]))
-        else:
-            segment.append(lead)
-            new_data.append(segment)
-            segment = []
-            segment.append(int(i[0]))
-            lead = int(i[1])
-    segment.append(lead)
-    new_data.append(segment)
-    return new_data
+    data = [(line[0], line[5]) for line in data if line[5] != 0]
+    return data
 
 
 ##############################################################################

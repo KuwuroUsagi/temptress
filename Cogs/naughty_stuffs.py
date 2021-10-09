@@ -70,7 +70,7 @@ class Porn(commands.Cog):
             roles = '>'
             for r in database.get_config('NSFW', ctx.guild.id):
                 roles = f"{roles} <@&{r}>\n>"
-            embed = discord.Embed(description=f"{ctx.author.mention} you are not eligible for NSFW content. \nGet any of the folloing role and try again.\n{roles}", color=0xF2A2C0)
+            embed = discord.Embed(description=f"{ctx.author.mention} you are not eligible for NSFW content. \nGet any of the folloing role and try again.\n{roles[:-2]}", color=0xF2A2C0)
             await ctx.send(embed=embed)
 
     @commands.command()
@@ -82,7 +82,7 @@ class Porn(commands.Cog):
             roles = '>'
             for r in database.get_config('NSFW', ctx.guild.id):
                 roles = f"{roles} <@&{r}>\n>"
-            embed = discord.Embed(description=f"{ctx.author.mention} you are not eligible for NSFW content. \nGet any of the folloing role and try again.\n{roles}", color=0xF2A2C0)
+            embed = discord.Embed(description=f"{ctx.author.mention} you are not eligible for NSFW content. \nGet any of the folloing role and try again.\n{roles[:-2]}", color=0xF2A2C0)
             await ctx.send(embed=embed)
 
     @commands.Cog.listener()
