@@ -170,7 +170,7 @@ class ServerConfig(commands.Cog):
             d_role = int((domme_roles[r * 18:(r * 18) + 18]))
             await prison.set_permissions(ctx.guild.get_role(d_role), view_channel=True, send_messages=True)
 
-    @commands.command()
+    @commands.command(aliases=['stats'])
     @commands.guild_only()
     async def stat(self, ctx):
         prison = database.get_config('prison', ctx.guild.id)
@@ -243,6 +243,62 @@ class ServerConfig(commands.Cog):
                                          color=0xF2A2C0)
             await ctx.reply(embed=sucess_embed)
 
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    @commands.guild_only()
+    async def blacklist(self, ctx, member: discord.Member = None):
+        if member is None:
+            page_number = 1
+            size = 10
+            data = database.get_blacklist(ctx.guild.id)
+
+            def page(lb_list, page, size):
+                value = ''
+                try:
+                    for x in range(((page - 1) * size), ((page - 1) * size) + size):
+                        value = value + f"> <@{lb_list[x]}>\n"
+                    embed = discord.Embed(title="Blacklisted Members", description=value, color=0xF2A2C0)
+                except IndexError:
+                    embed = discord.Embed(title="Blacklisted Members", description=value, color=0xF2A2C0)
+
+                embed.set_footer(text=f"On page {page}/{int(len(lb_list) / size) + (len(lb_list) % size > 0) + 1}")
+                embed.set_thumbnail(url=ctx.guild.icon_url)
+                return embed
+
+            def check(reaction, user):
+                return user == ctx.author
+
+            embed = page(data, 1, size)
+            box = await ctx.channel.send(embed=embed)
+            await box.add_reaction('⏪')
+            await box.add_reaction('⏩')
+            while True:
+                try:
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
+                    await box.remove_reaction(reaction, user)
+                except asyncio.TimeoutError:
+                    break
+                if str(reaction) == '⏪':
+                    if page_number == 1:
+                        pass
+                    else:
+                        embed = page(data, page_number - 1, size)
+                        page_number -= 1
+                if str(reaction) == '⏩':
+                    if page_number == int(len(data) / size) + (len(data) % size > 0) + 1:
+                        pass
+                    else:
+                        embed = page(data, page_number + 1, size)
+                        page_number += 1
+                await box.edit(embed=embed)
+        else:
+            if database.insert_remove_blacklist(member.id, ctx.guild.id):
+                embed = discord.Embed(title='Added into Blacklist', description=f"{member.mention} is Blacklisted, now the member can't lock anyone in the server anymore.", color=0xFF2030)
+            else:
+                embed = discord.Embed(title='Removed from Blacklist', description=f"{member.mention} is no longer Blacklisted, and can lock the subs <#{database.get_config('prison', ctx.guild.id)[0]}>", color=0x08FF08)
+            embed.set_thumbnail(url=member.avatar_url)
+            await ctx.send(embed=embed)
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.errors.CommandInvokeError):
@@ -257,6 +313,14 @@ class ServerConfig(commands.Cog):
 
         if isinstance(error, commands.errors.MissingPermissions):
             embed = discord.Embed(title='I see a Fake administrator', description=f"{ctx.author.mention} you don't have **Administration Permissions** in the server.", color=0xF2A2C0)
+            await ctx.send(embed=embed)
+
+    @blacklist.error
+    async def on_blacklist_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+            embed = discord.Embed(description=f"Usage:\n**`s.blacklist @mention`** to **add** or **remove** member from blacklist."
+                                              f"\n**`s.blacklist`** to see the list of blacklisted members.",
+                                  color=0xFF2030)
             await ctx.send(embed=embed)
 
 

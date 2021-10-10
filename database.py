@@ -41,6 +41,9 @@ with con:
     cur.execute("""CREATE TABLE IF NOT EXISTS Prison
         (slaveid bigint, guildid bigint, dommeid bigint, num integer, sentence text, count integer, roles text)""")
 
+    cur.execute("""CREATE TABLE IF NOT EXISTS Blacklist
+        (memberid bigint, guildid bigint)""")
+
 
 ##############################################################################
 #                                                                            #
@@ -241,10 +244,46 @@ def get_prisoner(slave, guild):
 
 
 def release_prison(slave, guild):
-    lines = get_prisoner(slave)[5]
+    lines = get_prisoner(slave, guild)[5]
     with con:
         cur.execute("UPDATE SlaveDB set lines = lines + %s WHERE slaveid = %s AND guildid = %s", (lines, slave, guild))
-        cur.execute("SELECT * FROM Prison WHERE slaveid=%s AND guildid=%s", (slave, guild))
-        data = cur.fetchall()
+        cur.execute("SELECT roles FROM Prison WHERE slaveid=%s AND guildid=%s", (slave, guild))
+        data = cur.fetchall()[0][0]
         cur.execute("DELETE FROM Prison WHERE slaveid = %s AND guildid = %s", (slave, guild))
-    return data[0]
+    try:
+        value = []
+        for i in range(int(len(data) / 18)):
+            value.append(int(data[i * 18:(i * 18) + 18]))
+        return value
+    except IndexError:
+        return [0]
+
+
+##############################################################################
+#                                                                            #
+#                                                                            #
+#                                 BLACKLIST                                  #
+#                                                                            #
+#                                                                            #
+##############################################################################
+
+
+def get_blacklist(guild):
+    cur.execute("SELECT memberid FROM Blacklist WHERE guildid = %s", (guild,))
+    data = cur.fetchall()
+    try:
+        data = [d[0] for d in data]
+        return data
+    except IndexError:
+        return []
+
+
+def insert_remove_blacklist(member, guild):
+    if member in get_blacklist(guild):
+        with con:
+            cur.execute("DELETE FROM Blacklist WHERE memberid = %s and guildid = %s", (member, guild))
+        return False
+    else:
+        with con:
+            cur.execute("INSERT INTO Blacklist (memberid, guildid) VALUES (%s, %s)", (member, guild))
+        return True

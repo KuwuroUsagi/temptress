@@ -11,6 +11,8 @@ from discord_components import *
 
 
 def who_is(author, member):
+    if database.get_config('domme', member.guild.id) == [0]:
+        return -1
     if set(database.get_config('domme', member.guild.id)) & set([role.id for role in author.roles]):
         if author.id == member.id:
             return 2
@@ -545,6 +547,11 @@ class Femdom(commands.Cog):
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
 
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
+
             elif member_is == 201:  # when domme owning a free slave
                 await action.own()
                 return
@@ -622,6 +629,11 @@ class Femdom(commands.Cog):
                 embed = discord.Embed(
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
+
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
             await action.react('n')
             await ctx.send(embed=embed)
 
@@ -692,6 +704,12 @@ class Femdom(commands.Cog):
                 embed = discord.Embed(
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
+
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
+
             await action.react('n')
             await ctx.send(embed=embed)
 
@@ -763,6 +781,11 @@ class Femdom(commands.Cog):
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
 
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
+
             await action.react('n')
             await ctx.send(embed=embed)
 
@@ -825,6 +848,12 @@ class Femdom(commands.Cog):
                 embed = discord.Embed(
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
+
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
+
             await action.react('n')
             await ctx.send(embed=embed)
 
@@ -891,6 +920,11 @@ class Femdom(commands.Cog):
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
 
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
+
             await action.react('n')
             await ctx.send(embed=embed)
 
@@ -955,6 +989,11 @@ class Femdom(commands.Cog):
                 embed = discord.Embed(
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
+
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
 
             await action.react('n')
             await ctx.send(embed=embed)
@@ -1021,6 +1060,11 @@ class Femdom(commands.Cog):
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
 
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
+
             await action.react('n')
             await ctx.send(embed=embed)
 
@@ -1079,6 +1123,11 @@ class Femdom(commands.Cog):
                 embed = discord.Embed(
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
+
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
 
             await action.react('n')
             await ctx.send(embed=embed)
@@ -1166,6 +1215,11 @@ class Femdom(commands.Cog):
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
 
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
+
             await action.react('n')
             await ctx.send(embed=embed)
 
@@ -1233,6 +1287,11 @@ class Femdom(commands.Cog):
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
 
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
+
             await action.react('n')
             await ctx.send(embed=embed)
 
@@ -1298,6 +1357,11 @@ class Femdom(commands.Cog):
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
 
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
+
             await action.react('n')
             await ctx.send(embed=embed)
 
@@ -1331,6 +1395,11 @@ class Femdom(commands.Cog):
                 embed = discord.Embed(
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
+
+            elif member_is == -1:
+                embed = discord.Embed(title='I am not ready yet.',
+                                      description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                      color=0xF2A2C0)
 
         await action.react('n')
         await ctx.channel.send(embed=embed)
@@ -1441,8 +1510,7 @@ class Femdom(commands.Cog):
     @emojii.error
     async def on_allowemoji_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.allowemoji @mention`**"
-                                              f"\n> aliases = `emojion`",
+            embed = discord.Embed(description=f"Usage:\n**`s.emoji @mention`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
