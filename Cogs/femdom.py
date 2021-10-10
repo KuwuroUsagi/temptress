@@ -280,7 +280,7 @@ class Action:
             embed.add_field(name='Restrictions', value=restriction, inline=False)
 
             if lines_count > 0:
-                embed.add_field(name="Lines I wrote", value=f"> {lines_count} lines written <#{database.get_config('prison', member.guild.id)}>", inline=False)
+                embed.add_field(name="Lines I wrote", value=f"> {lines_count} lines written <#{database.get_config('prison', member.guild.id)[0]}>", inline=False)
             embed.set_thumbnail(url=member.avatar_url)
 
         elif set(database.get_config('domme', member.guild.id)) & set([role.id for role in member.roles]):   # domme status

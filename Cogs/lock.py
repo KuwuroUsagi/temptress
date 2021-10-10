@@ -56,7 +56,7 @@ def make_image(sentence):
     max_char_count = int(img.size[0] * .95 / avg_char_width)  # 618
     new_string = textwrap.fill(text=new_string, width=max_char_count)
 
-    draw.text(xy=(img.size[0] / 20, img.size[1] / 15), text=new_string, font=font, fill='#ffffff', anchor='mm')
+    draw.text(xy=(img.size[0] / 2, img.size[1] / 2), text=new_string, font=font, fill='#ffffff', anchor='mm')
     img.save('./Image/new.png')
     return new_string
 
