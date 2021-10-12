@@ -85,6 +85,7 @@ class Action:
         channels = await self.ctx.guild.fetch_channels()
         for channel in channels:
             await channel.set_permissions(self.member, view_channel=False, send_messages=False)
+        await self.member.send(f"you are blindfolded in the server **{self.ctx.guild.name}**")
         await asyncio.sleep(5 * 60)
         for channel in channels:
             await channel.set_permissions(self.member, overwrite=None)

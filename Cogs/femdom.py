@@ -217,8 +217,7 @@ class Action:
                                   color=0xF2A2C0)
             await self.ctx.message.reply(embed=embed)
 
-    async def emoji_access(self):
-        _type = not database.get_slave_from_DB(self.member.id, self.member.guild.id)[0][4]
+    async def emoji_access(self, _type, message):
         database.update_slaveDB(self.member.id, 'emoji', _type, self.member.guild.id)
         if _type:
             embed = discord.Embed(title="Emojis on",
@@ -228,7 +227,8 @@ class Action:
             embed = discord.Embed(title="Emojis off",
                                   description=f" {self.author.mention} took away {self.member.mention}'s emojis.",
                                   color=0xF2A2C0)
-        await self.ctx.channel.send(embed=embed)
+        await message.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Allow Emoji', disabled=True),
+                                                     Button(style=ButtonStyle.red, label='Deny Emoji', disabled=True)]])
         await self.react('y')
 
     async def tie_in_channel(self, channel):
@@ -1194,7 +1194,24 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
 
             elif member_is == 200:  # Domme emoji allow on Owned slave
-                await action.emoji_access()
+                _type = database.get_slave_from_DB(member.id, ctx.guild.id)[0][4]
+                embed = discord.Embed(title="Emoji Access", color=0xF2A2C0)
+                m = await ctx.reply(embed=embed, components=[[Button(style=ButtonStyle.green, label='Allow Emoji', disabled=_type),
+                                                              Button(style=ButtonStyle.red, label='Deny Emoji', disabled=not _type)]])
+                try:
+                    def check(res):
+                        return ctx.author == res.user and res.channel == ctx.channel
+
+                    response = await self.bot.wait_for('button_click', timeout=30, check=check)
+                    await response.respond(type=6)
+                    if response.component.label == 'Allow Emoji':
+                        await action.emoji_access(True, m)
+                    else:
+                        await action.emoji_access(False, m)
+                except asyncio.TimeoutError:
+                    embed = discord.Embed(title='Time\'s Up', description='you got only 30 secs', color=0xF2A2C0)
+                    await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Allow Emoji', disabled=True),
+                                                           Button(style=ButtonStyle.red, label='Deny Emoji', disabled=True)]])
                 return
 
             elif member_is > 300:  # Domme emoji allow on other domme's owned slave
