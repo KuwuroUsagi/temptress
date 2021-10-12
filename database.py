@@ -2,11 +2,8 @@
 import psycopg2
 from os import environ
 from time import time
-from collections import Counter
 
 
-# DATABASE_URL = 'postgres://okqizptclrjlkj:252b7f77db58686cd92a4e69312fc44fcd2a2035d7b0b049439cf9d741bfe529@ec2-176-34-116-203.eu-west-1.compute.amazonaws.com:5432/d9qu5utgkc6r5d'
-# con = psycopg2.connect(DATABASE_URL)
 con = psycopg2.connect(environ['DATABASE_URL'])
 cur = con.cursor()
 
@@ -30,7 +27,7 @@ with con:
         (name text, guildid bigint, value text)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS SlaveDB
-        (slaveid bigint, guildid bigint, gag text, tiechannel bigint, emoji boolean, lines integer)""")
+        (slaveid bigint, guildid bigint, gag text, tiechannel bigint, emoji boolean, lines integer, chastity boolean, muff boolean)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS Ownership
         (slaveid bigint, guildid bigint, ownerid bigint, rank integer, str_time text)""")
@@ -100,8 +97,8 @@ def remove_guild(guild):
 
 def insert_slave_to_DB(member, guild):
     with con:
-        cur.execute("INSERT INTO SlaveDB (slaveid, guildid, gag, tiechannel, emoji, lines) VALUES (%s, %s, %s, %s, %s, %s)", (member, guild, 'off', 0, True, 0))
-    return [(member, guild, 'off', 0, True, 0)]
+        cur.execute("INSERT INTO SlaveDB (slaveid, guildid, gag, tiechannel, emoji, lines, chastity, muff) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (member, guild, 'off', 0, True, 0, True, True))
+    return [(member, guild, 'off', 0, True, 0, True, True)]
 
 
 def remove_member(member, guild):

@@ -484,16 +484,17 @@ class Femdom(commands.Cog):
         if ctx.author.bot:  # if the author is a bot.
             return
 
-        action = Action(self.bot, ctx, member)
-        if member.id == 892213737610678272:  # Seductress ID, owning Seductress
-            embed = discord.Embed(
-                description=f"your pp is so small you can't claim me, Ahahaha!!",
-                color=0xF2A2C0)
+        if member.id == self.bot.user.id:  # Seductress ID, owning Seductress
+            embed = discord.Embed(description=f"your pp is so small you can't claim me, Ahahaha!!",
+                                  color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         elif member.bot:  # owning a random bot
             embed = discord.Embed(description=f"{member.mention} is too strong for you to own!", color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 2:  # Domme self owning.
                 embed = discord.Embed(title=f'Nah',
@@ -547,7 +548,7 @@ class Femdom(commands.Cog):
                     description=f"{ctx.author.mention}, you should have any of the folloing roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                     color=0xF2A2C0)
 
-            elif member_is == -1:
+            elif member_is == -1:  # when server is not ready.
                 embed = discord.Embed(title='I am not ready yet.',
                                       description=f"Ask the Admins to run the command **`s.setup`** and try again",
                                       color=0xF2A2C0)
@@ -564,17 +565,18 @@ class Femdom(commands.Cog):
         if ctx.author.bot:  # when author is a bot.
             return
 
-        action = Action(self.bot, ctx, member)
-        if member.id == 892213737610678272:  # Seductress ID, owning Seductress
-            embed = discord.Embed(
-                description=f"your pp is so small you can't claim me then how are you going to disown me, Ahahaha!!",
-                color=0xF2A2C0)
+        if member.id == self.bot.user.id:  # Seductress ID, owning Seductress
+            embed = discord.Embed(description=f"your pp is so small you can't claim me then how are you going to disown me, Ahahaha!!",
+                                  color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         elif member.bot:  # when mentioning a random bot.
             embed = discord.Embed(description=f"{member.mention} is a bot not your slut to disown!",
                                   color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave self disowning
                 embed = discord.Embed(title='Pathetic...',
@@ -643,17 +645,19 @@ class Femdom(commands.Cog):
         if ctx.author.bot:  # when author is a bot.
             return
 
-        action = Action(self.bot, ctx, member)
-        if member.id == 892213737610678272:  # Hathor ID, trying to kitty gag hathor.
+        if member.id == self.bot.user.id:  # Hathor ID, trying to kitty gag hathor.
             embed = discord.Embed(
                 description=f"Pff.. are you dumb like Shaman, Ahahaha!!",
                 color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         elif member.bot:  # when mentioning a random bot
             embed = discord.Embed(description=f"{member.mention} is a bot not your slut!",
                                   color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave self kitty gag
                 embed = discord.Embed(title='Pathetic...',
@@ -719,17 +723,18 @@ class Femdom(commands.Cog):
         if ctx.author.bot:  # when author is a bot
             return
 
-        action = Action(self.bot, ctx, member)
-        if member.id == 892213737610678272:  # Hathor ID, trying to puppy gag Hathor
-            embed = discord.Embed(
-                description=f"Pff.. are you dumb like Shaman, Ahahaha!!",
-                color=0xF2A2C0)
+        if member.id == self.bot.user.id:  # Hathor ID, trying to puppy gag Hathor
+            embed = discord.Embed(description=f"Pff.. are you dumb like Shaman, Ahahaha!!",
+                                  color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         elif member.bot:  # when mention a ramdom bot
             embed = discord.Embed(description=f"{member.mention} is a bot not your slut!",
                                   color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave try to puppy gag self
                 embed = discord.Embed(title='Pathetic...',
@@ -792,16 +797,16 @@ class Femdom(commands.Cog):
     @commands.command(aliases=['human'])
     @commands.guild_only()
     async def ungag(self, ctx, member: discord.Member):
-        action = Action(self.bot, ctx, member)
-
         if ctx.author.bot:  # when author is a bot.
             return
 
         elif member.bot:  # when mention a random bot
             embed = discord.Embed(description=f"{member.mention} is a bot not a slut!",
                                   color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave self ungag
                 pass
@@ -860,15 +865,16 @@ class Femdom(commands.Cog):
     @commands.command(aliases=['word', 'addbadword', 'words', 'badwords', 'addbadwords'])
     @commands.guild_only()
     async def badword(self, ctx, member: discord.Member, *, words):
-        action = Action(self.bot, ctx, member)
         if ctx.author.bot:  # when author is a bot
             return
 
         elif member.bot:  # when mentioned user is a bot
             embed = discord.Embed(description=f"{member.mention} is a bot not a Pathetic Slut!",
                                   color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave self adding badword
                 embed = discord.Embed(title='Pathetic...',
@@ -931,14 +937,15 @@ class Femdom(commands.Cog):
     @commands.command(aliases=['removeword'])
     @commands.guild_only()
     async def removebadword(self, ctx, member: discord.Member, *, words):
-        action = Action(self.bot, ctx, member)
         if ctx.author.bot:  # when author is a bot
             return
 
         elif member.bot:  # when mentioned member is bot
             embed = discord.Embed(description=f"{member.mention} is a bot not a Person!",
                                   color=0xF2A2C0)
+            await ctx.send(embed=embed)
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave self removing badword
                 embed = discord.Embed(title='Pathetic...',
@@ -1001,15 +1008,16 @@ class Femdom(commands.Cog):
     @commands.command(aliases=['removeallbadwords', 'clearwords', 'removeallwords'])
     @commands.guild_only()
     async def clearbadword(self, ctx, member: discord.Member):
-        action = Action(self.bot, ctx, member)
         if ctx.author.bot:  # when author is a bot
             return
 
         elif member.bot:  # when mentioned member is a bot
             embed = discord.Embed(description=f"{member.mention} is a bot not a Person!",
                                   color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave self clearing all badwords
                 embed = discord.Embed(title='Pathetic...',
@@ -1071,15 +1079,16 @@ class Femdom(commands.Cog):
     @commands.command(aliases=['name', 'nick', 'clearname', 'clearnick', 'removename', 'removenick'])
     @commands.guild_only()
     async def nickname(self, ctx, member: discord.Member, *, name=''):
-        action = Action(self.bot, ctx, member)
         if ctx.author.bot:  # when author is a bot
             return
 
         elif member.bot:  # when mentioned member is bot
             embed = discord.Embed(description=f"{member.mention} is a bot not a Person!",
                                   color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave self nickname
                 embed = discord.Embed(title='Pathetic...',
@@ -1140,7 +1149,7 @@ class Femdom(commands.Cog):
         if ctx.author.bot:
             return
         elif member.bot:
-            if member.id == 892213737610678272:
+            if member.id == self.bot.user.id:
                 embed = discord.Embed(title='So you want to know my status?',
                                       description=f"I am Seductress. A woman who seduces someone like you, A harsh dominant one who entices men into sexual activities and suffering.",
                                       color=0xF2A2C0)
@@ -1156,15 +1165,16 @@ class Femdom(commands.Cog):
     @commands.command(aliases=['emoji'])
     @commands.guild_only()
     async def emojii(self, ctx, member: discord.Member):
-        action = Action(self.bot, ctx, member)
         if ctx.author.bot:  # when author is a bot
             return
 
         elif member.bot:  # when mention a ramdom bot
             embed = discord.Embed(description=f"{member.mention} is a bot not a Person!",
                                   color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave try to emoji allow self
                 embed = discord.Embed(title='Pathetic...',
@@ -1226,15 +1236,16 @@ class Femdom(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def tie(self, ctx, member: discord.Member, channel: discord.TextChannel = None):
-        action = Action(self.bot, ctx, member)
         if ctx.author.bot:  # when author is a bot
             return
 
         elif member.bot:  # when mention a ramdom bot
             embed = discord.Embed(description=f"{member.mention} is a bot not a slut!",
                                   color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave try to tie self
                 embed = discord.Embed(title='Pathetic...',
@@ -1298,15 +1309,16 @@ class Femdom(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def untie(self, ctx, member: discord.Member):
-        action = Action(self.bot, ctx, member)
         if ctx.author.bot:  # when author is a bot
             return
 
         elif member.bot:  # when mention a ramdom bot
             embed = discord.Embed(description=f"{member.mention} is a bot not a slut!",
                                   color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
         else:
+            action = Action(self.bot, ctx, member)
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave try to untie self
                 embed = discord.Embed(title='Pathetic...',
