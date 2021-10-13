@@ -95,7 +95,7 @@ class Lock(commands.Cog):
         if set(database.get_config('prisoner', message.guild.id)) & set([role.id for role in message.author.roles]):
             data = database.get_prisoner(message.author.id, message.guild.id)
             if message.content == data[4]:
-                await message.add_reaction("✅")
+                await message.add_reaction(emoji=':YES:897762486042910762')
                 sentence = make_image(message.content).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
                 database.update_lock(message.author.id, sentence, message.guild.id)
@@ -109,7 +109,7 @@ class Lock(commands.Cog):
                 await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h to be free from prison. ||(it is case sensitive)||")
                 await prison.send(file=discord.File('./Image/new.png'))
             else:
-                await message.add_reaction('❌')
+                await message.add_reaction(emoji=':NO:897762534499700736')
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
@@ -246,7 +246,7 @@ class Lock(commands.Cog):
 
                 else:  # I have no power
                     no_power_embed = discord.Embed(title='I don\'t have power',
-                                                   description=f'{member.mention} might be server owner or having higher role than me.',
+                                                   description=f'{member.mention} might be server owner or having higher role than me <:crypanda:897832575698075688>',
                                                    color=0xFF2030)
                     await ctx.send(embed=no_power_embed)
 

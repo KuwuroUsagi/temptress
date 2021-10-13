@@ -37,7 +37,7 @@ class Chat(commands.Cog):
                     emotion = data['message']['emotion']
                     if emotion == 'happy-9':
                         # await ctx.message.add_reaction(emoji='simp:858985009905664040')
-                        message = message + ' 🤭'
+                        message = message + ' <:giggle:897777342791942225>'
                     if 'cowboy!' in message:
                         NSFW_reply = ['*ignoring*', 'Go watch porn pervert.', 'I am not a Pervert like you', 'I am not a pathetic slut like you.', ]
                         message = choice(NSFW_reply)
@@ -53,7 +53,7 @@ class Chat(commands.Cog):
             roles = '>'
             for r in database.get_config('chat', message.guild.id):
                 roles = f"{roles} <@&{r}>\n>"
-            embed = discord.Embed(description=f"you don't have any of the folloing roles to talk to me.\n{roles[:-2]}", color=0xF2A2C0)
+            embed = discord.Embed(description=f"you don't have any of the following roles to talk to me.\n{roles[:-2]}", color=0xF2A2C0)
             await message.channel.send(embed=embed)
             return
 
