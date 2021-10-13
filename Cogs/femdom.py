@@ -61,7 +61,7 @@ class Action:
         if y_n == 'yes' or y_n == 'y':
             await self.ctx.message.add_reaction(emoji='YES:897762486042910762')
         elif y_n == 'no' or y_n == 'n':
-            await self.ctx.message.add_reaction(emoji='NO:897762534499700736')
+            await self.ctx.message.add_reaction(emoji='NO:897890789202493460')
 
     async def own(self):
         def check(res):
@@ -244,15 +244,18 @@ class Action:
                     owner = f"Owned by <@{owner}> and she made him, her Sex slave."
                 else:
                     owner = f"Owned by <@{owner}>"
-            gag = database.get_slave_from_DB(member.id, member.guild.id)[0][2]
+            data = database.get_slave_from_DB(member.id, member.guild.id)[0]
+            gag = data[2]
             if gag == 'kitty':
-                gag = ':cat: kitty'
+                gag = '<a:kitty:897769441796964372> Kitty'
             elif gag == 'puppy':
-                gag = ':dog: Puppy'
+                gag = '<:puppy:897769322242510850> Puppy'
             else:
-                gag = 'freely'
+                gag = 'None'
 
             restriction = f"> **Speech Restriction** : {gag}"
+
+            restriction = f"{restriction}\n> **NSFW Access** : {'<a:YES:897762486042910762>' if data[6] else '<a:NO:897890789202493460>'}\n> **Emoji Access** : {'<a:YES:897762486042910762>' if data[4] else '<a:NO:897890789202493460>'}\n> **Voice Channel Access** : {'<a:YES:897762486042910762>' if data[7] else '<a:NO:897890789202493460>'}\n> **Channel tied too** : {'<a:NO:897890789202493460>' if data[3] == 0 else f'<a:YES:897762486042910762> <#{data[3]}>'}"
 
             badwords = [word[0] for word in database.get_badwords(member.id, member.guild.id)]
             badword_count = len(badwords)
@@ -260,7 +263,7 @@ class Action:
                 badwords = ', '.join(badwords)
                 restriction = restriction + f"\n> **Badwords ({badword_count})** : {badwords}"
 
-            lines_count = database.get_slave_from_DB(member.id, member.guild.id)[0][5]
+            lines_count = data[5]
 
             embed = discord.Embed(title=name,
                                   description=f"{owner}",
@@ -272,6 +275,9 @@ class Action:
             embed.set_thumbnail(url=member.avatar_url)
 
         elif set(database.get_config('domme', member.guild.id)) & set([role.id for role in member.roles]):   # domme status
+            def get_status_emojis(member, guild):
+                data = database.get_slave_from_DB(member, guild)[0]
+                return f"{'' if data[6] else '<:chastity:897763218670354442>'}  {'' if data[7] else '<a:muffs:897764112388468747>'}  {'<:ballgag:897915835555921921>' if data[2] in ['kitty', 'puppy'] else ''}  {'' if data[4] else '<:noemoji:897921450118356992>'}"
             name = member.nick or member.name
             slaves_list = database.get_slaves(member.id, member.guild.id)
             if not slaves_list:
@@ -279,7 +285,7 @@ class Action:
             else:
                 owned_slaves = "**My slaves**\n"
                 for slave in slaves_list:
-                    owned_slaves += f"> {'' if slave[1] == 1000 else f'{slave[1]}°'} <@{str(slave[0])}>\n"
+                    owned_slaves += f"> {'' if slave[1] == 1000 else f'{slave[1]}°'} <@{str(slave[0])}>  {get_status_emojis(int(slave[0]), member.guild.id)}\n"
 
             embed = discord.Embed(title=name,
                                   description=owned_slaves,
@@ -287,9 +293,12 @@ class Action:
             embed.set_thumbnail(url=member.avatar_url)
 
         else:
-            embed = discord.Embed(title='I don\'t know you.',
-                                  description=f"You need any of the folloing roles:\n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
-                                  color=0xF2A2C0)
+            if database.get_config('domme', member.guild.id) == [0]:
+                embed = discord.Embed(title='I am not ready yet', description='ask Admins to run the command **`s.setup`**', color=0xF2A2C0)
+            else:
+                embed = discord.Embed(title='I don\'t know you.',
+                                      description=f"You need any of the folloing roles:\n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
+                                      color=0xF2A2C0)
 
         await self.ctx.channel.send(embed=embed)
 

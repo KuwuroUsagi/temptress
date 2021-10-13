@@ -5,9 +5,7 @@ from discord import Embed
 main = Embed(title='Main commands (everybody can use)',
              description=f"**To check the status**\n> **`s.status`** this will show your status in the server."
              f"\n> **`s.status @mention`**  this will show the status of the mentioned member in the server."
-             f"\n> **`s.stats`** this command will show my stats/configs in the server."
-             f"\n> **Do you know that I can do erp with you, start chating with me use `..` as prefix and say hi. for example `..hi baby how are you today?`"
-             f"\n> **`s.joke`** *will be adding soon.*",
+             f"\n> **`s.stats`** this command will show my stats/configs in the server.",
              color=0x9479ED)
 
 nsfw = Embed(title='NSFW commands',
@@ -20,11 +18,17 @@ domme = Embed(title='Domme only commands', color=0x9479ED)
 domme.add_field(name="To own or disown a sub.", value="> **`s.own @mention`** this prompts the mentioned user for consent to become a sub for the Domme using this command."
                 "\n> **`s.disown @mention`**  this removes the mentioned user as a sub of the Domme using this command.\n", inline=False)
 
-domme.add_field(name="To Gag Subs", value="> **`s.puppy @mention`** this will convert the sub into a puppy and the sub's messages into dog sounds"
-                "\n> **`s.kitty @mention`** this will convert the sub into a kitty and the sub's messages into cat sounds"
-                "\n> **`s.ungag @mention`** this will transform the sub back to human and remove the restraints of the messages"
-                "\n**Note: Dommes have to own a sub before before converting a sub into a puppy or kitty.**\n")
+domme.add_field(name="To Gag Subs", value="> **`s.gag @mention`** this will gag the sub and have fun."
+                "\n**Note: Dommes have to own a sub before before converting a sub into a puppy or kitty.**\n", inline=False)
 
+domme.add_field(name="To Chastity lock Subs", value="> **`s.chastity @mention`** this command will block NSFW channels from the sub."
+                "\n**Note: Dommes have to own a sub before locking a sub in chastity.**\n", inline=False)
+
+domme.add_field(name="To ear muffs Subs", value="> **`s.muffs @mention`** this command will block voice channels from the sub."
+                "\n**Note: Dommes have to own a sub before blocking Voice Channels.**\n", inline=False)
+
+domme.add_field(name="To blind Subs", value="> **`s.blind @mention`** this command will block **All Channels** from the sub for 5 minutes."
+                "\n**Note: Dommes have to own a sub before blocking All Channels and this command has cooldown.**\n", inline=False)
 
 domme.add_field(name="To add and remove badwords",
                 value="> **`s.badword @mention <word>`** this will add the word as a badword, preventing the sub from using the word again."
@@ -39,7 +43,7 @@ domme.add_field(name="To change Nickname of the sub.",
                 "\n**Note: Dommes must own the sub or sub should consent to have his/her name changed by Dommes.**\n",
                 inline=False)
 
-domme.add_field(name="To enable and disable emoji of the sub.", value="> **`s.emoji @mention`**  this will toggle the sub permission to use emojis in the server."
+domme.add_field(name="To enable and disable emoji of the sub.", value="> **`s.emoji @mention`** using this command you can toggle the sub permission to use emojis in the server."
                 "\n**Note: Dommes must own the sub to manage their emojis.**\n\n\n", inline=False)
 
 domme.add_field(name="To tie a sub in specific text channel in server.", value="> **`s.tie @mention #channel`** this will only allow the sub to send messages in the specified text channel."

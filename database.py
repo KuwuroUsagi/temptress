@@ -142,7 +142,7 @@ def disown_a_slave(member, guild):
     with con:
         cur.execute("DELETE FROM Ownership WHERE slaveid = %s AND guildid = %s", (member, guild))
         cur.execute("DELETE FROM Badwords WHERE slaveid = %s AND guildid = %s", (member, guild))
-        cur.execute("UPDATE SlaveDB set gag=%s, tiechannel=%s, emoji=%s WHERE slaveid=%s AND guildid = %s", ['off', 0, True, member, guild])
+        cur.execute("UPDATE SlaveDB set gag=%s, tiechannel=%s, emoji=%s, chastity=%s, muff=%s WHERE slaveid=%s AND guildid = %s", ['off', 0, True, True, True, member, guild])
 
 
 def update_slaveDB(member, column, value, guild):

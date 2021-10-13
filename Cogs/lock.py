@@ -109,7 +109,7 @@ class Lock(commands.Cog):
                 await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h to be free from prison. ||(it is case sensitive)||")
                 await prison.send(file=discord.File('./Image/new.png'))
             else:
-                await message.add_reaction(emoji=':NO:897762534499700736')
+                await message.add_reaction(emoji=':NO:897890789202493460')
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):

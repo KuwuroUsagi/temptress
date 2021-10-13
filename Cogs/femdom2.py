@@ -57,7 +57,7 @@ class Action:
         if y_n == 'yes' or y_n == 'y':
             await self.ctx.message.add_reaction(emoji='YES:897762486042910762')
         elif y_n == 'no' or y_n == 'n':
-            await self.ctx.message.add_reaction(emoji='NO:897762534499700736')
+            await self.ctx.message.add_reaction(emoji='NO:897890789202493460')
 
     async def chastity(self, access):
         channels = await self.ctx.guild.fetch_channels()
@@ -268,7 +268,7 @@ class Femdom(commands.Cog):
                         await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Remove Ear Muffs', disabled=True),
                                                                Button(style=ButtonStyle.red, label='Give Ear Muffs', disabled=True)]])
                         await action.muff(True)
-                        database.update_slaveDB(member.id, 'muff', False, ctx.guild.id)
+                        database.update_slaveDB(member.id, 'muff', True, ctx.guild.id)
                 except asyncio.TimeoutError:
                     embed = discord.Embed(description='Time\'s up, you got only 30 secs to make a choice.', color=0xF2A2C0)
                     await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Remove Ear Muffs', disabled=True),
