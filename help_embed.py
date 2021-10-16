@@ -10,7 +10,8 @@ main = Embed(title='Main commands (everybody can use)',
 
 nsfw = Embed(title='NSFW commands',
              description=f"> **`s.porn`** this command will show you irl femdom Pics in server."
-             f"\n> **`s.pornvideo`** this command will send you a femdom porn suggestion into your DMs :wink: :drool:",
+             f"\n> **`s.pornvideo`** this command will send you a femdom porn suggestion.:wink: :drool:"
+             f"\n> **`s.pornhub <femdom lesbians>`** you can search videos from pornhub. **`s.ph`** for short.",
              color=0x9479ED)
 
 domme = Embed(title='Domme only commands', color=0x9479ED)
