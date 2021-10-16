@@ -9,43 +9,47 @@ api = PornhubApi()
 
 
 async def getporn(ctx, tag=None):
-    if tag is None:
-        tag = ["femdom", "pet play", "pegging"]
+    if ctx.channel.is_nsfw():
+        if tag is None:
+            tag = ["femdom", "pet play", "pegging"]
+        else:
+            tag = tag.split(' ')
+        # await ctx.send(f'{ctx.message.author.mention} ||check your DMs|| :shushing_face: Shhh...')
+        while True:
+            try:
+                page_no = randint(1, 100)
+                porn_no = randint(1, 30)
+                data = api.search.search(page=page_no, tags=tag)
+                video = data.videos[porn_no]
+                video_url = video.url
+                video_title = video.title
+                video_thumbnail = video.default_thumb
+                break
+            except Exception:
+                pass
+
+        star_list = []
+        cat_list = []
+        tag_list = []
+        for star in video.pornstars:
+            star_list.append(star.pornstar_name)
+        stars = ", ".join(star_list)
+
+        for c in video.categories:
+            cat_list.append(c.category)
+        cats = ", ".join(cat_list)
+
+        for t in video.tags:
+            tag_list.append(t.tag_name)
+        tags = ", ".join(tag_list)
+
+        porn_embed = discord.Embed(title=f'{video_title} :peach: ', description=f'{stars} \n\n {cats} \n\n {tags}',
+                                   color=0xF2A2C0, url=video_url)
+        porn_embed.set_thumbnail(url=video_thumbnail)
+        await ctx.reply(embed=porn_embed)
     else:
-        tag = tag.split(' ')
-    # await ctx.send(f'{ctx.message.author.mention} ||check your DMs|| :shushing_face: Shhh...')
-    while True:
-        try:
-            page_no = randint(1, 100)
-            porn_no = randint(1, 30)
-            data = api.search.search(page=page_no, tags=tag)
-            video = data.videos[porn_no]
-            video_url = video.url
-            video_title = video.title
-            video_thumbnail = video.default_thumb
-            break
-        except Exception:
-            pass
-
-    star_list = []
-    cat_list = []
-    tag_list = []
-    for star in video.pornstars:
-        star_list.append(star.pornstar_name)
-    stars = ", ".join(star_list)
-
-    for c in video.categories:
-        cat_list.append(c.category)
-    cats = ", ".join(cat_list)
-
-    for t in video.tags:
-        tag_list.append(t.tag_name)
-    tags = ", ".join(tag_list)
-
-    porn_embed = discord.Embed(title=f'{video_title} :peach: ', description=f'{stars} \n\n {cats} \n\n {tags}',
-                               color=0xF2A2C0, url=video_url)
-    porn_embed.set_thumbnail(url=video_thumbnail)
-    await ctx.reply(embed=porn_embed)
+        embed = discord.Embed(title='You Pervert this is not a NSFW Channel.', color=0xF2A2C0)
+        await ctx.reply(embed=embed)
 
 
 async def getporn_image(ctx, file):
