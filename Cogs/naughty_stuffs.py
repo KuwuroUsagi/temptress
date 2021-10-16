@@ -8,13 +8,17 @@ import database
 api = PornhubApi()
 
 
-async def getporn(ctx):
-    await ctx.send(f'{ctx.message.author.mention} ||check your DMs|| :shushing_face: Shhh...')
+async def getporn(ctx, tag=None):
+    if tag is None:
+        tag = ["femdom", "pet play", "pegging"]
+    else:
+        tag = tag.split(' ')
+    # await ctx.send(f'{ctx.message.author.mention} ||check your DMs|| :shushing_face: Shhh...')
     while True:
         try:
             page_no = randint(1, 100)
             porn_no = randint(1, 30)
-            data = api.search.search(page=page_no, tags=["femdom", "pet play", "pegging"])
+            data = api.search.search(page=page_no, tags=tag)
             video = data.videos[porn_no]
             video_url = video.url
             video_title = video.title
@@ -41,7 +45,7 @@ async def getporn(ctx):
     porn_embed = discord.Embed(title=f'{video_title} :peach: ', description=f'{stars} \n\n {cats} \n\n {tags}',
                                color=0xF2A2C0, url=video_url)
     porn_embed.set_thumbnail(url=video_thumbnail)
-    await ctx.message.author.send(embed=porn_embed)
+    await ctx.reply(embed=porn_embed)
 
 
 async def getporn_image(ctx, file):
@@ -78,6 +82,18 @@ class Porn(commands.Cog):
     async def porn(self, ctx):
         if set(database.get_config('NSFW', ctx.guild.id)) & set([role.id for role in ctx.author.roles]) or database.get_config('NSFW', ctx.guild.id) == [0]:
             await getporn_image(ctx, 'Text_files/porn_image_list.txt')
+        else:
+            roles = '>'
+            for r in database.get_config('NSFW', ctx.guild.id):
+                roles = f"{roles} <@&{r}>\n>"
+            embed = discord.Embed(description=f"{ctx.author.mention} you are not eligible for NSFW content. \nGet any of the folloing role and try again.\n{roles[:-2]}", color=0xF2A2C0)
+            await ctx.send(embed=embed)
+
+    @commands.command(aliases=['ph'])
+    @commands.guild_only()
+    async def pornhub(self, ctx, tag):
+        if set(database.get_config('NSFW', ctx.guild.id)) & set([role.id for role in ctx.author.roles]) or database.get_config('NSFW', ctx.guild.id) == [0]:
+            await getporn(ctx, tag=tag)
         else:
             roles = '>'
             for r in database.get_config('NSFW', ctx.guild.id):
