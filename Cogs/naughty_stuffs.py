@@ -91,7 +91,7 @@ class Porn(commands.Cog):
 
     @commands.command(aliases=['ph'])
     @commands.guild_only()
-    async def pornhub(self, ctx, tag):
+    async def pornhub(self, ctx, *, tag=None):
         if set(database.get_config('NSFW', ctx.guild.id)) & set([role.id for role in ctx.author.roles]) or database.get_config('NSFW', ctx.guild.id) == [0]:
             await getporn(ctx, tag=tag)
         else:
