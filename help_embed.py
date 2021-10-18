@@ -5,7 +5,8 @@ from discord import Embed
 main = Embed(title='Main commands (everybody can use)',
              description=f"**To check the status**\n> **`s.status`** this will show your status in the server."
              f"\n> **`s.status @mention`**  this will show the status of the mentioned member in the server."
-             f"\n> **`s.stats`** this command will show my stats/configs in the server.",
+             f"\n> **`s.stats`** this command will show my stats/configs in the server."
+             f"\n> **`s.action @mention`** actions can be **`hug`**, **`cuddle`**, **`pat`**, **`kiss`**, **`poke`**, **`slap`**, **`spank`**",
              color=0x9479ED)
 
 nsfw = Embed(title='NSFW commands',
