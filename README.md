@@ -96,3 +96,21 @@ ___
 - Manage NickName Permission.
 - Administrative Permission.
 
+## Tasks to do.
+
+[] add point system to database.
+[] add points on status.
+[] make prison a point system.
+[] make a counting game.
+	- [] make counting game + add configs to database.
+	- [] ruin command.
+	- [] setting up the game on `s.setup`
+[] worship and praise command for Subs
+[] good boy command for Dommes.
+[] coinflip
+[] make store.
+	- [] dommes can change the nickname of any free subs.
+	- [] dommes can gag any free subs for 10 mins.
+	- [] dommes can chastity lock any free sub for 30mins.
+	- [] reset nickname and dommes can't change name for next 24h.
+	- [] add collectable items (dildo, condom, cuffs, whips...)
