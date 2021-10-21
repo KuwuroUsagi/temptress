@@ -44,6 +44,9 @@ with con:
     cur.execute("""CREATE TABLE IF NOT EXISTS Money
         (memberid bigint, coin bigint, gem bigint)""")
 
+    cur.execute("""CREATE TABLE IF NOT EXISTS Worship
+        (memberid bigint, guildid bigint, simp text)""")
+
 
 ##############################################################################
 #                                                                            #
@@ -101,13 +104,60 @@ def remove_guild(guild):
         cur.execute("DELETE FROM Badwords WHERE guildid = %s", (guild,))
         cur.execute("DELETE FROM Prison WHERE guildid = %s", (guild,))
 
-##############################################################################
-#                                                                            #
-#                                                                            #
-#                                  FEMDOM                                    #
-#                                                                            #
-#                                                                            #
-##############################################################################
+        ##############################################################################
+        #                                                                            #
+        #                                                                            #
+        #                                 WORSHIP                                    #
+        #                                                                            #
+        #                                                                            #
+        ##############################################################################
+
+
+def simp(member, guild, women):
+    cur.execute("SELECT * FROM Worship WHERE memberid = %s AND guildid = %s", (member, guild))
+    data = cur.fetchall()
+    if data == []:
+        with con:
+            cur.execute("INSERT INTO Worship (memberid, guildid, simp) VALUES (%s, %s, %s)", (member, guild, str(women) + '_1'))
+    else:
+        data = data[0][2]
+        if str(women) in data:
+            temp = []
+            data = data.split('/')
+            for d in data:
+                x = d.split('_')
+                if x[0] == str(women):
+                    x[1] = str(int(x[1]) + 1)
+                x = '_'.join(x)
+                temp.append(x)
+            data = '/'.join(temp)
+            with con:
+                cur.execute("UPDATE Worship SET simp = %s WHERE memberid = %s AND guildid = %s", (data, member, guild))
+        else:
+            with con:
+                cur.execute("UPDATE Worship SET simp = simp || %s WHERE memberid = %s AND guildid = %s", ('/' + str(women) + '_1', member, int(guild)))
+
+
+def get_simp(member, guild):
+    cur.execute("SELECT simp FROM Worship WHERE memberid =%s AND guildid =%s", (member, guild))
+    try:
+        temp = []
+        data = cur.fetchall()[0][0].split('/')
+        for d in data:
+            x = d.split('_')
+            x = [int(x[0]), int(x[1])]
+            temp.append(x)
+        return temp
+    except IndexError:
+        return
+
+        ##############################################################################
+        #                                                                            #
+        #                                                                            #
+        #                                  FEMDOM                                    #
+        #                                                                            #
+        #                                                                            #
+        ##############################################################################
 
 
 def insert_slave_to_DB(member, guild):
@@ -241,7 +291,7 @@ def get_money(member):
     cur.execute("SELECT * FROM Money WHERE memberid = %s", (member,))
     try:
         data = cur.fetchall()[0]
-        return data
+        return [data[0], data[1], int(data[2] / 10)]
     except IndexError:
         with con:
             cur.execute("INSERT INTO Money (memberid, coin, gem) VALUES (%s, %s, %s)", (member, 100, 0))
