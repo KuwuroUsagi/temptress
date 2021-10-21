@@ -70,6 +70,7 @@ admin = Embed(title='Admin commands',
               description=f"> **`s.setup`** to configure me in the server."
               f"\n> **`s.setNSFW @mentionRoles`** this will make sure that only people with mentioned role can access NSFW commands."
               f"\n> **`s.setchat @mentionRoles`** I will chat with member only with the mentioned roles and have fun. ||maybe some erp||"
+              f"\n> **`s.setcount #channel`** this command will set the  mentioned channel as counting channel."
               f"\n> **`s.blacklist @mention`** This will blacklist a mentioned member, and prevent them to lock any subs."
               f"\n> **`s.blacklist`** this will show the list of blacklisted members in the server.",
               color=0x9479ED)

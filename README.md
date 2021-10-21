@@ -103,8 +103,8 @@ ___
 - &check; make prison a point system.
 - &check; make a counting game.
 	- &check; make counting game + add configs to database.
-	- &square; ruin command.
-	- &square; setting up the game on `s.setup`
+	- &check; ruin command.
+	- &check; setting up the game on `s.setup`
 - &square; worship and praise command for Subs
 - &square; add worship to status.
 - &square; good boy command for Dommes.
