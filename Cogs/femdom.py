@@ -241,7 +241,7 @@ class Action:
                 owner = f"Owned by no one, a poor lonely soul"
             else:
                 if member.id == 855057142297264139:  # Alex wood ID
-                    owner = f"Owned by <@{owner}> and she made him, her Sex slave."
+                    owner = f"Owned by <@{owner}>"
                 else:
                     owner = f"Owned by <@{owner}>"
             data = database.get_slave_from_DB(member.id, member.guild.id)[0]
@@ -268,6 +268,10 @@ class Action:
             embed = discord.Embed(title=name,
                                   description=f"{owner}",
                                   color=0xF2A2C0)
+
+            money = database.get_money(member.id)
+
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[1]}\n> <a:gems:899985611946078208> {money[2]}", inline=False)
             embed.add_field(name='Restrictions', value=restriction, inline=False)
 
             if lines_count > 0:
@@ -283,13 +287,15 @@ class Action:
             if not slaves_list:
                 owned_slaves = "> Until now, no one has proven themselves worthy of being owned by me"
             else:
-                owned_slaves = "**My slaves**\n"
+                owned_slaves = "\n"
                 for slave in slaves_list:
                     owned_slaves += f"> {'' if slave[1] == 1000 else f'{slave[1]}°'} <@{str(slave[0])}>  {get_status_emojis(int(slave[0]), member.guild.id)}\n"
 
-            embed = discord.Embed(title=name,
-                                  description=owned_slaves,
-                                  color=0xF2A2C0)
+            money = database.get_money(member.id)
+
+            embed = discord.Embed(title=name, color=0xF2A2C0)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[1]}\n> <a:gems:899985611946078208> {money[2]} ", inline=False)
+            embed.add_field(name='My Subs', value=owned_slaves, inline=False)
             embed.set_thumbnail(url=member.avatar_url)
 
         else:

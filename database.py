@@ -41,6 +41,9 @@ with con:
     cur.execute("""CREATE TABLE IF NOT EXISTS Blacklist
         (memberid bigint, guildid bigint)""")
 
+    cur.execute("""CREATE TABLE IF NOT EXISTS Money
+        (memberid bigint, coin bigint, gem bigint)""")
+
 
 ##############################################################################
 #                                                                            #
@@ -71,11 +74,23 @@ def get_config(name, guild):
         cur.execute("SELECT value FROM Config WHERE name =%s AND guildid = %s", (name, int(guild)))
         value = []
         data = cur.fetchall()[0][0]
-        for i in range(int(len(data) / 18)):
-            value.append(int(data[i * 18:(i * 18) + 18]))
+        for i in range(1 if (int(len(data) / 18)) == 0 else int(len(data) / 18)):
+            if len(data) < 18:
+                value.append(int(data))
+            else:
+                value.append(int(data[i * 18:(i * 18) + 18]))
         return value
     except IndexError:
         return [0]
+
+
+def get_config_raw(name, guild):
+    try:
+        cur.execute("SELECT value FROM Config WHERE name =%s AND guildid =%s", (name, guild))
+        raw_value = cur.fetchall()[0][0]
+        return raw_value
+    except IndexError:
+        return
 
 
 def remove_guild(guild):
@@ -217,6 +232,37 @@ def get_lines_leaderboard(guild):
 ##############################################################################
 #                                                                            #
 #                                                                            #
+#                                   MONEY                                    #
+#                                                                            #
+#                                                                            #
+##############################################################################
+
+def get_money(member):
+    cur.execute("SELECT * FROM Money WHERE memberid = %s", (member,))
+    try:
+        data = cur.fetchall()[0]
+        return data
+    except IndexError:
+        with con:
+            cur.execute("INSERT INTO Money (memberid, coin, gem) VALUES (%s, %s, %s)", (member, 100, 0))
+        return [member, 100, 0]
+
+
+def add_money(member, coin, gem):
+    get_money(member)
+    with con:
+        cur.execute("UPDATE Money SET coin = coin + %s, gem = gem + %s WHERE memberid =%s", (coin, gem, member))
+
+
+def remove_money(member, coin, gem):
+    get_money(member)
+    with con:
+        cur.execute("UPDATE Money SET coin = coin - %s, gem = gem - %s WHERE memberid =%s", (coin, gem, member))
+
+
+##############################################################################
+#                                                                            #
+#                                                                            #
 #                                  PRISON                                    #
 #                                                                            #
 #                                                                            #
@@ -232,6 +278,7 @@ def lock(slave, guild, domme, num, sentence, roles):
 def update_lock(slave, sentence, guild):
     with con:
         cur.execute("UPDATE Prison SET num = num - 1, sentence = %s, count = count + 1 WHERE slaveid = %s AND guildid = %s", (sentence, slave, guild))
+        add_money(slave, 2, 0)
 
 
 def get_prisoner(slave, guild):

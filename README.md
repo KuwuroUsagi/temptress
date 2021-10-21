@@ -98,19 +98,20 @@ ___
 
 ## Tasks to do.
 
-[] add point system to database.
-[] add points on status.
-[] make prison a point system.
-[] make a counting game.
-	- [] make counting game + add configs to database.
-	- [] ruin command.
-	- [] setting up the game on `s.setup`
-[] worship and praise command for Subs
-[] good boy command for Dommes.
-[] coinflip
-[] make store.
-	- [] dommes can change the nickname of any free subs.
-	- [] dommes can gag any free subs for 10 mins.
-	- [] dommes can chastity lock any free sub for 30mins.
-	- [] reset nickname and dommes can't change name for next 24h.
-	- [] add collectable items (dildo, condom, cuffs, whips...)
+- &check; add point system to database.
+- &check; add points on status.
+- &check; make prison a point system.
+- &check; make a counting game.
+	- &check; make counting game + add configs to database.
+	- &square; ruin command.
+	- &square; setting up the game on `s.setup`
+- &square; worship and praise command for Subs
+- &square; add worship to status.
+- &square; good boy command for Dommes.
+- &square; coinflip
+- &square; make store.
+	- &square; dommes can change the nickname of any free subs.
+	- &square; dommes can gag any free subs for 10 mins.
+	- &square; dommes can chastity lock any free sub for 30mins.
+	- &square; reset nickname and dommes can't change name for next 24h.
+	- &square; add collectable items (dildo, condom, cuffs, whips...)

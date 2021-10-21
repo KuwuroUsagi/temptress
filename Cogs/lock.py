@@ -95,13 +95,15 @@ class Lock(commands.Cog):
         if set(database.get_config('prisoner', message.guild.id)) & set([role.id for role in message.author.roles]):
             data = database.get_prisoner(message.author.id, message.guild.id)
             if message.content == data[4]:
-                await message.add_reaction(emoji=':YES:897762486042910762')
+                await message.add_reaction(emoji='YES:897762486042910762')
                 sentence = make_image(message.content).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
                 database.update_lock(message.author.id, sentence, message.guild.id)
                 if data[3] == 1:
                     prisoner = message.guild.get_role(database.get_config('prisoner', message.guild.id)[0])
                     await message.author.remove_roles(prisoner)
+                    database.add_money(message.author.id, 70, 0)
+                    await message.reply(f"{message.author.mention} received 70 <a:pinkcoin:900000697288892416> for being a good boy and writing the lines.")
                     return
                 if message.author.id == 855057142297264139:
                     await message.author.send(sentence)
@@ -109,7 +111,7 @@ class Lock(commands.Cog):
                 await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h to be free from prison. ||(it is case sensitive)||")
                 await prison.send(file=discord.File('./Image/new.png'))
             else:
-                await message.add_reaction(emoji=':NO:897890789202493460')
+                await message.add_reaction(emoji='NO:897890789202493460')
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
