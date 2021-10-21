@@ -28,7 +28,7 @@ class Games(commands.Cog):
             if message.content.lower() == 's.ruin':  # string is passed
                 return
             else:
-                await message.delete()
+                # await message.delete()
                 return
 
         number = int(data[0])
@@ -99,7 +99,7 @@ class Games(commands.Cog):
             await ctx.reply(f"You should use this command in <#{data[1]}>")
         elif set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in ctx.author.roles]):
             database.add_money(ctx.author.id, int(data[4]), 0)
-            data_ = f"{-1 * random.randint(70, 10000)}_{ctx.channel.id}_0_0_0"
+            data_ = f"{-1 * random.randint(70, 1000)}_{ctx.channel.id}_0_0_0"
             database.insert_config('counting', ctx.guild.id, data_)
             embed = discord.Embed(description=f"{ctx.author.mention} ruined the counting and earned {data[4]} <a:pinkcoin:900000697288892416>"
                                   f"\n\n\n> **Now guess the next number to earn more**", color=0xF2A2C0)
