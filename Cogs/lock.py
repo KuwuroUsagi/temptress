@@ -96,6 +96,7 @@ class Lock(commands.Cog):
             data = database.get_prisoner(message.author.id, message.guild.id)
             if message.content == data[4]:
                 await message.add_reaction(emoji='YES:897762486042910762')
+                await message.add_reaction(emoji='pinkcoin:900000697288892416')
                 sentence = make_image(message.content).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
                 database.update_lock(message.author.id, sentence, message.guild.id)
@@ -204,11 +205,11 @@ class Lock(commands.Cog):
                     try:
                         response = await self.bot.wait_for('button_click', timeout=30, check=check)
                         if response.component.label == 'Easy':
-                            num = randint(1, 10)
+                            num = randint(1, 7)
                         elif response.component.label == 'Medium':
-                            num = randint(11, 25)
+                            num = randint(5, 15)
                         elif response.component.label == 'Hard':
-                            num = randint(26, 50)
+                            num = randint(12, 20)
                         await response.respond(type=6)
                         await m.delete()
                     except asyncio.TimeoutError:
@@ -235,6 +236,9 @@ class Lock(commands.Cog):
                     await prison.send(file=discord.File('./Image/new.png'))
 
                     database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
+                    database.add_money(ctx.author.id, 20, 0)
+                    points_embed = discord.Embed(description=f"{ctx.author.mention} received 20<a:pinkcoin:900000697288892416> by locking {member.mention} in {prison.mention}", color=0xF2A2C0)
+                    await ctx.send(embed=points_embed)
                     if member.id == 855057142297264139:
                         await member.send(sentence)
                     await asyncio.sleep(60 * 60 * 2)
@@ -299,6 +303,14 @@ class Lock(commands.Cog):
                                                description=f"you are not worthy to use this command, how can you even to do such things you stupid bitch.",
                                                color=0xF2A2C0)
             await ctx.reply(embed=unlock_slave_embed)
+
+    ##############################################################################
+    #                                                                            #
+    #                                                                            #
+    #                                  ERRORS                                    #
+    #                                                                            #
+    #                                                                            #
+    ##############################################################################
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):

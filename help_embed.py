@@ -59,7 +59,7 @@ domme.add_field(name="To rank your sub in hierarchy.", value="> **`s.rank @menti
 lock = Embed(title=' How to use prison?',
              description=f"The command to put subs in prison is `s.lock @mention` as per example \"**`s.lock @alex#0001`**\". "
              f"Then you just need to choose the punishment of the sub if it is 'degree' or 'worship' and finally choose the level of torture "
-             f"easy will make the sub write from 1-10 lines, medium will make the sub write 11-25 lines, hard will make the sub write 26-50 lines. After it just enjoy the sub punishment!"
+             f"easy will make the sub write from 1-7 lines, medium will make the sub write 5-15 lines, hard will make the sub write 12-20 lines. After it just enjoy the sub punishment!"
              f"\n\n\n**Only the Domme who locked can unlock the sub, ||and admins for safety reasons||**"
              f"\n> **`s.unlock @mention`** this will unlock the sub from prison."
              f"\n**NOTE: Admins can remove sub from prison just by removing prison role. deleting of the role or prison channel will unlock all the subs from prison.**",

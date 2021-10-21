@@ -274,6 +274,14 @@ class Action:
             embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[1]}\n> <a:gems:899985611946078208> {money[2]}", inline=False)
             embed.add_field(name='Restrictions', value=restriction, inline=False)
 
+            simp_list = database.get_simp(member.id, member.guild.id)
+            if simp_list is not None:
+                simp_list = sorted(simp_list, key=lambda simp_list: simp_list[1], reverse=True)[:5]
+                simps = ''
+                for s in simp_list:
+                    simps = f"{simps}\n> <@{s[0]}> ({s[1]})"
+                embed.add_field(name='I Simp for', value=simps, inline=False)
+
             if lines_count > 0:
                 embed.add_field(name="Lines I wrote", value=f"> {lines_count} lines written <#{database.get_config('prison', member.guild.id)[0]}>", inline=False)
             embed.set_thumbnail(url=member.avatar_url)
@@ -296,6 +304,15 @@ class Action:
             embed = discord.Embed(title=name, color=0xF2A2C0)
             embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[1]}\n> <a:gems:899985611946078208> {money[2]} ", inline=False)
             embed.add_field(name='My Subs', value=owned_slaves, inline=False)
+
+            simp_list = database.get_simp(member.id, member.guild.id)
+            if simp_list is not None:
+                simp_list = sorted(simp_list, key=lambda simp_list: simp_list[1], reverse=True)[:5]
+                simps = ''
+                for s in simp_list:
+                    simps = f"{simps}\n> <@{s[0]}> ({s[1]})"
+                embed.add_field(name='I Simp for', value=simps, inline=False)
+
             embed.set_thumbnail(url=member.avatar_url)
 
         else:

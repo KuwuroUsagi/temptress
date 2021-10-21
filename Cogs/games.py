@@ -112,13 +112,56 @@ class Games(commands.Cog):
             embed = discord.Embed(description=f"you don't have any of the following roles to ruin the game.\n{roles[:-2]}", color=0xF2A2C0)
             await ctx.send(embed=embed)
 
-    ##############################################################################
-    #                                                                            #
-    #                                                                            #
-    #                                  ERRORS                                    #
-    #                                                                            #
-    #                                                                            #
-    ##############################################################################
+    @commands.command(aliases=['praise', 'simp'])
+    @commands.guild_only()
+    async def worship(self, ctx, member: discord.Member):
+        if set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in member.roles]):
+            if ctx.channel.is_nsfw():
+                money = database.get_money(ctx.author.id)[1]
+                if money >= 100:
+                    database.remove_money(ctx.author.id, 100, 0)
+                    database.add_money(ctx.author.id, 0, 1)
+                    database.add_money(member.id, 0, 1)
+                    database.simp(ctx.author.id, ctx.guild.id, member.id)
+                    simp_embed = discord.Embed(title=f"{ctx.author.nick or ctx.author.name} Simps for {member.nick or member.name}",
+                                               description=f"",
+                                               color=0xF2A2C0)
+                    with open('Text_files/simp_image.txt', 'r') as f:
+                        lines = f.read().splitlines()
+                        link = random.choice(lines)
+                    simp_embed.set_image(url=link)
+                    await ctx.send(embed=simp_embed)
+                else:
+                    embed = discord.Embed(description=f"{ctx.author.mention} you need at least 100 <a:pinkcoin:900000697288892416> to simp for {member.mention}", color=0xF2A2C0)
+                    await ctx.send(embed=embed)
+            else:
+                embed = discord.Embed(description=f'{ctx.author.mention} This is not a NSFW Channel try again in NSFW channel.', color=0xF2A2C0)
+                await ctx.reply(embed=embed)
+        else:
+            roles = '>'
+            for r in database.get_config('chat', ctx.guild.id):
+                roles = f"{roles} <@&{r}>\n>"
+            embed = discord.Embed(description=f"You can only simp/worship members with following roles.\n{roles[:-2]}", color=0xF2A2C0)
+            await ctx.send(embed=embed)
+
+    # @commands.command(aliases=['cf'])
+    # @commands.guild_only()
+    # @commands.cooldown(4, 1 * 60 * 60, commands.BucketType.user)
+    # async def coinflip(self, ctx, choice, bet: int):
+    #     pass
+        # if bet < 100:
+        #     await ctx.reply(f"<:staff:897777248839540757> You need to bet more that 100 <a:pinkcoin:900000697288892416>")
+        # elif choice.lower() not in ['head', 'tail', 'h', 't']:
+        #     await ctx.reply(f"<:staff:897777248839540757> usage **`s.coinflip <head|tail> <bet>`**")
+        # else:
+
+        ##############################################################################
+        #                                                                            #
+        #                                                                            #
+        #                                  ERRORS                                    #
+        #                                                                            #
+        #                                                                            #
+        ##############################################################################
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -143,6 +186,25 @@ class Games(commands.Cog):
                                   description="{} you need to wait {:,.1f} minutes to ruin the game again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
                                   color=0xFF2030)
         await ctx.send(embed=embed)
+
+    @worship.error
+    async def on_worship_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+            embed = discord.Embed(description=f"Usage:\n**`s.worship @mention`**",
+                                  color=0xFF2030)
+            await ctx.send(embed=embed)
+
+    # @coinflip.error
+    # async def on_coinflip_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.coinflip head|tail <bet>`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
+    #     elif isinstance(error, commands.errors.CommandOnCooldown):
+    #         embed = discord.Embed(title="Coinflip Cooldown is 1h",
+    #                               description="{} you need to wait {:,.1f} minutes to flip coin again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
 
 def setup(bot):
