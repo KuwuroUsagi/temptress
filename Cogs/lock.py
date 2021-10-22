@@ -122,7 +122,7 @@ class Lock(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @commands.cooldown(3, 4 * 60 * 60, commands.BucketType.user)
+    @commands.cooldown(3, 2 * 60 * 60, commands.BucketType.user)
     async def lock(self, ctx, member: discord.Member):
         if ctx.author.bot:
             return
@@ -222,7 +222,7 @@ class Lock(commands.Cog):
                 i_have_power = ctx.guild.get_member(self.bot.user.id).top_role > member.top_role and ctx.guild.owner.id != member.id
                 if i_have_power:
                     for role in member.roles:
-                        if role != ctx.guild.default_role:
+                        if role != ctx.guild.default_role and role != ctx.guild.premium_subscriber_role:
                             await member.remove_roles(role)
 
                     await member.add_roles(prisoner)
@@ -331,7 +331,7 @@ class Lock(commands.Cog):
                                   f"\nAfter it just enjoy the slave punishment!",
                                   color=0xFF2030)
         elif isinstance(error, commands.errors.CommandOnCooldown):
-            embed = discord.Embed(title="Prison Cooldown is 4h",
+            embed = discord.Embed(title="Prison Cooldown is 2h",
                                   description="{} you need to wait {:,.1f} minutes to lock a slave again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
                                   color=0xFF2030)
         await ctx.send(embed=embed)
