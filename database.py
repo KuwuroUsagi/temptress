@@ -328,7 +328,7 @@ def lock(slave, guild, domme, num, sentence, roles):
 def update_lock(slave, sentence, guild):
     with con:
         cur.execute("UPDATE Prison SET num = num - 1, sentence = %s, count = count + 1 WHERE slaveid = %s AND guildid = %s", (sentence, slave, guild))
-        add_money(slave, 2, 0)
+    add_money(slave, 2, 0)
 
 
 def get_prisoner(slave, guild):
