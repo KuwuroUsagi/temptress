@@ -20,7 +20,7 @@ class Games(commands.Cog):
                     try:
                         if "https://disboard.org/images/bot-command-image-bump.png" == embed.to_dict()['image']['url']:
                             user_id = int(embed.to_dict()['description'][2:20])
-                            database.add_money(user_id, 30, 0)
+                            database.add_money(user_id, message.guild.id, 30, 0)
                             embed = discord.Embed(description=f"<@{user_id}> received 30 <a:pinkcoin:900000697288892416> for Bumping the server.", color=0xF2A2C0)
                             await message.channel.send(embed=embed)
                             return
@@ -28,7 +28,7 @@ class Games(commands.Cog):
                         return
 
         if random.random() < 0.1:
-            database.add_money(message.author.id, 1, 0)
+            database.add_money(message.author.id, message.guild.id, 1, 0)
 
         try:
             data = database.get_config_raw('counting', message.guild.id).split('_')  # [number, channel, member, message, count_length]
@@ -51,7 +51,7 @@ class Games(commands.Cog):
             if (-1 * number) == count:
                 embed = discord.Embed(description=f"{message.author.mention} you guessed the correct number and you earned 30 <a:pinkcoin:900000697288892416>", color=0xF2A2C0)
                 await message.reply(embed=embed)
-                database.add_money(message.author.id, 30, 0)
+                database.add_money(message.author.id, message.guild.id, 30, 0)
                 data[0] = str(-1 * number + 1)
                 data[2] = str(message.author.id)
                 data[3] = str(message.id)
@@ -73,7 +73,7 @@ class Games(commands.Cog):
                 await asyncio.sleep(5)
                 await m.delete()
             elif count == number:
-                database.add_money(message.author.id, 1, 0)
+                database.add_money(message.author.id, message.guild.id, 1, 0)
                 data[0] = str(number + 1)
                 data[2] = str(message.author.id)
                 data[3] = str(message.id)
@@ -113,7 +113,7 @@ class Games(commands.Cog):
         if ctx.channel.id != int(data[1]):
             await ctx.reply(f"You should use this command in <#{data[1]}>")
         elif set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in ctx.author.roles]):
-            database.add_money(ctx.author.id, int(data[4]), 0)
+            database.add_money(ctx.author.id, ctx.guild.id, int(data[4]), 0)
             data_ = f"{-1 * random.randint(70, 1000)}_{ctx.channel.id}_0_0_0"
             database.insert_config('counting', ctx.guild.id, data_)
             embed = discord.Embed(description=f"{ctx.author.mention} ruined the counting and earned {data[4]} <a:pinkcoin:900000697288892416>"
@@ -132,11 +132,11 @@ class Games(commands.Cog):
     async def worship(self, ctx, member: discord.Member):
         if set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in member.roles]):
             if ctx.channel.is_nsfw():
-                money = database.get_money(ctx.author.id)[1]
+                money = database.get_money(ctx.author.id, ctx.guild.id)[1]
                 if money >= 100:
-                    database.remove_money(ctx.author.id, 100, 0)
-                    database.add_money(ctx.author.id, 0, 1)
-                    database.add_money(member.id, 0, 1)
+                    database.remove_money(ctx.author.id, ctx.guild.id, 100, 0)
+                    database.add_money(ctx.author.id, ctx.guild.id, 0, 1)
+                    database.add_money(member.id, ctx.guild.id, 0, 1)
                     database.simp(ctx.author.id, ctx.guild.id, member.id)
                     simp_embed = discord.Embed(title=f"{ctx.author.nick or ctx.author.name} Simps for {member.nick or member.name}",
                                                description=f"",

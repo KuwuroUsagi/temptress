@@ -42,7 +42,7 @@ with con:
         (memberid bigint, guildid bigint)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS Money
-        (memberid bigint, coin bigint, gem bigint)""")
+        (memberid bigint, guildid bigint, coin bigint, gem bigint)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS Worship
         (memberid bigint, guildid bigint, simp text)""")
@@ -287,27 +287,27 @@ def get_lines_leaderboard(guild):
 #                                                                            #
 ##############################################################################
 
-def get_money(member):
-    cur.execute("SELECT * FROM Money WHERE memberid = %s", (member,))
+def get_money(member, guild):
+    cur.execute("SELECT * FROM Money WHERE memberid = %s AND guildid = %s", (member, guild))
     try:
         data = cur.fetchall()[0]
-        return [data[0], data[1], int(data[2] / 10)]
+        return [data[0], data[1], data[2], int(data[3] / 10)]
     except IndexError:
         with con:
             cur.execute("INSERT INTO Money (memberid, coin, gem) VALUES (%s, %s, %s)", (member, 100, 0))
-        return [member, 100, 0]
+        return [member, guild, 169, 0]
 
 
-def add_money(member, coin, gem):
-    get_money(member)
+def add_money(member, guild, coin, gem):
+    get_money(member, guild)
     with con:
-        cur.execute("UPDATE Money SET coin = coin + %s, gem = gem + %s WHERE memberid =%s", (coin, gem, member))
+        cur.execute("UPDATE Money SET coin = coin + %s, gem = gem + %s WHERE memberid = %s AND guildid = %s", (coin, gem, member, guild))
 
 
-def remove_money(member, coin, gem):
-    get_money(member)
+def remove_money(member, guild, coin, gem):
+    get_money(member, guild)
     with con:
-        cur.execute("UPDATE Money SET coin = coin - %s, gem = gem - %s WHERE memberid =%s", (coin, gem, member))
+        cur.execute("UPDATE Money SET coin = coin - %s, gem = gem - %s WHERE memberid =%s AND guildid = %s", (coin, gem, member, guild))
 
 
 ##############################################################################
@@ -328,7 +328,7 @@ def lock(slave, guild, domme, num, sentence, roles):
 def update_lock(slave, sentence, guild):
     with con:
         cur.execute("UPDATE Prison SET num = num - 1, sentence = %s, count = count + 1 WHERE slaveid = %s AND guildid = %s", (sentence, slave, guild))
-        add_money(slave, 2, 0)
+        add_money(slave, guild, 2, 0)
 
 
 def get_prisoner(slave, guild):

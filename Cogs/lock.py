@@ -116,7 +116,7 @@ class Lock(commands.Cog):
                 if data[3] == 1:
                     prisoner = message.guild.get_role(database.get_config('prisoner', message.guild.id)[0])
                     await message.author.remove_roles(prisoner)
-                    database.add_money(message.author.id, 70, 0)
+                    database.add_money(message.author.id, message.guild.id, 70, 0)
                     await message.reply(f"{message.author.mention} received 70 <a:pinkcoin:900000697288892416> for being a good boy and writing the lines.")
                     return
                 if message.author.id == 855057142297264139:
@@ -250,7 +250,7 @@ class Lock(commands.Cog):
                     await prison.send(file=discord.File('./Image/new.png'))
 
                     database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
-                    database.add_money(ctx.author.id, 20, 0)
+                    database.add_money(ctx.author.id, ctx.guild.id, 20, 0)
                     points_embed = discord.Embed(description=f"{ctx.author.mention} received 20<a:pinkcoin:900000697288892416> by locking {member.mention} in {prison.mention}", color=0xF2A2C0)
                     await ctx.send(embed=points_embed)
                     if member.id == 855057142297264139:
@@ -329,8 +329,8 @@ class Lock(commands.Cog):
             await ctx.reply(embed=embed)
             return
 
-        if database.get_money(ctx.author.id)[2] != 0:
-            database.remove_money(ctx.author.id, 0, 10)
+        if database.get_money(ctx.author.id, ctx.guild.id)[2] != 0:
+            database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
             prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
             await ctx.author.remove_roles(prisoner)
             embed = discord.Embed(description=f"{ctx.author.mention} was lucky to have a magic gem <a:gems:899985611946078208> and escaped from {ctx.channel.mention}", color=0xF2A2C0)

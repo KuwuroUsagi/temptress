@@ -269,7 +269,7 @@ class Action:
                                   description=f"{owner}",
                                   color=0xF2A2C0)
 
-            money = database.get_money(member.id)
+            money = database.get_money(member.id, member.guild.id)
 
             embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[1]}\n> <a:gems:899985611946078208> {money[2]}", inline=False)
             embed.add_field(name='Restrictions', value=restriction, inline=False)
@@ -299,7 +299,7 @@ class Action:
                 for slave in slaves_list:
                     owned_slaves += f"> {'' if slave[1] == 1000 else f'{slave[1]}°'} <@{str(slave[0])}>  {get_status_emojis(int(slave[0]), member.guild.id)}\n"
 
-            money = database.get_money(member.id)
+            money = database.get_money(member.id, member.guild.id)
 
             embed = discord.Embed(title=name, color=0xF2A2C0)
             embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[1]}\n> <a:gems:899985611946078208> {money[2]} ", inline=False)
