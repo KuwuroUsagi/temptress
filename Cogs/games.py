@@ -13,7 +13,22 @@ class Games(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author.bot:
-            return
+            if message.author.id != 302050872383242240:  # user ID of Disboard bot
+                return
+            else:
+                for embed in message.embed:
+                    try:
+                        if "https://disboard.org/images/bot-command-image-bump.png" == embed.to_dict()['image']['url']:
+                            user_id = int(embed.to_dict()['description'][2:20])
+                            database.add_money(user_id, 30, 0)
+                            embed = discord.Embed(description=f"<@{user_id}> received 30 <a:pinkcoin:900000697288892416> for Bumping the server.", color=0xF2A2C0)
+                            await message.channel.send(embed=embed)
+                            return
+                    except Exception:
+                        return
+
+        if random.random() < 0.1:
+            database.add_money(message.author.id, 1, 0)
 
         try:
             data = database.get_config_raw('counting', message.guild.id).split('_')  # [number, channel, member, message, count_length]
@@ -112,7 +127,7 @@ class Games(commands.Cog):
             embed = discord.Embed(description=f"you don't have any of the following roles to ruin the game.\n{roles[:-2]}", color=0xF2A2C0)
             await ctx.send(embed=embed)
 
-    @commands.command(aliases=['praise', 'simp'])
+    @commands.command(aliases=['praise', 'simp', 'footkiss', 'feetkiss'])
     @commands.guild_only()
     async def worship(self, ctx, member: discord.Member):
         if set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in member.roles]):
@@ -139,7 +154,7 @@ class Games(commands.Cog):
                 await ctx.reply(embed=embed)
         else:
             roles = '>'
-            for r in database.get_config('chat', ctx.guild.id):
+            for r in database.get_config('domme', ctx.guild.id):
                 roles = f"{roles} <@&{r}>\n>"
             embed = discord.Embed(description=f"You can only simp/worship members with following roles.\n{roles[:-2]}", color=0xF2A2C0)
             await ctx.send(embed=embed)
