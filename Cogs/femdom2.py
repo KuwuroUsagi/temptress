@@ -59,7 +59,7 @@ class Action:
         elif y_n == 'no' or y_n == 'n':
             await self.ctx.message.add_reaction(emoji='NO:897890789202493460')
 
-    async def chastity(self, access):
+    async def chastity(self, access, temp=False):
         channels = await self.ctx.guild.fetch_channels()
         for channel in channels:
             if channel.is_nsfw():
@@ -69,6 +69,12 @@ class Action:
                 else:
                     await channel.set_permissions(self.member, view_channel=False)
                     database.update_slaveDB(self.member.id, 'chastity', False, self.ctx.guild.id)
+        if temp:
+            await asyncio.sleep(1 * 60 * 60)
+            for channel in channels:
+                if channel.is_nsfw():
+                    await channel.set_permissions(self.member, overwrite=None)
+                    database.update_slaveDB(self.member.id, 'chastity', True, self.ctx.guild.id)
 
     async def muff(self, access):
         channels = await self.ctx.guild.fetch_channels()
@@ -141,10 +147,38 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
 
             elif member_is == 201:
-                embed = discord.Embed(title='Nah',
-                                      description=f"{ctx.author.mention}, you can't do such a thing. {member.mention} is a free slave!"
-                                                  f" the sub must be owned by you.",
-                                      color=0xF2A2C0)
+                if database.get_money(ctx.author.id, ctx.guild.id)[3] <= 0:
+                    embed = discord.Embed(title='Nah',
+                                          description=f"{ctx.author.mention}, you don't have magic gem, you need magic gem <a:gems:899985611946078208> "
+                                          f"to gag/ungag because {member.mention} is a free slave!",
+                                          color=0xF2A2C0)
+                else:
+                    embed = discord.Embed(title='So what should I do?', color=0xF2A2C0)
+                    m = await ctx.reply(embed=embed, components=[[Button(style=ButtonStyle.green, label='Chastity Unlock', emoji='🔓', disabled=database.get_slave_from_DB(member.id, ctx.guild.id)[0][6]),
+                                                                  Button(style=ButtonStyle.red, label='Chastity Lock', emoji='🔒', disabled=not database.get_slave_from_DB(member.id, ctx.guild.id)[0][6])]])
+                    try:
+                        def check(res):
+                            return ctx.author == res.user and res.channel == ctx.channel
+
+                        response = await self.bot.wait_for('button_click', timeout=30, check=check)
+                        await response.respond(type=6)
+                        if response.component.label == 'Chastity Lock':
+                            embed = discord.Embed(description=f"{member.mention} can't access NSFW Channels in this server for next 1 hour.", color=0xFF2030)
+                            await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Chastity Unlock', emoji='🔓', disabled=True),
+                                                                   Button(style=ButtonStyle.red, label='Chastity Lock', emoji='🔒', disabled=True)]])
+                            await action.chastity(False, temp=True)
+
+                        elif response.component.label == 'Chastity Unlock':
+                            embed = discord.Embed(description=f"{member.mention} can access NSFW Channels in this server.", color=0x08FF08)
+                            await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Chastity Unlock', emoji='🔓', disabled=True),
+                                                                   Button(style=ButtonStyle.red, label='Chastity Lock', emoji='🔒', disabled=True)]])
+                            await action.chastity(True)
+
+                    except asyncio.TimeoutError:
+                        embed = discord.Embed(description='Time\'s up, you got only 30 secs to make a choice.', color=0xF2A2C0)
+                        await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Chastity Unlock', emoji='🔓', disabled=True),
+                                                               Button(style=ButtonStyle.red, label='Chastity Lock', emoji='🔒', disabled=True)]])
+                    return
 
             elif member_is == 200:
                 embed = discord.Embed(title='So what should I do?', color=0xF2A2C0)
@@ -161,14 +195,13 @@ class Femdom(commands.Cog):
                         await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Chastity Unlock', emoji='🔓', disabled=True),
                                                                Button(style=ButtonStyle.red, label='Chastity Lock', emoji='🔒', disabled=True)]])
                         await action.chastity(False)
-                        database.update_slaveDB(member.id, 'chastity', False, ctx.guild.id)
 
                     elif response.component.label == 'Chastity Unlock':
                         embed = discord.Embed(description=f"{member.mention} can access NSFW Channels in this server.", color=0x08FF08)
                         await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Chastity Unlock', emoji='🔓', disabled=True),
                                                                Button(style=ButtonStyle.red, label='Chastity Lock', emoji='🔒', disabled=True)]])
                         await action.chastity(True)
-                        database.update_slaveDB(member.id, 'chastity', True, ctx.guild.id)
+
                 except asyncio.TimeoutError:
                     embed = discord.Embed(description='Time\'s up, you got only 30 secs to make a choice.', color=0xF2A2C0)
                     await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Chastity Unlock', emoji='🔓', disabled=True),
@@ -348,10 +381,38 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
 
             elif member_is == 201:
-                embed = discord.Embed(title='Nah',
-                                      description=f"{ctx.author.mention}, you can't do such a thing. {member.mention} is a free slave!"
-                                                  f" the sub must be owned by you.",
-                                      color=0xF2A2C0)
+                if database.get_money(ctx.author.id, ctx.guild.id)[3] <= 0:
+                    embed = discord.Embed(title='Nah',
+                                          description=f"{ctx.author.mention}, you don't have magic gem, you need magic gem <a:gems:899985611946078208> "
+                                          f"to gag/ungag because {member.mention} is a free slave!",
+                                          color=0xF2A2C0)
+                else:
+                    embed = discord.Embed(title='Are you sure that you wanna do this?', description=f"{member.mention} will not be able to see any channels in this server for 5 mins.", color=0xF2A2C0)
+                    m = await ctx.reply(embed=embed, components=[[Button(style=ButtonStyle.green, label='No'),
+                                                                  Button(style=ButtonStyle.red, label='Yes do it')]])
+                    try:
+                        def check(res):
+                            return ctx.author == res.user and res.channel == ctx.channel
+
+                        response = await self.bot.wait_for('button_click', timeout=30, check=check)
+                        await response.respond(type=6)
+                        if response.component.label == 'Yes do it':
+                            embed = discord.Embed(description=f"{member.mention} can't see any of the Channels in this server for next 5 mins.", color=0xFF2030)
+                            await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='No', disabled=True),
+                                                                   Button(style=ButtonStyle.red, label='Yes do it', disabled=True)]])
+                            await action.blind()
+                            database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+
+                        elif response.component.label == 'No':
+                            embed = discord.Embed(description=f"Mission Aborted. lucky {member.mention}", color=0x08FF08)
+                            await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='No', disabled=True),
+                                                                   Button(style=ButtonStyle.red, label='Yes do it', disabled=True)]])
+
+                    except asyncio.TimeoutError:
+                        embed = discord.Embed(description='Time\'s up, you got only 30 secs', color=0xF2A2C0)
+                        await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='No', disabled=True),
+                                                               Button(style=ButtonStyle.red, label='Yes do it', disabled=True)]])
+                    return
 
             elif member_is == 200:
                 embed = discord.Embed(title='Are you sure that you wanna do this?', description=f"{member.mention} will not be able to see any channels in this server for 5 mins.", color=0xF2A2C0)
@@ -373,7 +434,7 @@ class Femdom(commands.Cog):
                         embed = discord.Embed(description=f"Mission Aborted. lucky {member.mention}", color=0x08FF08)
                         await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='No', disabled=True),
                                                                Button(style=ButtonStyle.red, label='Yes do it', disabled=True)]])
-                        await action.blind()
+
                 except asyncio.TimeoutError:
                     embed = discord.Embed(description='Time\'s up, you got only 30 secs', color=0xF2A2C0)
                     await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='No', disabled=True),

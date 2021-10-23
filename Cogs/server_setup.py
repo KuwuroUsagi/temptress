@@ -211,6 +211,7 @@ class ServerConfig(commands.Cog):
         slave = database.get_config('slave', ctx.guild.id)
         NSFW = database.get_config('NSFW', ctx.guild.id)
         chat = database.get_config('chat', ctx.guild.id)
+        locker = database.get_config('locker', ctx.guild.id)
 
         if NSFW == [0]:
             NSFW = f"> {ctx.guild.default_role}"
@@ -222,6 +223,7 @@ class ServerConfig(commands.Cog):
                                        description=f"**I am active in {len(self.bot.guilds)} servers.**\n\n"
                                        f"Domme roles:\n{self.list_roles(domme)}\n"
                                        f"Sub roles:\n{self.list_roles(slave)}\n"
+                                       f"Dommes who are strong to lock subs in <#{prison[0]}>:\n{self.list_roles(locker)}\n"
                                        f"NSFW command access is given to:\n{self.list_roles(NSFW)}\n"
                                        f"Members who have permission to talk to me:\n{self.list_roles(chat)}\n\n"
                                        f"**Dommes can torture subs in <#{prison[0]}>**\n"
