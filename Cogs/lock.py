@@ -50,7 +50,7 @@ def make_image(sentence):
             new_string += character.lower()
 
     img = Image.open('./Image/blank_discord_bg.png')
-    font = ImageFont.truetype('./Fonts/LadylikeBB.ttf', 30)
+    font = ImageFont.truetype('./Fonts/LadylikeBB.ttf', 53)
     draw = ImageDraw.Draw(img)
     avg_char_width = sum(font.getsize(char)[0] for char in ascii_letters) / len(ascii_letters)
     max_char_count = int(img.size[0] * .95 / avg_char_width)  # 618
