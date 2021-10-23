@@ -142,12 +142,14 @@ def get_simp(member, guild):
     cur.execute("SELECT simp FROM Worship WHERE memberid =%s AND guildid =%s", (member, guild))
     try:
         temp = []
+        total_simp = 0
         data = cur.fetchall()[0][0].split('/')
         for d in data:
             x = d.split('_')
             x = [int(x[0]), int(x[1])]
+            total_simp += x[1]
             temp.append(x)
-        return temp
+        return [temp, total_simp]
     except IndexError:
         return
 
@@ -266,22 +268,6 @@ def set_slave_rank(member, rank, guild):
 ##############################################################################
 #                                                                            #
 #                                                                            #
-#                              LEADERBORARD                                  #
-#                                                                            #
-#                                                                            #
-##############################################################################
-
-
-def get_lines_leaderboard(guild):
-    cur.execute("SELECT * FROM SlaveDB WHERE guildid = %s ORDER BY lines DESC", (guild,))
-    data = cur.fetchall()
-    data = [(line[0], line[5]) for line in data if line[5] != 0]
-    return data
-
-
-##############################################################################
-#                                                                            #
-#                                                                            #
 #                                   MONEY                                    #
 #                                                                            #
 #                                                                            #
@@ -381,3 +367,24 @@ def insert_remove_blacklist(member, guild):
         with con:
             cur.execute("INSERT INTO Blacklist (memberid, guildid) VALUES (%s, %s)", (member, guild))
         return True
+
+##############################################################################
+#                                                                            #
+#                                                                            #
+#                              LEADERBORARD                                  #
+#                                                                            #
+#                                                                            #
+##############################################################################
+
+
+def get_lines_leaderboard(guild):
+    cur.execute("SELECT * FROM SlaveDB WHERE guildid = %s ORDER BY lines DESC", (guild,))
+    data = cur.fetchall()
+    data = [(line[0], line[5]) for line in data if line[5] != 0]
+    return data
+
+
+def get_money_leaderboard(guild):
+    cur.execute("SELECT memberid, coin, gem FROM Money WHERE guildid = %s ORDER BY gem DESC, coin DESC", (guild,))
+    data = cur.fetchall()
+    return data

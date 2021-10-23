@@ -19,7 +19,7 @@ class Games(commands.Cog):
                 for embed in message.embed:
                     try:
                         if "https://disboard.org/images/bot-command-image-bump.png" == embed.to_dict()['image']['url']:
-                            user_id = int(embed.to_dict()['description'][2:20])
+                            user_id = int(embed.to_dict()['description'][2:20].replace('>', ''))
                             database.add_money(user_id, message.guild.id, 30, 0)
                             embed = discord.Embed(description=f"<@{user_id}> received 30 <a:pinkcoin:900000697288892416> for Bumping the server.", color=0xF2A2C0)
                             await message.channel.send(embed=embed)
@@ -132,7 +132,7 @@ class Games(commands.Cog):
     async def worship(self, ctx, member: discord.Member):
         if set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in member.roles]):
             if ctx.channel.is_nsfw():
-                money = database.get_money(ctx.author.id, ctx.guild.id)[1]
+                money = database.get_money(ctx.author.id, ctx.guild.id)[2]
                 if money >= 100:
                     database.remove_money(ctx.author.id, ctx.guild.id, 100, 0)
                     database.add_money(ctx.author.id, ctx.guild.id, 0, 1)

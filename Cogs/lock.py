@@ -329,7 +329,7 @@ class Lock(commands.Cog):
             await ctx.reply(embed=embed)
             return
 
-        if database.get_money(ctx.author.id, ctx.guild.id)[2] != 0:
+        if database.get_money(ctx.author.id, ctx.guild.id)[3] != 0:
             database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
             prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
             await ctx.author.remove_roles(prisoner)

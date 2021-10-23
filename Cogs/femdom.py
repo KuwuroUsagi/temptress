@@ -271,15 +271,17 @@ class Action:
 
             money = database.get_money(member.id, member.guild.id)
 
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[1]}\n> <a:gems:899985611946078208> {money[2]}", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:899985611946078208> {money[3]}", inline=False)
             embed.add_field(name='Restrictions', value=restriction, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
             if simp_list is not None:
+                total_simp = simp_list[1]
+                simp_list = simp_list[0]
                 simp_list = sorted(simp_list, key=lambda simp_list: simp_list[1], reverse=True)[:5]
                 simps = ''
                 for s in simp_list:
-                    simps = f"{simps}\n> <@{s[0]}> ({s[1]})"
+                    simps = f"{simps}\n> <@{s[0]}> {int((s[1]/total_simp)*100)}%"
                 embed.add_field(name='I Simp for', value=simps, inline=False)
 
             if lines_count > 0:
@@ -302,15 +304,17 @@ class Action:
             money = database.get_money(member.id, member.guild.id)
 
             embed = discord.Embed(title=name, color=0xF2A2C0)
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[1]}\n> <a:gems:899985611946078208> {money[2]} ", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:899985611946078208> {money[3]} ", inline=False)
             embed.add_field(name='My Subs', value=owned_slaves, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
             if simp_list is not None:
+                total_simp = simp_list[1]
+                simp_list = simp_list[0]
                 simp_list = sorted(simp_list, key=lambda simp_list: simp_list[1], reverse=True)[:5]
                 simps = ''
                 for s in simp_list:
-                    simps = f"{simps}\n> <@{s[0]}> ({s[1]})"
+                    simps = f"{simps}\n> <@{s[0]}> {int((s[1]/total_simp)*100)}%"
                 embed.add_field(name='I Simp for', value=simps, inline=False)
 
             embed.set_thumbnail(url=member.avatar_url)
@@ -326,9 +330,13 @@ class Action:
         await self.ctx.channel.send(embed=embed)
 
     async def leaderboard(self, type='line'):
+        page_number = 1
+        size = 10
+
+        def check(reaction, user):
+            return user == self.author
+
         if type == 'line':
-            page_number = 1
-            size = 10
             data = database.get_lines_leaderboard(self.ctx.guild.id)
 
             def page(lb_list, page, size):
@@ -344,8 +352,45 @@ class Action:
                 embed.set_thumbnail(url=self.ctx.guild.icon_url)
                 return embed
 
-            def check(reaction, user):
-                return user == self.author
+            embed = page(data, 1, size)
+            box = await self.ctx.channel.send(embed=embed)
+            await box.add_reaction('⏪')
+            await box.add_reaction('⏩')
+            while True:
+                try:
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
+                    await box.remove_reaction(reaction, user)
+                except asyncio.TimeoutError:
+                    break
+                if str(reaction) == '⏪':
+                    if page_number == 1:
+                        pass
+                    else:
+                        embed = page(data, page_number - 1, size)
+                        page_number -= 1
+                if str(reaction) == '⏩':
+                    if page_number == int(len(data) / size) + (len(data) % size > 0) + 1:
+                        pass
+                    else:
+                        embed = page(data, page_number + 1, size)
+                        page_number += 1
+                await box.edit(embed=embed)
+
+        elif type == 'cash':
+            data = database.get_money_leaderboard(self.ctx.guild.id)
+
+            def page(lb_list, page, size):
+                value = ''
+                try:
+                    for x in range(((page - 1) * size), ((page - 1) * size) + size):
+                        value = value + f"> <@{lb_list[x][0]}> {lb_list[x][2]} gems <a:gems:899985611946078208>   {lb_list[x][1]} coins <a:pinkcoin:900000697288892416>\n"
+                    embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
+                except IndexError:
+                    embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
+
+                embed.set_footer(text=f"On page {page}/{int(len(lb_list) / size) + (len(lb_list) % size > 0) + 1}")
+                embed.set_thumbnail(url=self.ctx.guild.icon_url)
+                return embed
 
             embed = page(data, 1, size)
             box = await self.ctx.channel.send(embed=embed)
@@ -1332,12 +1377,17 @@ class Femdom(commands.Cog):
 
     @commands.command(aliases=['lb'])
     @commands.guild_only()
-    async def leaderboard(self, ctx, lb_type='line'):
+    async def leaderboard(self, ctx, lb_type='cash'):
         if ctx.author.bot:  # when author is a bot.
             return
 
+        if lb_type.lower() not in ['cash', 'line']:
+            embed = discord.Embed(tite="wrong options", description="I got only few options\n> **`s.lb cash`**\n> **`s.lb line`**", color=0xFF2030)
+            await ctx.channel.send(embed=embed)
+            return
+
         action = Action(self.bot, ctx, ctx.author)
-        await action.leaderboard(type='line')
+        await action.leaderboard(type=lb_type)
 
     ##############################################################################
     #                                                                            #
