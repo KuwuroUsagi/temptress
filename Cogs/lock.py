@@ -324,8 +324,8 @@ class Lock(commands.Cog):
         if ctx.author.bot:
             return
 
-        if not set(database.get_config('prisoner', ctx.guild.id)) & set([role.id for role in member.roles]) or member.bot:
-            embed = discord.Embed(title='Already Free', description=f"{member.mention} is already in woods enjoying the sun.", color=0xF2A2C0)
+        if not set(database.get_config('prisoner', ctx.guild.id)) & set([role.id for role in ctx.author.roles]):
+            embed = discord.Embed(title='Already Free', description=f"{ctx.author.mention} is already in woods enjoying the sun.", color=0xF2A2C0)
             await ctx.reply(embed=embed)
             return
 
@@ -337,6 +337,7 @@ class Lock(commands.Cog):
             await ctx.send(embed=embed)
         else:
             embed = discord.Embed(description=f"{ctx.author.mention} you don't have magic gem <a:gems:899985611946078208> to be free.", color=0xF2A2C0)
+            await ctx.reply(embed=embed)
 
     ##############################################################################
     #                                                                            #
