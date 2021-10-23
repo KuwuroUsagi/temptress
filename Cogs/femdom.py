@@ -389,7 +389,7 @@ class Action:
                 value = ''
                 try:
                     for x in range(((page - 1) * size), ((page - 1) * size) + size):
-                        value = value + f"> <@{lb_list[x][0]}> {lb_list[x][2]} gems <a:gems:899985611946078208>   {lb_list[x][1]} coins <a:pinkcoin:900000697288892416>\n"
+                        value = value + f"> <@{lb_list[x][0]}> {int(lb_list[x][2]/10)} <a:gems:899985611946078208>   {lb_list[x][1]} <a:pinkcoin:900000697288892416>\n"
                     embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
                 except IndexError:
                     embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
