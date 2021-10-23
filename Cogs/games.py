@@ -16,7 +16,7 @@ class Games(commands.Cog):
             if message.author.id != 302050872383242240:  # user ID of Disboard bot
                 return
             else:
-                for embed in message.embed:
+                for embed in message.embeds:
                     try:
                         if "https://disboard.org/images/bot-command-image-bump.png" == embed.to_dict()['image']['url']:
                             user_id = int(embed.to_dict()['description'][2:20].replace('>', ''))
