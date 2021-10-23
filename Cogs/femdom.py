@@ -108,11 +108,11 @@ class Action:
         await self.ctx.channel.send(embed=disown_embed)
         await self.react('y')
 
-    async def gag(self, type, message):
+    async def gag(self, type, message, temp=False):
         database.update_slaveDB(self.member.id, 'gag', type, self.member.guild.id)
         if type == 'kitty':
             kitty_gag_embed = discord.Embed(title="Behave like a good kitty",
-                                            description=f"Lets hear you meow! {self.author.mention} convert {self.member.mention} into a kitty.",
+                                            description=f"Lets hear you meow! {self.author.mention} convert {self.member.mention} into a kitty{' for next 10 minutes.' if temp else '.'}",
                                             color=0xF2A2C0)
 
             await message.edit(embed=kitty_gag_embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
@@ -121,12 +121,15 @@ class Action:
 
         elif type == 'puppy':
             puppy_gag_embed = discord.Embed(title="Behave like a good puppy",
-                                            description=f"Lets hear you bark! {self.author.mention} convert {self.member.mention} into a puppy.",
+                                            description=f"Lets hear you bark! {self.author.mention} convert {self.member.mention} into a puppy{' for next 10 minutes.' if temp else '.'}",
                                             color=0xF2A2C0)
             await message.edit(embed=puppy_gag_embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
                                                                    Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
                                                                    Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
         await self.react('y')
+        if temp:
+            await asyncio.sleep(10 * 60)
+            database.update_slaveDB(self.member.id, 'gag', 'off', self.member.guild.id)
 
     async def ungag(self, message):
         database.update_slaveDB(self.member.id, 'gag', 'off', self.member.guild.id)
@@ -205,7 +208,7 @@ class Action:
                                   color=0xF2A2C0)
             await self.ctx.message.reply(embed=embed)
 
-    async def emoji_access(self, _type, message):
+    async def emoji_access(self, _type, message, temp=False):
         database.update_slaveDB(self.member.id, 'emoji', _type, self.member.guild.id)
         if _type:
             embed = discord.Embed(title="Emojis on",
@@ -213,11 +216,14 @@ class Action:
                                   colour=0xF2A2C0)
         elif not _type:
             embed = discord.Embed(title="Emojis off",
-                                  description=f" {self.author.mention} took away {self.member.mention}'s emojis.",
+                                  description=f" {self.author.mention} took away {self.member.mention}'s emojis{' for next 1 hour.' if temp else '.'}",
                                   color=0xF2A2C0)
         await message.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Allow Emoji', disabled=True),
                                                      Button(style=ButtonStyle.red, label='Deny Emoji', disabled=True)]])
         await self.react('y')
+        if temp:
+            await asyncio.sleep(1 * 60 * 60)
+            database.update_slaveDB(self.member.id, 'emoji', True, self.member.guild.id)
 
     async def tie_in_channel(self, channel):
         database.update_slaveDB(self.member.id, 'tiechannel', channel, self.member.guild.id)
@@ -269,17 +275,19 @@ class Action:
                                   description=f"{owner}",
                                   color=0xF2A2C0)
 
-            money = database.get_money(member.id)
+            money = database.get_money(member.id, member.guild.id)
 
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[1]}\n> <a:gems:899985611946078208> {money[2]}", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:899985611946078208> {money[3]}", inline=False)
             embed.add_field(name='Restrictions', value=restriction, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
             if simp_list is not None:
+                total_simp = simp_list[1]
+                simp_list = simp_list[0]
                 simp_list = sorted(simp_list, key=lambda simp_list: simp_list[1], reverse=True)[:5]
                 simps = ''
                 for s in simp_list:
-                    simps = f"{simps}\n> <@{s[0]}> ({s[1]})"
+                    simps = f"{simps}\n> <@{s[0]}> {int((s[1]/total_simp)*100)}%"
                 embed.add_field(name='I Simp for', value=simps, inline=False)
 
             if lines_count > 0:
@@ -299,18 +307,20 @@ class Action:
                 for slave in slaves_list:
                     owned_slaves += f"> {'' if slave[1] == 1000 else f'{slave[1]}°'} <@{str(slave[0])}>  {get_status_emojis(int(slave[0]), member.guild.id)}\n"
 
-            money = database.get_money(member.id)
+            money = database.get_money(member.id, member.guild.id)
 
             embed = discord.Embed(title=name, color=0xF2A2C0)
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[1]}\n> <a:gems:899985611946078208> {money[2]} ", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:899985611946078208> {money[3]} ", inline=False)
             embed.add_field(name='My Subs', value=owned_slaves, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
             if simp_list is not None:
+                total_simp = simp_list[1]
+                simp_list = simp_list[0]
                 simp_list = sorted(simp_list, key=lambda simp_list: simp_list[1], reverse=True)[:5]
                 simps = ''
                 for s in simp_list:
-                    simps = f"{simps}\n> <@{s[0]}> ({s[1]})"
+                    simps = f"{simps}\n> <@{s[0]}> {int((s[1]/total_simp)*100)}%"
                 embed.add_field(name='I Simp for', value=simps, inline=False)
 
             embed.set_thumbnail(url=member.avatar_url)
@@ -326,9 +336,13 @@ class Action:
         await self.ctx.channel.send(embed=embed)
 
     async def leaderboard(self, type='line'):
+        page_number = 1
+        size = 10
+
+        def check(reaction, user):
+            return user == self.author
+
         if type == 'line':
-            page_number = 1
-            size = 10
             data = database.get_lines_leaderboard(self.ctx.guild.id)
 
             def page(lb_list, page, size):
@@ -344,8 +358,45 @@ class Action:
                 embed.set_thumbnail(url=self.ctx.guild.icon_url)
                 return embed
 
-            def check(reaction, user):
-                return user == self.author
+            embed = page(data, 1, size)
+            box = await self.ctx.channel.send(embed=embed)
+            await box.add_reaction('⏪')
+            await box.add_reaction('⏩')
+            while True:
+                try:
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
+                    await box.remove_reaction(reaction, user)
+                except asyncio.TimeoutError:
+                    break
+                if str(reaction) == '⏪':
+                    if page_number == 1:
+                        pass
+                    else:
+                        embed = page(data, page_number - 1, size)
+                        page_number -= 1
+                if str(reaction) == '⏩':
+                    if page_number == int(len(data) / size) + (len(data) % size > 0) + 1:
+                        pass
+                    else:
+                        embed = page(data, page_number + 1, size)
+                        page_number += 1
+                await box.edit(embed=embed)
+
+        elif type == 'cash':
+            data = database.get_money_leaderboard(self.ctx.guild.id)
+
+            def page(lb_list, page, size):
+                value = ''
+                try:
+                    for x in range(((page - 1) * size), ((page - 1) * size) + size):
+                        value = value + f"> <@{lb_list[x][0]}> {lb_list[x][2]} gems <a:gems:899985611946078208>   {lb_list[x][1]} coins <a:pinkcoin:900000697288892416>\n"
+                    embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
+                except IndexError:
+                    embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
+
+                embed.set_footer(text=f"On page {page}/{int(len(lb_list) / size) + (len(lb_list) % size > 0) + 1}")
+                embed.set_thumbnail(url=self.ctx.guild.icon_url)
+                return embed
 
             embed = page(data, 1, size)
             box = await self.ctx.channel.send(embed=embed)
@@ -693,10 +744,36 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
 
             elif member_is == 201:  # Domme gag in Free slave
-                embed = discord.Embed(title='Nah',
-                                      description=f"{ctx.author.mention}, you can't do such a thing. {member.mention} is a free slave!"
-                                                  f" the sub must be owned by you.",
-                                      color=0xF2A2C0)
+                if database.get_money(ctx.author.id, ctx.guild.id)[3] <= 0:
+                    embed = discord.Embed(title='Nah',
+                                          description=f"{ctx.author.mention}, you don't have magic gem, you need magic gem <a:gems:899985611946078208> "
+                                          f"to gag/ungag because {member.mention} is a free slave!",
+                                          color=0xF2A2C0)
+                else:
+                    embed = discord.Embed(title="What should I do?", color=0xF2A2C0)
+                    gag = database.get_slave_from_DB(member.id, ctx.guild.id)[0][2]
+                    m = await ctx.reply(embed=embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=(gag == 'kitty')),
+                                                                  Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=(gag == 'puppy')),
+                                                                  Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))]])
+                    try:
+                        def check(res):
+                            return ctx.author == res.user and res.channel == ctx.channel
+
+                        response = await self.bot.wait_for('button_click', timeout=30, check=check)
+                        await response.respond(type=6)
+                        if response.component.label == 'Kitty Gag':
+                            await action.gag('kitty', m, temp=True)
+                        elif response.component.label == 'Puppy Gag':
+                            await action.gag('puppy', m, temp=True)
+                        else:
+                            await action.ungag(m)
+                        database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+                    except asyncio.TimeoutError:
+                        embed = discord.Embed(description=f"{ctx.author.mention} you got only 30 secs to make a choice, I can't wait for long.", color=0xF2A2C0)
+                        await m.edit(embed=embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
+                                                               Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
+                                                               Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
+                    return
 
             elif member_is == 200:  # Domme kitty gag on Owned slave
                 embed = discord.Embed(title="What should I do?", color=0xF2A2C0)
@@ -1085,10 +1162,32 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
 
             elif member_is == 201:  # Domme ungaging on Free slave
-                embed = discord.Embed(title='Nah',
-                                      description=f"{ctx.author.mention}, you can't do such a thing. {member.mention} is a free slave!"
-                                                  f" the sub must be owned by you.",
-                                      color=0xF2A2C0)
+                if database.get_money(ctx.author.id, ctx.guild.id)[3] <= 0:
+                    embed = discord.Embed(title='Nah',
+                                          description=f"{ctx.author.mention}, you don't have magic gem, you need magic gem <a:gems:899985611946078208> "
+                                          f"to ban/allow emotes because {member.mention} is a free slave!",
+                                          color=0xF2A2C0)
+                else:
+                    _type = database.get_slave_from_DB(member.id, ctx.guild.id)[0][4]
+                    embed = discord.Embed(title="Emoji Access", color=0xF2A2C0)
+                    m = await ctx.reply(embed=embed, components=[[Button(style=ButtonStyle.green, label='Allow Emoji', disabled=_type),
+                                                                  Button(style=ButtonStyle.red, label='Deny Emoji', disabled=not _type)]])
+                    try:
+                        def check(res):
+                            return ctx.author == res.user and res.channel == ctx.channel
+
+                        response = await self.bot.wait_for('button_click', timeout=30, check=check)
+                        await response.respond(type=6)
+                        if response.component.label == 'Allow Emoji':
+                            await action.emoji_access(True, m)
+                        else:
+                            await action.emoji_access(False, m, temp=True)
+                        database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+                    except asyncio.TimeoutError:
+                        embed = discord.Embed(title='Time\'s Up', description='you got only 30 secs to make a choice.', color=0xF2A2C0)
+                        await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Allow Emoji', disabled=True),
+                                                               Button(style=ButtonStyle.red, label='Deny Emoji', disabled=True)]])
+                    return
 
             elif member_is == 200:  # Domme emoji allow on Owned slave
                 _type = database.get_slave_from_DB(member.id, ctx.guild.id)[0][4]
@@ -1332,12 +1431,17 @@ class Femdom(commands.Cog):
 
     @commands.command(aliases=['lb'])
     @commands.guild_only()
-    async def leaderboard(self, ctx, lb_type='line'):
+    async def leaderboard(self, ctx, lb_type='cash'):
         if ctx.author.bot:  # when author is a bot.
             return
 
+        if lb_type.lower() not in ['cash', 'line']:
+            embed = discord.Embed(tite="wrong options", description="I got only few options\n> **`s.lb cash`**\n> **`s.lb line`**", color=0xFF2030)
+            await ctx.channel.send(embed=embed)
+            return
+
         action = Action(self.bot, ctx, ctx.author)
-        await action.leaderboard(type='line')
+        await action.leaderboard(type=lb_type)
 
     ##############################################################################
     #                                                                            #

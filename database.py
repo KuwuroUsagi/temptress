@@ -42,7 +42,7 @@ with con:
         (memberid bigint, guildid bigint)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS Money
-        (memberid bigint, coin bigint, gem bigint)""")
+        (memberid bigint, guildid bigint, coin bigint, gem bigint)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS Worship
         (memberid bigint, guildid bigint, simp text)""")
@@ -142,12 +142,14 @@ def get_simp(member, guild):
     cur.execute("SELECT simp FROM Worship WHERE memberid =%s AND guildid =%s", (member, guild))
     try:
         temp = []
+        total_simp = 0
         data = cur.fetchall()[0][0].split('/')
         for d in data:
             x = d.split('_')
             x = [int(x[0]), int(x[1])]
+            total_simp += x[1]
             temp.append(x)
-        return temp
+        return [temp, total_simp]
     except IndexError:
         return
 
@@ -266,48 +268,32 @@ def set_slave_rank(member, rank, guild):
 ##############################################################################
 #                                                                            #
 #                                                                            #
-#                              LEADERBORARD                                  #
-#                                                                            #
-#                                                                            #
-##############################################################################
-
-
-def get_lines_leaderboard(guild):
-    cur.execute("SELECT * FROM SlaveDB WHERE guildid = %s ORDER BY lines DESC", (guild,))
-    data = cur.fetchall()
-    data = [(line[0], line[5]) for line in data if line[5] != 0]
-    return data
-
-
-##############################################################################
-#                                                                            #
-#                                                                            #
 #                                   MONEY                                    #
 #                                                                            #
 #                                                                            #
 ##############################################################################
 
-def get_money(member):
-    cur.execute("SELECT * FROM Money WHERE memberid = %s", (member,))
+def get_money(member, guild):
+    cur.execute("SELECT * FROM Money WHERE memberid = %s AND guildid = %s", (member, guild))
     try:
         data = cur.fetchall()[0]
-        return [data[0], data[1], int(data[2] / 10)]
+        return [data[0], data[1], data[2], int(data[3] / 10)]
     except IndexError:
         with con:
-            cur.execute("INSERT INTO Money (memberid, coin, gem) VALUES (%s, %s, %s)", (member, 100, 0))
-        return [member, 100, 0]
+            cur.execute("INSERT INTO Money (memberid, guildid, coin, gem) VALUES (%s, %s, %s, %s)", (member, guild, 100, 0))
+        return [member, guild, 169, 0]
 
 
-def add_money(member, coin, gem):
-    get_money(member)
+def add_money(member, guild, coin, gem):
+    get_money(member, guild)
     with con:
-        cur.execute("UPDATE Money SET coin = coin + %s, gem = gem + %s WHERE memberid =%s", (coin, gem, member))
+        cur.execute("UPDATE Money SET coin = coin + %s, gem = gem + %s WHERE memberid = %s AND guildid = %s", (coin, gem, member, guild))
 
 
-def remove_money(member, coin, gem):
-    get_money(member)
+def remove_money(member, guild, coin, gem):
+    get_money(member, guild)
     with con:
-        cur.execute("UPDATE Money SET coin = coin - %s, gem = gem - %s WHERE memberid =%s", (coin, gem, member))
+        cur.execute("UPDATE Money SET coin = coin - %s, gem = gem - %s WHERE memberid =%s AND guildid = %s", (coin, gem, member, guild))
 
 
 ##############################################################################
@@ -328,7 +314,7 @@ def lock(slave, guild, domme, num, sentence, roles):
 def update_lock(slave, sentence, guild):
     with con:
         cur.execute("UPDATE Prison SET num = num - 1, sentence = %s, count = count + 1 WHERE slaveid = %s AND guildid = %s", (sentence, slave, guild))
-    add_money(slave, 2, 0)
+        add_money(slave, guild, 2, 0)
 
 
 def get_prisoner(slave, guild):
@@ -381,3 +367,24 @@ def insert_remove_blacklist(member, guild):
         with con:
             cur.execute("INSERT INTO Blacklist (memberid, guildid) VALUES (%s, %s)", (member, guild))
         return True
+
+##############################################################################
+#                                                                            #
+#                                                                            #
+#                              LEADERBORARD                                  #
+#                                                                            #
+#                                                                            #
+##############################################################################
+
+
+def get_lines_leaderboard(guild):
+    cur.execute("SELECT * FROM SlaveDB WHERE guildid = %s ORDER BY lines DESC", (guild,))
+    data = cur.fetchall()
+    data = [(line[0], line[5]) for line in data if line[5] != 0]
+    return data
+
+
+def get_money_leaderboard(guild):
+    cur.execute("SELECT memberid, coin, gem FROM Money WHERE guildid = %s ORDER BY gem DESC, coin DESC", (guild,))
+    data = cur.fetchall()
+    return data

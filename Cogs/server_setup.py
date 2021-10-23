@@ -39,23 +39,28 @@ class ServerConfig(commands.Cog):
         def check(res):
             return ctx.author == res.author and res.channel == ctx.channel
 
-        setup_embed_domme = discord.Embed(title='Setting Me Up.. (1/3)',
+        setup_embed_domme = discord.Embed(title='Setting Me Up.. (1/4)',
                                           description=f"Mention Domme role/s in the server, \nI will consider members with those roles as Domme.\n> "
                                           "*I will wait 1 minute for you to mention the Domme role/s.*",
                                           color=0xBF99A0)
         setup_embed_domme.set_thumbnail(url=self.bot.user.avatar_url)
 
-        setup_embed_slave = discord.Embed(title='Setting Me Up.. (2/3)',
+        setup_embed_slave = discord.Embed(title='Setting Me Up.. (2/4)',
                                           description=f"Mention Sub role/s in the server,\nI will consider members with those roles as Subs.\n> "
                                           "*I will wait 1 minute for you to mention the Sub role/s.*",
                                           color=0x591B32)
         setup_embed_slave.set_thumbnail(url=self.bot.user.avatar_url)
 
-        setup_embed_prison = discord.Embed(title='Setting Me Up.. (3/3)',
+        setup_embed_prison = discord.Embed(title='Setting Me Up.. (4/4)',
                                            description=f"Mention a channel to lock Subs for punishments.\n> "
                                            "*I will wait 1 minute for you to mention a channel,*\n> *or type anything so I will make a new prison channel.*",
                                            color=0xF2A2C0)
         setup_embed_prison.set_thumbnail(url=self.bot.user.avatar_url)
+
+        setup_embed_locker = discord.Embed(title='Setting Me Up.. (3/4)',
+                                           description=f"Mention the lock roles, so only Members with that role can lock Subs in prison."
+                                           f"\n> *I will wait 1 minute for you to mention the Role/s*",
+                                           color=0x591B32)
 
         setup_embed_fail = discord.Embed(title='Failed',
                                          description=f"**I was not able to find a valid role mentioned in this message**\n"
@@ -95,54 +100,82 @@ class ServerConfig(commands.Cog):
                     return
                 database.insert_config('slave', ctx.guild.id, slave_roles)
                 await response.delete()
-                await m.edit(embed=setup_embed_prison)
+                await m.edit(embed=setup_embed_locker)
 
                 try:
                     response = await self.bot.wait_for('message', timeout=90, check=check)
+                    locker_roles = [role[3:-1] for role in re.findall(r'<@&\d*>', response.content)]
+                    for x in locker_roles:
+                        if x in slave_roles:
+                            locker_roles.pop(x)
+                    locker_roles = ''.join(locker_roles)
+
+                    if locker_roles == '':
+                        await response.reply(embed=setup_embed_fail)
+                        return
+                    database.insert_config('locker', ctx.guild.id, locker_roles)
+                    await response.delete()
+                    await m.edit(embed=setup_embed_prison)
+
                     try:
-                        prison = [role[2:-1] for role in re.findall(r'<#\d*>', response.content)][0]
-                        database.insert_config('prison', ctx.guild.id, prison)
-                        await response.delete()
+                        response = await self.bot.wait_for('message', timeout=90, check=check)
+                        try:
+                            prison = [role[2:-1] for role in re.findall(r'<#\d*>', response.content)][0]
+                            database.insert_config('prison', ctx.guild.id, prison)
+                            await response.delete()
 
-                        d_roles = ''
-                        s_roles = ''
-                        for r in range(int(len(domme_roles) / 18)):
-                            d_roles = f"{d_roles}\n> <@&{domme_roles[r * 18:(r * 18) + 18]}>"
+                            d_roles = ''
+                            s_roles = ''
+                            l_roles = ''
+                            for r in range(int(len(domme_roles) / 18)):
+                                d_roles = f"{d_roles}\n> <@&{domme_roles[r * 18:(r * 18) + 18]}>"
 
-                        for r in range(int(len(slave_roles) / 18)):
-                            s_roles = f"{s_roles}\n> <@&{slave_roles[r * 18:(r * 18) + 18]}>"
+                            for r in range(int(len(slave_roles) / 18)):
+                                s_roles = f"{s_roles}\n> <@&{slave_roles[r * 18:(r * 18) + 18]}>"
 
-                        setup_embed_summary = discord.Embed(title='Completed',
-                                                            description=f"Dommes in the server are the members with the following roles{d_roles}"
-                                                            f"\nSubs in the server are the members with the following roles{s_roles}"
-                                                            f"\nThe channel where Dommes can torture and punish subs.\n> <#{prison}>"
-                                                            f"\n\n**Use the command `s.help` to know more about me.**",
-                                                            color=0x08FF08)
-                        setup_embed_summary.set_thumbnail(url=self.bot.user.avatar_url)
-                        await m.edit(embed=setup_embed_summary)
-                    except IndexError:
-                        prison = database.get_config('prison', ctx.guild.id)
-                        if prison == [0] or ctx.guild.get_channel(int(prison[0])) is None:
-                            prison = await ctx.guild.create_text_channel('Prison')
-                            database.insert_config('prison', ctx.guild.id, prison.id)
-                            prison = prison.id
-                        else:
-                            prison = int(prison[0])
-                        d_roles = ''
-                        s_roles = ''
-                        for r in range(int(len(domme_roles) / 18)):
-                            d_roles = f"{d_roles}\n> <@&{domme_roles[r * 18:(r * 18) + 18]}>"
+                            for r in range(int(len(locker_roles) / 18)):
+                                l_roles = f"{l_roles}\n> <@&{locker_roles[r * 18:(r * 18) + 18]}>"
 
-                        for r in range(int(len(slave_roles) / 18)):
-                            s_roles = f"{s_roles}\n> <@&{slave_roles[r * 18:(r * 18) + 18]}>"
-                        setup_embed_summary = discord.Embed(title='Completed',
-                                                            description=f"Dommes in the server are the members with the following roles{d_roles}"
-                                                            f"\nSubs in the server are the members with the following roles{s_roles}"
-                                                            f"\nThe channel where Dommes can torture and punish subs.\n> <#{prison}>"
-                                                            f"\n\n**Use the command `s.help` to know more about me.**",
-                                                            color=0x08FF08)
-                        setup_embed_summary.set_thumbnail(url=self.bot.user.avatar_url)
-                        await m.edit(embed=setup_embed_summary)
+                            setup_embed_summary = discord.Embed(title='Completed',
+                                                                description=f"Dommes in the server are the members with the following roles{d_roles}"
+                                                                f"\nSubs in the server are the members with the following roles{s_roles}"
+                                                                f"\nMembers with following roles can lock sub in <#{prison}> {l_roles}"
+                                                                f"\nThe channel where Dommes can torture and punish subs.\n> <#{prison}>"
+                                                                f"\n\n**Use the command `s.help` to know more about me.**",
+                                                                color=0x08FF08)
+                            setup_embed_summary.set_thumbnail(url=self.bot.user.avatar_url)
+                            await m.edit(embed=setup_embed_summary)
+                        except IndexError:
+                            prison = database.get_config('prison', ctx.guild.id)
+                            if prison == [0] or ctx.guild.get_channel(int(prison[0])) is None:
+                                prison = await ctx.guild.create_text_channel('Prison')
+                                database.insert_config('prison', ctx.guild.id, prison.id)
+                                prison = prison.id
+                            else:
+                                prison = int(prison[0])
+                            d_roles = ''
+                            s_roles = ''
+                            for r in range(int(len(domme_roles) / 18)):
+                                d_roles = f"{d_roles}\n> <@&{domme_roles[r * 18:(r * 18) + 18]}>"
+
+                            for r in range(int(len(slave_roles) / 18)):
+                                s_roles = f"{s_roles}\n> <@&{slave_roles[r * 18:(r * 18) + 18]}>"
+
+                            for r in range(int(len(locker_roles) / 18)):
+                                l_roles = f"{l_roles}\n> <@&{locker_roles[r * 18:(r * 18) + 18]}>"
+
+                            setup_embed_summary = discord.Embed(title='Completed',
+                                                                description=f"Dommes in the server are the members with the following roles{d_roles}"
+                                                                f"\nSubs in the server are the members with the following roles{s_roles}"
+                                                                f"\nMembers with following roles can lock sub in <#{prison}> {l_roles}"
+                                                                f"\nThe channel where Dommes can torture and punish subs.\n> <#{prison}>"
+                                                                f"\n\n**Use the command `s.help` to know more about me.**",
+                                                                color=0x08FF08)
+                            setup_embed_summary.set_thumbnail(url=self.bot.user.avatar_url)
+                            await m.edit(embed=setup_embed_summary)
+
+                    except asyncio.TimeoutError:
+                        await m.edit(embed=setup_embed_timeout)
 
                 except asyncio.TimeoutError:
                     await m.edit(embed=setup_embed_timeout)
@@ -178,6 +211,7 @@ class ServerConfig(commands.Cog):
         slave = database.get_config('slave', ctx.guild.id)
         NSFW = database.get_config('NSFW', ctx.guild.id)
         chat = database.get_config('chat', ctx.guild.id)
+        locker = database.get_config('locker', ctx.guild.id)
 
         if NSFW == [0]:
             NSFW = f"> {ctx.guild.default_role}"
@@ -189,6 +223,7 @@ class ServerConfig(commands.Cog):
                                        description=f"**I am active in {len(self.bot.guilds)} servers.**\n\n"
                                        f"Domme roles:\n{self.list_roles(domme)}\n"
                                        f"Sub roles:\n{self.list_roles(slave)}\n"
+                                       f"Dommes who are strong to lock subs in <#{prison[0]}>:\n{self.list_roles(locker)}\n"
                                        f"NSFW command access is given to:\n{self.list_roles(NSFW)}\n"
                                        f"Members who have permission to talk to me:\n{self.list_roles(chat)}\n\n"
                                        f"**Dommes can torture subs in <#{prison[0]}>**\n"

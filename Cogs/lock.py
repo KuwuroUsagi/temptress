@@ -11,12 +11,12 @@ from string import ascii_letters
 
 
 def who_is(author, member):
-    if database.get_config('domme', member.guild.id) == [0]:
+    if database.get_config('locker', member.guild.id) == [0]:
         return -1
-    if set(database.get_config('domme', member.guild.id)) & set([role.id for role in author.roles]):
+    if set(database.get_config('locker', member.guild.id)) & set([role.id for role in author.roles]):
         if author.id == member.id:
             return 2
-        if set(database.get_config('domme', member.guild.id)) & set([role.id for role in member.roles]):
+        if set(database.get_config('locker', member.guild.id)) & set([role.id for role in member.roles]):
             return 202
         elif set(database.get_config('slave', member.guild.id)) & set([role.id for role in member.roles]):
             ownerid = database.get_owner(member.id, member.guild.id)
@@ -33,7 +33,7 @@ def who_is(author, member):
             return 1
         if set(database.get_config('slave', member.guild.id)) & set([role.id for role in member.roles]):
             return 101
-        if set(database.get_config('domme', member.guild.id)) & set([role.id for role in member.roles]):
+        if set(database.get_config('locker', member.guild.id)) & set([role.id for role in member.roles]):
             return 102
         else:
             return 111
@@ -88,6 +88,19 @@ class Lock(commands.Cog):
                     await after.send(f"You are now released from <#{database.get_config('prison', before.guild.id)[0]}> of {after.guild.name}")
 
     @commands.Cog.listener()
+    async def on_guild_channel_create(self, channel):
+        prisoner = database.get_config('prisoner', channel.guild.id)
+        if prisoner == [0] or channel.guild.get_role(int(prisoner[0])) is None:
+            prisoner = await channel.guild.create_role(name='Prisoner', color=0x591B32)
+            database.insert_config('prisoner', channel.guild.id, prisoner.id)
+            channels = await channel.guild.fetch_channels()
+            for channel in channels:
+                await channel.set_permissions(prisoner, view_channel=False, send_messages=False)
+            prison = channel.guild.get_channel(database.get_config('prison', message.guild.id)[0])
+            if prison is not None:
+                await prison.set_permissions(prisoner, view_channel=True, send_messages=True, read_message_history=True)
+
+    @commands.Cog.listener()
     async def on_message(self, message):
         if message.author.bot:
             return
@@ -103,13 +116,13 @@ class Lock(commands.Cog):
                 if data[3] == 1:
                     prisoner = message.guild.get_role(database.get_config('prisoner', message.guild.id)[0])
                     await message.author.remove_roles(prisoner)
-                    database.add_money(message.author.id, 70, 0)
+                    database.add_money(message.author.id, message.guild.id, 70, 0)
                     await message.reply(f"{message.author.mention} received 70 <a:pinkcoin:900000697288892416> for being a good boy and writing the lines.")
                     return
                 if message.author.id == 855057142297264139:
                     await message.author.send(sentence)
                 prison = message.guild.get_channel(database.get_config('prison', message.guild.id)[0])
-                await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h to be free from prison. ||(it is case sensitive)||")
+                await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
                 await prison.send(file=discord.File('./Image/new.png'))
             else:
                 await message.add_reaction(emoji='NO:897890789202493460')
@@ -178,7 +191,7 @@ class Lock(commands.Cog):
                     channels = await ctx.guild.fetch_channels()
                     for channel in channels:
                         await channel.set_permissions(prisoner, view_channel=False, send_messages=False)
-                    await prison.set_permissions(prisoner, view_channel=True, send_messages=True)
+                    await prison.set_permissions(prisoner, view_channel=True, send_messages=True, read_message_history=True)
                 else:
                     prisoner = ctx.guild.get_role(prisoner[0])
 
@@ -205,11 +218,11 @@ class Lock(commands.Cog):
                     try:
                         response = await self.bot.wait_for('button_click', timeout=30, check=check)
                         if response.component.label == 'Easy':
-                            num = randint(1, 7)
+                            num = randint(2, 3)
                         elif response.component.label == 'Medium':
-                            num = randint(5, 15)
+                            num = randint(3, 5)
                         elif response.component.label == 'Hard':
-                            num = randint(12, 20)
+                            num = randint(7, 10)
                         await response.respond(type=6)
                         await m.delete()
                     except asyncio.TimeoutError:
@@ -219,6 +232,7 @@ class Lock(commands.Cog):
                     await m.edit(embed=timeout_embed)
                     return
                 roles = "".join([str(role.id) for role in member.roles][1:])
+                roles = roles.replace(str(ctx.guild.premium_subscriber_role.id), '')
                 i_have_power = ctx.guild.get_member(self.bot.user.id).top_role > member.top_role and ctx.guild.owner.id != member.id
                 if i_have_power:
                     for role in member.roles:
@@ -232,11 +246,11 @@ class Lock(commands.Cog):
                     sentence = sentence.replace('  ', ' ')
                     embed = discord.Embed(description=f"{member.mention} is locked in prison by {ctx.author.mention}.", color=0x9479ED)
                     await ctx.channel.send(embed=embed)
-                    await prison.send(f"{member.mention} you have to write :point_down: {num} times to be free or you have to wait 2h to be free from prison. ||(it is case sensitive)||")
+                    await prison.send(f"{member.mention} you have to write :point_down: {num} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
                     await prison.send(file=discord.File('./Image/new.png'))
 
                     database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
-                    database.add_money(ctx.author.id, 20, 0)
+                    database.add_money(ctx.author.id, ctx.guild.id, 20, 0)
                     points_embed = discord.Embed(description=f"{ctx.author.mention} received 20<a:pinkcoin:900000697288892416> by locking {member.mention} in {prison.mention}", color=0xF2A2C0)
                     await ctx.send(embed=points_embed)
                     if member.id == 855057142297264139:
@@ -258,14 +272,14 @@ class Lock(commands.Cog):
 
         elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
             embed = discord.Embed(description=f"{member.mention} should have any of the folloing roles \n"
-                                  f"{self.list_roles(database.get_config('domme', member.guild.id))}\n"
+                                  f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
                                   f"{self.list_roles(database.get_config('slave', member.guild.id))}",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
 
         elif member_is == 0:  # when the author doesn't have domme or slave role.
             embed = discord.Embed(description=f"{ctx.author.mention}, you should have any of the folloing roles \n"
-                                  f"{self.list_roles(database.get_config('domme', member.guild.id))}\n"
+                                  f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
                                   f"{self.list_roles(database.get_config('slave', member.guild.id))}",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
@@ -303,6 +317,26 @@ class Lock(commands.Cog):
                                                description=f"you are not worthy to use this command, how can you even to do such things you stupid bitch.",
                                                color=0xF2A2C0)
             await ctx.reply(embed=unlock_slave_embed)
+
+    @commands.command()
+    @commands.guild_only()
+    async def escape(self, ctx):
+        if ctx.author.bot:
+            return
+
+        if not set(database.get_config('prisoner', ctx.guild.id)) & set([role.id for role in member.roles]) or member.bot:
+            embed = discord.Embed(title='Already Free', description=f"{member.mention} is already in woods enjoying the sun.", color=0xF2A2C0)
+            await ctx.reply(embed=embed)
+            return
+
+        if database.get_money(ctx.author.id, ctx.guild.id)[3] != 0:
+            database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+            prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
+            await ctx.author.remove_roles(prisoner)
+            embed = discord.Embed(description=f"{ctx.author.mention} was lucky to have a magic gem <a:gems:899985611946078208> and escaped from {ctx.channel.mention}", color=0xF2A2C0)
+            await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed(description=f"{ctx.author.mention} you don't have magic gem <a:gems:899985611946078208> to be free.", color=0xF2A2C0)
 
     ##############################################################################
     #                                                                            #
