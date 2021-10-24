@@ -135,7 +135,7 @@ class Lock(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @commands.cooldown(3, 2 * 60 * 60, commands.BucketType.user)
+    @commands.cooldown(5, 2 * 60 * 60, commands.BucketType.user)
     async def lock(self, ctx, member: discord.Member):
         if ctx.author.bot:
             return
