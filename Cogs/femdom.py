@@ -287,7 +287,7 @@ class Action:
                 simp_list = sorted(simp_list, key=lambda simp_list: simp_list[1], reverse=True)[:5]
                 simps = ''
                 for s in simp_list:
-                    simps = f"{simps}\n> <@{s[0]}> {int((s[1]/total_simp)*100)}%"
+                    simps = f"{simps}\n> <@{s[0]}> {int((s[1]/total_simp)*100)}% ({s[1]})"
                 embed.add_field(name='I Simp for', value=simps, inline=False)
 
             if lines_count > 0:
@@ -320,7 +320,7 @@ class Action:
                 simp_list = sorted(simp_list, key=lambda simp_list: simp_list[1], reverse=True)[:5]
                 simps = ''
                 for s in simp_list:
-                    simps = f"{simps}\n> <@{s[0]}> {int((s[1]/total_simp)*100)}%"
+                    simps = f"{simps}\n> <@{s[0]}> {int((s[1]/total_simp)*100)}% ({s[1]})"
                 embed.add_field(name='I Simp for', value=simps, inline=False)
 
             embed.set_thumbnail(url=member.avatar_url)
