@@ -97,7 +97,9 @@ class Porn(commands.Cog):
     @commands.guild_only()
     async def pornhub(self, ctx, *, tag=None):
         if set(database.get_config('NSFW', ctx.guild.id)) & set([role.id for role in ctx.author.roles]) or database.get_config('NSFW', ctx.guild.id) == [0]:
-            await getporn(ctx, tag=tag)
+            # await getporn(ctx, tag=tag)
+            embed = discord.Embed(description=f"this command is disabled due to some unknown reason, which I don't know about GRRRR", color=0xFF2030)
+            await ctx.send(embed=embed)
         else:
             roles = '>'
             for r in database.get_config('NSFW', ctx.guild.id):
