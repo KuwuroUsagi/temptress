@@ -277,7 +277,10 @@ class Lock(commands.Cog):
                     await m.edit(embed=timeout_embed)
                     return
                 roles = "".join([str(role.id) for role in member.roles][1:])
-                roles = roles.replace(str(ctx.guild.premium_subscriber_role.id), '')
+                try:
+                    roles = roles.replace(str(ctx.guild.premium_subscriber_role.id), '')
+                except AttributeError:
+                    pass
                 i_have_power = ctx.guild.get_member(self.bot.user.id).top_role > member.top_role and ctx.guild.owner.id != member.id
                 if i_have_power:
                     for role in member.roles:
