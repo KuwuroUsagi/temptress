@@ -47,6 +47,9 @@ with con:
     cur.execute("""CREATE TABLE IF NOT EXISTS Worship
         (memberid bigint, guildid bigint, simp text)""")
 
+    cur.execute("""CREATE TABLE IF NOT EXISTS Escape
+        (memberid bigint, guildid bigint, timeint bigint)""")
+
 
 ##############################################################################
 #                                                                            #
@@ -367,6 +370,34 @@ def insert_remove_blacklist(member, guild):
         with con:
             cur.execute("INSERT INTO Blacklist (memberid, guildid) VALUES (%s, %s)", (member, guild))
         return True
+
+
+##############################################################################
+#                                                                            #
+#                                                                            #
+#                                  ESCAPE                                    #
+#                                                                            #
+#                                                                            #
+##############################################################################
+
+
+def insert_escape(member, guild):
+    with con:
+        cur.execute("INSERT INTO Escape (memberid, guildid, timeint) VALUES (%s, %s, %s)", (member, guild, int(str(time() + (6 * 60 * 60))[:10])))
+
+
+def is_escaped(member, guild):
+    cur.execute("SELECT timeint FROM Escape WHERE memberid = %s AND guildid = %s", (member, guild))
+    try:
+        data = cur.fetchall()[0][0]
+        return data
+    except IndexError:
+        return
+
+
+def clear_escape():
+    with con:
+        cur.execute("DELETE FROM Escape WHERE timeint < %s", (int(str(time())[:10]),))
 
 ##############################################################################
 #                                                                            #

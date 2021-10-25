@@ -4,7 +4,7 @@ import database
 import textwrap
 import asyncio
 from random import choice, randint, getrandbits
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord_components import *
 from PIL import Image, ImageDraw, ImageFont
 from string import ascii_letters
@@ -64,6 +64,7 @@ def make_image(sentence):
 class Lock(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.escape_cleanup.start()
         DiscordComponents(bot)
 
     def list_roles(self, roles):
@@ -74,6 +75,10 @@ class Lock(commands.Cog):
             return role[:-2]
         else:
             return roles
+
+    @tasks.loop(seconds=60 * 5)
+    async def escape_cleanup(self):
+        database.clear_escape()
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
@@ -156,6 +161,15 @@ class Lock(commands.Cog):
             await ctx.reply(embed=embed)
             return
 
+        is_escaped = database.is_escaped(ctx.member.id, ctx.guild.id)
+        if is_escaped is not None:
+            embed = discord.Embed(title='Magic Gem is Real',
+                                  description=f"{member.mention} used the power of Magic Gem<a:gems:899985611946078208> "
+                                  f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped + (5 * 60)}:R>.\n> *patience is a virtue*",
+                                  color=0xF47FFF)
+            await ctx.reply(embed=embed)
+            return
+
         member_is = who_is(ctx.author, member)
 
         if member_is in [2, 202]:
@@ -197,19 +211,50 @@ class Lock(commands.Cog):
 
                 embed = discord.Embed(title='What should this slave do while he is in prison?', color=0x9479ED)
                 timeout_embed = discord.Embed(title='Time is over the slave escaped from prison', color=0x9479ED)
+                spend_gem = False
                 m = await ctx.reply(embed=embed, components=[[Button(style=ButtonStyle.green, label="Praise", emoji='🛐'),
-                                                              Button(style=ButtonStyle.red, label='Degrade', emoji='🙇‍♂️')]])
+                                                              Button(style=ButtonStyle.red, label='Degrade', emoji='🙇‍♂️'),
+                                                              Button(style=ButtonStyle.blue, label='Custom Lines', emoji='✍️', disabled=(database.get_money(ctx.author.id, ctx.guild.id)[3] == 0))]])
                 try:
                     response = await self.bot.wait_for('button_click', timeout=30, check=check)
                     if response.component.label == 'Praise':
+                        await response.respond(type=6)
                         with open('Text_files/praise.txt', 'r') as praise:
                             lines = praise.read().splitlines()
                             sentence = choice(lines)
+
                     elif response.component.label == 'Degrade':
+                        await response.respond(type=6)
                         with open('Text_files/degrade.txt', 'r') as degrade:
                             lines = degrade.read().splitlines()
                             sentence = choice(lines)
-                    await response.respond(type=6)
+
+                    elif response.component.label == 'Custom Lines':
+                        await response.respond(type=6)
+
+                        def check_m(res):
+                            return ctx.author == res.author and res.channel == ctx.channel
+
+                        embed = discord.Embed(title='Type the Custom line.',
+                                              description='not more that 125 characters', color=0x9479ED)
+                        await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label="Praise", emoji='🛐', disabled=True),
+                                                               Button(style=ButtonStyle.red, label='Degrade', emoji='🙇‍♂️', disabled=True),
+                                                               Button(style=ButtonStyle.blue, label='Custom Lines', emoji='✍️', disabled=True)]])
+                        spend_gem = True
+                        try:
+                            response = await self.bot.wait_for('message', timeout=120, check=check_m)
+                            sentence = response.content
+                            if len(sentence) > 125:
+                                embed = discord.Embed(title='Not more than 120 characters',
+                                                      description=f'{ctx.author.mention} failed to lock {member.mention}', color=0xFF2030)
+                                await m.edit(embed=embed)
+                                return
+                            await response.delete()
+
+                        except asyncio.TimeoutError:
+                            await m.edit(embed=timeout_embed)
+                            return
+
                     embed = discord.Embed(title='Which level of torture do you prefer?', color=0x9479ED)
                     await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Easy'),
                                                            Button(style=ButtonStyle.blue, label='Medium'),
@@ -238,6 +283,9 @@ class Lock(commands.Cog):
                     for role in member.roles:
                         if role != ctx.guild.default_role and role != ctx.guild.premium_subscriber_role:
                             await member.remove_roles(role)
+
+                    if spend_gem:
+                        database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
 
                     await member.add_roles(prisoner)
                     sentence = sentence.replace('#domme', ctx.author.nick or ctx.author.name)
@@ -335,6 +383,7 @@ class Lock(commands.Cog):
             await ctx.author.remove_roles(prisoner)
             embed = discord.Embed(description=f"{ctx.author.mention} was lucky to have a magic gem <a:gems:899985611946078208> and escaped from {ctx.channel.mention}", color=0xF2A2C0)
             await ctx.send(embed=embed)
+            database.insert_escape(ctx.author.id, ctx.guild.id)
         else:
             embed = discord.Embed(description=f"{ctx.author.mention} you don't have magic gem <a:gems:899985611946078208> to be free.", color=0xF2A2C0)
             await ctx.reply(embed=embed)
