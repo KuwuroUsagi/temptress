@@ -161,7 +161,7 @@ class Lock(commands.Cog):
             await ctx.reply(embed=embed)
             return
 
-        is_escaped = database.is_escaped(ctx.member.id, ctx.guild.id)
+        is_escaped = database.is_escaped(member.id, ctx.guild.id)
         if is_escaped is not None:
             embed = discord.Embed(title='Magic Gem is Real',
                                   description=f"{member.mention} used the power of Magic Gem<a:gems:899985611946078208> "
