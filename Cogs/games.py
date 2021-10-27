@@ -169,7 +169,7 @@ class Games(commands.Cog):
 
     @commands.command(aliases=['cf'])
     @commands.guild_only()
-    @commands.cooldown(4, 30 * 60, commands.BucketType.user)
+    # @commands.cooldown(50, 30 * 60, commands.BucketType.user)
     async def coinflip(self, ctx, choice: str, bet: int):
         if bet < 100:
             await ctx.reply(f"<:staff:897777248839540757> You need to bet at least 100 <a:pinkcoin:900000697288892416>")
