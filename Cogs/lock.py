@@ -3,7 +3,7 @@ import discord
 import database
 import textwrap
 import asyncio
-from random import choice, randint, getrandbits
+from random import choice, randint, getrandbits, random
 from discord.ext import commands, tasks
 from discord_components import *
 from PIL import Image, ImageDraw, ImageFont
@@ -115,6 +115,7 @@ class Lock(commands.Cog):
             if message.content == data[4]:
                 await message.add_reaction(emoji='YES:897762486042910762')
                 await message.add_reaction(emoji='pinkcoin:900000697288892416')
+                database.add_money(message.author.id, message.guild.id, 10, 0)
                 sentence = make_image(message.content).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
                 database.update_lock(message.author.id, sentence, message.guild.id)
@@ -131,6 +132,8 @@ class Lock(commands.Cog):
                 await prison.send(file=discord.File('./Image/new.png'))
             else:
                 await message.add_reaction(emoji='NO:897890789202493460')
+                if random() < 0.1:
+                    database.remove_money(message.author.id, message.guild.id, 2, 0)
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
