@@ -86,7 +86,7 @@ async def help(ctx):
 
 
 @bot.event
-async def on_command_error(self, ctx, error):
+async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.CommandInvokeError):
         if isinstance(error.original, discord.errors.Forbidden):
             embed = discord.Embed(title='I don\'t feel so Good.', description=f"I am restrained help, Please make sure that I have **Administration Permissions** and **Elevate my Role**, then try again.", color=0xFF2030)
