@@ -176,7 +176,7 @@ class Games(commands.Cog):
         elif choice.lower() not in ['head', 'tail', 'h', 't', 'heads', 'tails']:
             await ctx.reply(f"<:staff:897777248839540757> usage: **`s.coinflip <head|tail> <bet>`**")
         else:
-            coins = database.get_money[2]
+            coins = database.get_money(ctx.author.id, ctx.guild.id)[2]
             if bet > coins:
                 await ctx.reply(f"<:staff:897777248839540757> really?, you are broke you only have {coins} <a:pinkcoin:900000697288892416>")
                 return
@@ -207,22 +207,6 @@ class Games(commands.Cog):
     #                                                                            #
     #                                                                            #
     ##############################################################################
-
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.errors.CommandInvokeError):
-            if isinstance(error.original, discord.errors.Forbidden):
-                embed = discord.Embed(title='I don\'t feel so Good.', description=f"I am restrained help, Please make sure that I have **Administration Permissions** and **Elevate my Role**, then try again.", color=0xFF2030)
-                await ctx.author.send(embed=embed)
-                await ctx.send(embed=embed)
-
-        if isinstance(error, commands.NoPrivateMessage):
-            embed = discord.Embed(description=f"{ctx.author.mention} you should be using this command in server.", color=0xF2A2C0)
-            await ctx.send(embed=embed)
-
-        if isinstance(error, commands.errors.MissingPermissions):
-            embed = discord.Embed(title='I see a Fake administrator', description=f"{ctx.author.mention} you don't have **Administration Permissions** in the server.", color=0xF2A2C0)
-            await ctx.send(embed=embed)
 
     @ruin.error
     async def on_ruin_error(self, ctx, error):

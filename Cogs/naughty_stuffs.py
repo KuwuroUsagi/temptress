@@ -107,18 +107,6 @@ class Porn(commands.Cog):
             embed = discord.Embed(description=f"{ctx.author.mention} you are not eligible for NSFW content. \nGet any of the folloing role and try again.\n{roles[:-2]}", color=0xF2A2C0)
             await ctx.send(embed=embed)
 
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.NoPrivateMessage):
-            embed = discord.Embed(description=f"{ctx.author.mention} you should be using this command in server.", color=0xFF2030)
-            await ctx.send(embed=embed)
-
-        if isinstance(error, commands.errors.CommandInvokeError):
-            if isinstance(error.original, discord.errors.Forbidden):
-                embed = discord.Embed(title='I don\'t feel so Good.', description=f"I am restrained help, Please make sure that I have **Administration Permissions** and **Elevate my Role**, then try again.", color=0xFF2030)
-                await ctx.author.send(embed=embed)
-                await ctx.send(embed=embed)
-
 
 def setup(bot):
     bot.add_cog(Porn(bot))

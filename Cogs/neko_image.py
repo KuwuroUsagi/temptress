@@ -129,13 +129,6 @@ class Neko(commands.Cog):
             embed.set_image(url=image_url)
             await ctx.reply(embed=embed)
 
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            m = await ctx.reply("<:staff:897777248839540757> You need to mention a member.")
-            await asyncio.sleep(5)
-            await m.delete()
-
 
 def setup(bot):
     bot.add_cog(Neko(bot))
