@@ -184,7 +184,7 @@ class Games(commands.Cog):
             await asyncio.sleep(2)
             if random.random() > 0.5:
 
-                if choice in ['head', 'heads', 'h']:
+                if choice.lower() in ['head', 'heads', 'h']:
                     database.add_money(ctx.author.id, ctx.guild.id, 2 * bet, 0)
                     embed = discord.Embed(title='its heads!!', description=f"{ctx.author.mention} won {bet}", color=0x08FF08)
                     await ctx.reply(embed=embed)
@@ -193,9 +193,10 @@ class Games(commands.Cog):
                     await ctx.reply(embed=embed)
 
             else:
-                if choice in ['tail', 'tails', 't']:
+                if choice.lower() in ['tail', 'tails', 't']:
                     database.add_money(ctx.author.id, ctx.guild.id, 2 * bet, 0)
                     embed = discord.Embed(title='its tails!!', description=f"{ctx.author.mention} won {bet}", color=0x08FF08)
+                    await ctx.reply(embed=embed)
                 else:
                     embed = discord.Embed(title='its tails!!', description=f"{ctx.author.mention} lost {bet}", color=0xFF2030)
                     await ctx.reply(embed=embed)
