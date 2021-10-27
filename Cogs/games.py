@@ -169,10 +169,10 @@ class Games(commands.Cog):
 
     @commands.command(aliases=['cf'])
     @commands.guild_only()
-    # @commands.cooldown(50, 30 * 60, commands.BucketType.user)
+    # @commands.cooldown(50, 30 * 60, commands.BucketType.user)s.status
     async def coinflip(self, ctx, choice: str, bet: int):
-        if bet < 100:
-            await ctx.reply(f"<:staff:897777248839540757> You need to bet at least 100 <a:pinkcoin:900000697288892416>")
+        if bet < 10:
+            await ctx.reply(f"<:staff:897777248839540757> You need to bet at least 10 <a:pinkcoin:900000697288892416>")
         elif choice.lower() not in ['head', 'tail', 'h', 't', 'heads', 'tails']:
             await ctx.reply(f"<:staff:897777248839540757> usage: **`s.coinflip <head|tail> <bet>`**")
         else:
