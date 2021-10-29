@@ -101,7 +101,7 @@ class Lock(commands.Cog):
             channels = await channel.guild.fetch_channels()
             for channel in channels:
                 await channel.set_permissions(prisoner, view_channel=False, send_messages=False)
-            prison = channel.guild.get_channel(database.get_config('prison', message.guild.id)[0])
+            prison = channel.guild.get_channel(database.get_config('prison', channel.guild.id)[0])
             if prison is not None:
                 await prison.set_permissions(prisoner, view_channel=True, send_messages=True, read_message_history=True)
 
