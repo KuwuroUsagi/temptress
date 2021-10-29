@@ -381,9 +381,9 @@ def insert_remove_blacklist(member, guild):
 ##############################################################################
 
 
-def insert_escape(member, guild):
+def insert_escape(member, guild, safe_time):
     with con:
-        cur.execute("INSERT INTO Escape (memberid, guildid, timeint) VALUES (%s, %s, %s)", (member, guild, int(str(time() + (6 * 60 * 60))[:10])))
+        cur.execute("INSERT INTO Escape (memberid, guildid, timeint) VALUES (%s, %s, %s)", (member, guild, int(str(time() + (safe_time * 60 * 60))[:10])))
 
 
 def is_escaped(member, guild):

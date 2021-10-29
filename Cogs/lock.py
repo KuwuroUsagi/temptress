@@ -316,6 +316,7 @@ class Lock(commands.Cog):
                         #         r = ctx.guild.get_role(role)
                         #         await member.add_roles(r)
                         await member.remove_roles(prisoner)
+                        # database.insert_escape(member.id, ctx.guild.id, 3)
                         await member.send(f"You are now released from {prison.mention} of {ctx.guild.name}")
 
                 else:  # I have no power
@@ -389,7 +390,7 @@ class Lock(commands.Cog):
             await ctx.author.remove_roles(prisoner)
             embed = discord.Embed(description=f"{ctx.author.mention} was lucky to have a magic gem <a:gems:899985611946078208> and escaped from {ctx.channel.mention}", color=0xF2A2C0)
             await ctx.send(embed=embed)
-            database.insert_escape(ctx.author.id, ctx.guild.id)
+            database.insert_escape(ctx.author.id, ctx.guild.id, 6)
         else:
             embed = discord.Embed(description=f"{ctx.author.mention} you don't have magic gem <a:gems:899985611946078208> to be free.", color=0xF2A2C0)
             await ctx.reply(embed=embed)

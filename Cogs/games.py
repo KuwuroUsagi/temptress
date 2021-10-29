@@ -162,48 +162,6 @@ class Games(commands.Cog):
     ##############################################################################
     #                                                                            #
     #                                                                            #
-    #                                 GAMMBLE                                    #
-    #                                                                            #
-    #                                                                            #
-    ##############################################################################
-
-    @commands.command(aliases=['cf'])
-    @commands.guild_only()
-    # @commands.cooldown(50, 30 * 60, commands.BucketType.user)s.status
-    async def coinflip(self, ctx, choice: str, bet: int):
-        if bet < 10:
-            await ctx.reply(f"<:staff:897777248839540757> You need to bet at least 10 <a:pinkcoin:900000697288892416>")
-        elif choice.lower() not in ['head', 'tail', 'h', 't', 'heads', 'tails']:
-            await ctx.reply(f"<:staff:897777248839540757> usage: **`s.coinflip <head|tail> <bet>`**")
-        else:
-            coins = database.get_money(ctx.author.id, ctx.guild.id)[2]
-            if bet > coins:
-                await ctx.reply(f"<:staff:897777248839540757> really?, you are broke you only have {coins} <a:pinkcoin:900000697288892416>")
-                return
-            database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)
-            await asyncio.sleep(2)
-            if random.random() > 0.5:
-
-                if choice.lower() in ['head', 'heads', 'h']:
-                    database.add_money(ctx.author.id, ctx.guild.id, 2 * bet, 0)
-                    embed = discord.Embed(title='its heads!!', description=f"{ctx.author.mention} won {bet}", color=0x08FF08)
-                    await ctx.reply(embed=embed)
-                else:
-                    embed = discord.Embed(title='its heads!!', description=f"{ctx.author.mention} lost {bet}", color=0xFF2030)
-                    await ctx.reply(embed=embed)
-
-            else:
-                if choice.lower() in ['tail', 'tails', 't']:
-                    database.add_money(ctx.author.id, ctx.guild.id, 2 * bet, 0)
-                    embed = discord.Embed(title='its tails!!', description=f"{ctx.author.mention} won {bet}", color=0x08FF08)
-                    await ctx.reply(embed=embed)
-                else:
-                    embed = discord.Embed(title='its tails!!', description=f"{ctx.author.mention} lost {bet}", color=0xFF2030)
-                    await ctx.reply(embed=embed)
-
-    ##############################################################################
-    #                                                                            #
-    #                                                                            #
     #                                  ERRORS                                    #
     #                                                                            #
     #                                                                            #
@@ -221,18 +179,6 @@ class Games(commands.Cog):
     async def on_worship_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
             embed = discord.Embed(description=f"Usage:\n**`s.worship @mention`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
-
-    @coinflip.error
-    async def on_coinflip_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.coinflip <head|tail> <bet>`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
-        elif isinstance(error, commands.errors.CommandOnCooldown):
-            embed = discord.Embed(title="Coinflip Cooldown is 30 minutes",
-                                  description="{} you need to wait {:,.1f} minutes to flip coin again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
