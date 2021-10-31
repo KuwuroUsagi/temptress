@@ -121,7 +121,7 @@ class Lock(commands.Cog):
                 if data[3] == 1:
                     prisoner = message.guild.get_role(database.get_config('prisoner', message.guild.id)[0])
                     await message.author.remove_roles(prisoner)
-                    await message.reply(f"{message.author.mention} you are now released from {ctx.channel.mention} for being a good boy and writing the lines.")
+                    await message.reply(f"{message.author.mention} you are now released from {message.channel.mention} for being a good boy and writing the lines.")
                     return
                 if message.author.id == 855057142297264139:
                     await message.author.send(sentence)

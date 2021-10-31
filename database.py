@@ -317,13 +317,21 @@ def lock(slave, guild, domme, num, sentence, roles):
 def update_lock(slave, sentence, guild):
     with con:
         cur.execute("UPDATE Prison SET num = num - 1, sentence = %s, count = count + 1 WHERE slaveid = %s AND guildid = %s", (sentence, slave, guild))
-    add_money(slave, guild, 2, 0)
+    add_money(slave, guild, 15, 0)
 
 
 def get_prisoner(slave, guild):
     cur.execute("SELECT * FROM Prison WHERE slaveid=%s AND guildid =%s", (slave, guild))
     data = cur.fetchall()
-    return data[0]
+    try:
+        return data[0]
+    except IndexError:
+        return
+
+
+def update_lock_raw(slave, sentence, num, guild):
+    with con:
+        cur.execute("UPDATE Prison SET num = %s, sentence = %s, WHERE slaveid = %s AND guildid = %s", (num, sentence, slave, guild))
 
 
 def release_prison(slave, guild):
