@@ -41,7 +41,7 @@ def who_is(author, member):
         return 0
 
 
-def make_image(sentence):
+def make_image(sentence, memberid):
     new_string = ''
     for character in sentence:
         if bool(getrandbits(1)):
@@ -57,7 +57,7 @@ def make_image(sentence):
     new_string = textwrap.fill(text=new_string, width=max_char_count)
 
     draw.text(xy=(img.size[0] / 2, img.size[1] / 2), text=new_string, font=font, fill='#ffffff', anchor='mm')
-    img.save('./Image/new.png')
+    img.save(f'./Image/{memberid}.png')
     return new_string
 
 
@@ -115,15 +115,13 @@ class Lock(commands.Cog):
             if message.content == data[4]:
                 await message.add_reaction(emoji='YES:897762486042910762')
                 await message.add_reaction(emoji='pinkcoin:900000697288892416')
-                database.add_money(message.author.id, message.guild.id, 10, 0)
-                sentence = make_image(message.content).replace('\n', ' ')
+                sentence = make_image(message.content).replace('\n', ' ', message.author.id)
                 sentence = sentence.replace('  ', ' ')
                 database.update_lock(message.author.id, sentence, message.guild.id)
                 if data[3] == 1:
                     prisoner = message.guild.get_role(database.get_config('prisoner', message.guild.id)[0])
                     await message.author.remove_roles(prisoner)
-                    database.add_money(message.author.id, message.guild.id, 70, 0)
-                    await message.reply(f"{message.author.mention} received 70 <a:pinkcoin:900000697288892416> for being a good boy and writing the lines.")
+                    await message.reply(f"{message.author.mention} you are now released from {ctx.channel.mention} for being a good boy and writing the lines.")
                     return
                 if message.author.id == 855057142297264139:
                     await message.author.send(sentence)
@@ -143,7 +141,7 @@ class Lock(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @commands.cooldown(5, 2 * 60 * 60, commands.BucketType.user)
+    @commands.cooldown(1, 3 * 60 * 60, commands.BucketType.user)
     async def lock(self, ctx, member: discord.Member):
         if ctx.author.bot:
             return
@@ -296,7 +294,7 @@ class Lock(commands.Cog):
                     await member.add_roles(prisoner)
                     sentence = sentence.replace('#domme', ctx.author.nick or ctx.author.name)
                     sentence = sentence.replace('#slave', member.nick or member.name)
-                    sentence = make_image(sentence).replace('\n', ' ')
+                    sentence = make_image(sentence).replace('\n', ' ', member.id)
                     sentence = sentence.replace('  ', ' ')
                     embed = discord.Embed(description=f"{member.mention} is locked in prison by {ctx.author.mention}.", color=0x9479ED)
                     await ctx.channel.send(embed=embed)
@@ -410,7 +408,7 @@ class Lock(commands.Cog):
                                   f"\nAfter it just enjoy the slave punishment!",
                                   color=0xFF2030)
         elif isinstance(error, commands.errors.CommandOnCooldown):
-            embed = discord.Embed(title="Prison Cooldown is 2h",
+            embed = discord.Embed(title="Prison Cooldown is 3h",
                                   description="{} you need to wait {:,.1f} minutes to lock a slave again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
                                   color=0xFF2030)
         await ctx.send(embed=embed)
