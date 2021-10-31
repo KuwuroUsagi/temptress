@@ -115,7 +115,7 @@ class Lock(commands.Cog):
             if message.content == data[4]:
                 await message.add_reaction(emoji='YES:897762486042910762')
                 await message.add_reaction(emoji='pinkcoin:900000697288892416')
-                sentence = make_image(message.content.replace('\n', ' '), message.author.id)
+                sentence = make_image(message.content, message.author.id).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
                 database.update_lock(message.author.id, sentence, message.guild.id)
                 if data[3] == 1:
@@ -127,7 +127,7 @@ class Lock(commands.Cog):
                     await message.author.send(sentence)
                 prison = message.guild.get_channel(database.get_config('prison', message.guild.id)[0])
                 await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
-                await prison.send(file=discord.File('./Image/new.png'))
+                await prison.send(file=discord.File(f'./Image/{message.author.id}.png'))
             else:
                 await message.add_reaction(emoji='NO:897890789202493460')
                 if random() < 0.1:
@@ -294,12 +294,12 @@ class Lock(commands.Cog):
                     await member.add_roles(prisoner)
                     sentence = sentence.replace('#domme', ctx.author.nick or ctx.author.name)
                     sentence = sentence.replace('#slave', member.nick or member.name)
-                    sentence = make_image(sentence.replace('\n', ' '), member.id)
+                    sentence = make_image(sentence, member.id).replace('\n', ' ')
                     sentence = sentence.replace('  ', ' ')
                     embed = discord.Embed(description=f"{member.mention} is locked in prison by {ctx.author.mention}.", color=0x9479ED)
                     await ctx.channel.send(embed=embed)
                     await prison.send(f"{member.mention} you have to write :point_down: {num} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
-                    await prison.send(file=discord.File('./Image/new.png'))
+                    await prison.send(file=discord.File(f'./Image/{member.id}.png'))
 
                     database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
                     database.add_money(ctx.author.id, ctx.guild.id, 20, 0)
