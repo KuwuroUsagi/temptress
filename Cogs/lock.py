@@ -115,7 +115,7 @@ class Lock(commands.Cog):
             if message.content == data[4]:
                 await message.add_reaction(emoji='YES:897762486042910762')
                 await message.add_reaction(emoji='pinkcoin:900000697288892416')
-                sentence = make_image(message.content).replace('\n', ' ', message.author.id)
+                sentence = make_image(message.content.replace('\n', ' '), message.author.id)
                 sentence = sentence.replace('  ', ' ')
                 database.update_lock(message.author.id, sentence, message.guild.id)
                 if data[3] == 1:
@@ -294,7 +294,7 @@ class Lock(commands.Cog):
                     await member.add_roles(prisoner)
                     sentence = sentence.replace('#domme', ctx.author.nick or ctx.author.name)
                     sentence = sentence.replace('#slave', member.nick or member.name)
-                    sentence = make_image(sentence).replace('\n', ' ', member.id)
+                    sentence = make_image(sentence.replace('\n', ' '), member.id)
                     sentence = sentence.replace('  ', ' ')
                     embed = discord.Embed(description=f"{member.mention} is locked in prison by {ctx.author.mention}.", color=0x9479ED)
                     await ctx.channel.send(embed=embed)
