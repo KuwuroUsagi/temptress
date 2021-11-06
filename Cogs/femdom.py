@@ -351,7 +351,7 @@ class Action:
         """
         member = self.member or self.author
         
-        ban_data = database.is_botban(member)
+        ban_data = database.is_botban(member.id)
         if ban_data is not None:  # if the member is banned from using bot
             embed = discord.Embed(title='Bot Ban',
                                   description=f"{member.mention} is banned from using {self.bot.user.mention} till <t:{ban_data[1]}:F>",
