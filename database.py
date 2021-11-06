@@ -27,13 +27,13 @@ with con:
         (name text, guildid bigint, value text)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS SlaveDB
-        (slaveid bigint, guildid bigint, gag text, tiechannel bigint, emoji boolean, lines integer, chastity boolean, muff boolean)""")
+        (slaveid bigint, guildid bigint, gag text, tiechannel bigint, emoji boolean, lines integer, chastity boolean, muff boolean, life int)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS Ownership
         (slaveid bigint, guildid bigint, ownerid bigint, rank integer, str_time text)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS Badwords
-        (slaveid bigint, guildid bigint, word text, str_time text)""")
+        (slaveid bigint, dommeid bigint, guildid bigint, word text, str_time text)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS Prison
         (slaveid bigint, guildid bigint, dommeid bigint, num integer, sentence text, count integer, roles text)""")
@@ -48,7 +48,10 @@ with con:
         (memberid bigint, guildid bigint, simp text)""")
 
     cur.execute("""CREATE TABLE IF NOT EXISTS Escape
-        (memberid bigint, guildid bigint, timeint bigint)""")
+        (memberid bigint, guildid bigint, timeint bigint, type text)""")
+
+    cur.execute("""CREATE TABLE IF NOT EXISTS Botban
+        (memberid bigint, timeint bigint, reason text)""")
 
 
 ##############################################################################
@@ -97,6 +100,20 @@ def get_config_raw(name, guild):
         return raw_value
     except IndexError:
         return
+
+
+def is_config(guild):
+    if [0] == get_config('domme', guild):
+        return False
+    if [0] == get_config('slave', guild):
+        return False
+    if [0] == get_config('locker', guild):
+        return False
+    if [0] == get_config('prisoner', guild):
+        return False
+    if [0] == get_config('prison', guild):
+        return False
+    return True
 
 
 def remove_guild(guild):
@@ -167,8 +184,8 @@ def get_simp(member, guild):
 
 def insert_slave_to_DB(member, guild):
     with con:
-        cur.execute("INSERT INTO SlaveDB (slaveid, guildid, gag, tiechannel, emoji, lines, chastity, muff) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (member, guild, 'off', 0, True, 0, True, True))
-    return [(member, guild, 'off', 0, True, 0, True, True)]
+        cur.execute("INSERT INTO SlaveDB (slaveid, guildid, gag, tiechannel, emoji, lines, chastity, muff, life) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (member, guild, 'off', 0, True, 0, True, True, 10))
+    return [(member, guild, 'off', 0, True, 0, True, True, 10)]
 
 
 def remove_member(member, guild):
@@ -177,6 +194,7 @@ def remove_member(member, guild):
         cur.execute("DELETE FROM Ownership WHERE slaveid=%s AND guildid = %s", (member, guild))
         cur.execute("DELETE FROM Ownership WHERE ownerid=%s AND guildid = %s", (member, guild))
         cur.execute("DELETE FROM Badwords WHERE slaveid=%s AND guildid = %s", (member, guild))
+        cur.execute("DELETE FROM Badwords WHERE dommeid=%s AND guildid = %s", (member, guild))
         cur.execute("DELETE FROM Prison WHERE slaveid=%s AND guildid = %s", (member, guild))
 
 
@@ -226,12 +244,13 @@ def get_badwords(member, guild):
     return badwords
 
 
-def insert_badword(member, word, guild):
+def insert_badword(member, domme, word, guild):
     with con:
-        cur.execute("INSERT INTO Badwords (slaveid, guildid, word, str_time) VALUES (%(slaveid)s, %(guildid)s, %(badword)s, %(str_time)s)", {'slaveid': member,
-                                                                                                                                             'guildid': guild,
-                                                                                                                                             'badword': word,
-                                                                                                                                             'str_time': get_time_date()})
+        cur.execute("INSERT INTO Badwords (slaveid, dommeid, guildid, word, str_time) VALUES (%(slaveid)s, %(dommeid)s %(guildid)s, %(badword)s, %(str_time)s)", {'slaveid': member,
+                                                                                                                                                                  'dommeid': domme,
+                                                                                                                                                                  'guildid': guild,
+                                                                                                                                                                  'badword': word,
+                                                                                                                                                                  'str_time': get_time_date()})
 
 
 def remove_badword(member, word, guild):
@@ -244,17 +263,6 @@ def remove_badword(member, word, guild):
 def clear_badword(member, guild):
     with con:
         cur.execute("DELETE FROM Badwords WHERE slaveid=%s AND guildid=%s", (member, guild))
-
-
-# def get_task_count(member):
-#     cur.execute("SELECT * FROM Tasks WHERE rate NOT IN ('fail') AND slaveid = %s", (member,))
-#     return len(cur.fetchall())
-
-
-# def get_member_tasks(member):
-#     cur.execute("SELECT * FROM Tasks WHERE slaveid=%s or dommeid=%s ORDER BY str_time DESC", (member, member))
-#     data = cur.fetchall()
-#     return data
 
 
 def get_slaves(member, guild):
@@ -389,15 +397,15 @@ def insert_remove_blacklist(member, guild):
 ##############################################################################
 
 
-def insert_escape(member, guild, safe_time):
+def insert_escape(member, guild, safe_time, type):
     with con:
-        cur.execute("INSERT INTO Escape (memberid, guildid, timeint) VALUES (%s, %s, %s)", (member, guild, int(str(time() + (safe_time * 60 * 60))[:10])))
+        cur.execute("INSERT INTO Escape (memberid, guildid, timeint, type) VALUES (%s, %s, %s, %s)", (member, guild, int(str(time() + (safe_time * 60 * 60))[:10]), type))
 
 
 def is_escaped(member, guild):
-    cur.execute("SELECT timeint FROM Escape WHERE memberid = %s AND guildid = %s", (member, guild))
+    cur.execute("SELECT * FROM Escape WHERE memberid = %s AND guildid = %s", (member, guild))
     try:
-        data = cur.fetchall()[0][0]
+        data = cur.fetchall()[0]
         return data
     except IndexError:
         return
@@ -406,6 +414,7 @@ def is_escaped(member, guild):
 def clear_escape():
     with con:
         cur.execute("DELETE FROM Escape WHERE timeint < %s", (int(str(time())[:10]),))
+        cur.execute("DELETE FROM Botban WHERE timeint < %s", (int(str(time())[:10]),))
 
 ##############################################################################
 #                                                                            #
@@ -427,3 +436,31 @@ def get_money_leaderboard(guild):
     cur.execute("SELECT memberid, coin, gem FROM Money WHERE guildid = %s ORDER BY gem DESC, coin DESC", (guild,))
     data = cur.fetchall()
     return data
+
+##############################################################################
+#                                                                            #
+#                                                                            #
+#                                BOT BAN                                     #
+#                                                                            #
+#                                                                            #
+##############################################################################
+
+
+def insert_botban(member, ban_till, reason):
+    with con:
+        cur.execute("INSERT INTO Botban (memberid, timeint, reason) VALUES (%s, %s, %s)", (member, int(str(time() + ban_till)[:10]), reason))
+        cur.execute("DELETE FROM SlaveDB WHERE slaveid=%s", (member,))
+        cur.execute("DELETE FROM Ownership WHERE slaveid=%s", (member,))
+        cur.execute("DELETE FROM Ownership WHERE ownerid=%s", (member,))
+        cur.execute("DELETE FROM Badwords WHERE slaveid=%s", (member,))
+        cur.execute("DELETE FROM Badwords WHERE dommeid=%s", (member,))
+        cur.execute("DELETE FROM Worship WHERE memberid=%s", (member,))
+
+
+def is_botban(member):
+    cur.execute("SELECT * FROM Botban WHERE memberid = %s", (member,))
+    try:
+        data = cur.fetchall()[0]
+        return data
+    except IndexError:
+        return None
