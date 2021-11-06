@@ -611,7 +611,7 @@ class Punishment:
         """
         deletes the message if they use badwords
         """
-        string = re.sub('[^A-Za-z0-9]+', '', unicodedata.normalize('NFD', self.message.content).encode('ascii', 'ignore')).lower()
+        string = re.sub('[^A-Za-z0-9]+', '', str(unicodedata.normalize('NFD', self.message.content)).encode('ascii', 'ignore')).lower()
         if any([bad_word in string for bad_word in self.badwords]):
             await self.message.delete()
             life = database.get_slave_from_DB(self.author.id, self.author.guild.id)[0][8]
