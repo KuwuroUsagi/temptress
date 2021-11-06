@@ -797,7 +797,7 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
             elif member_is < -1:  # when author is bot banned
                 embed = discord.Embed(title='Bot ban',
-                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is}:F>",
+                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>",
                                       color=0xF2A2C0)
 
             elif member_is == 201:  # when domme owning a free slave
@@ -892,7 +892,7 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
             elif member_is < -1:  # when author is bot banned
                 embed = discord.Embed(title='Bot ban',
-                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is}:F>",
+                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>",
                                       color=0xF2A2C0)
             await action.react('n')
             await ctx.send(embed=embed)
@@ -1026,7 +1026,7 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
             elif member_is < -1:  # when author is bot banned
                 embed = discord.Embed(title='Bot ban',
-                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is}:F>",
+                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>",
                                       color=0xF2A2C0)
 
             await action.react('n')
@@ -1109,7 +1109,7 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
             elif member_is < -1:  # when author is bot banned
                 embed = discord.Embed(title='Bot ban',
-                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is}:F>",
+                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>",
                                       color=0xF2A2C0)
 
             await action.react('n')
@@ -1191,7 +1191,7 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
             elif member_is < -1:  # when author is bot banned
                 embed = discord.Embed(title='Bot ban',
-                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is}:F>",
+                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>",
                                       color=0xF2A2C0)
 
             await action.react('n')
@@ -1273,7 +1273,7 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
             elif member_is < -1:  # when author is bot banned
                 embed = discord.Embed(title='Bot ban',
-                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is}:F>",
+                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>",
                                       color=0xF2A2C0)
 
             await action.react('n')
@@ -1349,7 +1349,7 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
             elif member_is < -1:  # when author is bot banned
                 embed = discord.Embed(title='Bot ban',
-                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is}:F>",
+                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>",
                                       color=0xF2A2C0)
 
             await action.react('n')
@@ -1499,7 +1499,7 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
             elif member_is < -1:  # when author is bot banned
                 embed = discord.Embed(title='Bot ban',
-                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is}:F>",
+                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>",
                                       color=0xF2A2C0)
 
             await action.react('n')
@@ -1583,7 +1583,7 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
             elif member_is < -1:  # when author is bot banned
                 embed = discord.Embed(title='Bot ban',
-                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is}:F>",
+                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>",
                                       color=0xF2A2C0)
 
             await action.react('n')
@@ -1665,7 +1665,7 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
             elif member_is < -1:  # when author is bot banned
                 embed = discord.Embed(title='Bot ban',
-                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is}:F>",
+                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>",
                                       color=0xF2A2C0)
 
             await action.react('n')
@@ -1716,7 +1716,7 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
             elif member_is < -1:  # when author is bot banned
                 embed = discord.Embed(title='Bot ban',
-                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is}:F>",
+                                      description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>",
                                       color=0xF2A2C0)
 
         await action.react('n')
