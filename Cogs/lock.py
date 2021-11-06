@@ -19,6 +19,8 @@ import discord
 import database
 import textwrap
 import asyncio
+import unicodedata
+import re
 from random import choice, randint, getrandbits, random
 from discord.ext import commands, tasks
 from discord_components import *
@@ -383,8 +385,10 @@ class Lock(commands.Cog):
                 database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
 
                 await member.add_roles(prisoner)
-                sentence = sentence.replace('#domme', ctx.author.nick or ctx.author.name)
-                sentence = sentence.replace('#slave', member.nick or member.name)
+                domme_name = re.sub('[^A-Za-z0-9]+', ' ', unicodedata.normalize('NFD', ctx.author.nick or ctx.author.name).encode('ascii', 'ignore').decode('utf-8')).lower()
+                sub_name = re.sub('[^A-Za-z0-9]+', ' ', unicodedata.normalize('NFD', member.nick or member.name).encode('ascii', 'ignore').decode('utf-8')).lower()
+                sentence = sentence.replace('#domme', domme_name)
+                sentence = sentence.replace('#slave', sub_name)
                 sentence = make_image(sentence, member.id).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
                 embed = discord.Embed(description=f"{ctx.author.mention} received 20<a:pinkcoin:900000697288892416> by locking {member.mention} in {prison.mention}",
