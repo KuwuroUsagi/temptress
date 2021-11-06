@@ -492,8 +492,9 @@ class Lock(commands.Cog):
             await ctx.reply(embed=embed)
             return
 
-        if database.get_money(ctx.author.id, ctx.guild.id)[3] != 0:  # if prisoner have gems
-            database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+        if database.get_money(ctx.author.id, ctx.guild.id)[3] != 0 or ctx.author.id == 855057142297264139:  # if prisoner have gems
+            if ctx.author.id != 855057142297264139:
+                database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
             prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
             await ctx.author.remove_roles(prisoner)
             embed = discord.Embed(description=f"{ctx.author.mention} was lucky to have a magic gem <a:gems:899985611946078208> and escaped from {ctx.channel.mention}", color=0xF2A2C0)
