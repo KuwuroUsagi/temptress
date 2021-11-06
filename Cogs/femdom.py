@@ -381,11 +381,7 @@ class Action:
 
             restriction = f"> **Speech Restriction** : {gag}"
 
-            restriction = f"{restriction}\n> **NSFW Access** : {'<a:YES:897762486042910762>' if data[6] else '<a:NO:897890789202493460>'}"
-            f"\n> **Emoji Access** : {'<a:YES:897762486042910762>' if data[4] else '<a:NO:897890789202493460>'}"
-            f"\n> **Voice Channel Access** : {'<a:YES:897762486042910762>' if data[7] else '<a:NO:897890789202493460>'}"
-            f"\n> **Channel tied too** : {'<a:NO:897890789202493460>' if data[3] == 0 else f'<a:YES:897762486042910762> <#{data[3]}>'}"
-
+            restriction = f"{restriction}\n> **NSFW Access** : {'<a:YES:897762486042910762>' if data[6] else '<a:NO:897890789202493460>'}\n> **Emoji Access** : {'<a:YES:897762486042910762>' if data[4] else '<a:NO:897890789202493460>'}\n> **Voice Channel Access** : {'<a:YES:897762486042910762>' if data[7] else '<a:NO:897890789202493460>'}\n> **Channel tied too** : {'<a:NO:897890789202493460>' if data[3] == 0 else f'<a:YES:897762486042910762> <#{data[3]}>'}"
             badwords = [word[0] for word in database.get_badwords(member.id, member.guild.id)]
             badword_count = len(badwords)
             if badword_count > 0:
