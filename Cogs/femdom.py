@@ -624,9 +624,9 @@ class Punishment:
                 database.update_slaveDB(self.author.id, 'life', life-1, self.author.guild.id)
                 embed = discord.Embed(title="Nope",
                                     description=f"{self.mention} can't say that word little one! Better watch that mouth!, you lost 1 life."
-                                    f"\n**life**\n> {'<:minecraftheart:906338512184438854>'*(life - 1)}{'<:blackheart:906338619407601695>'*(11 - life)}",
+                                    f"\n\n\n**life**\n> {'<:minecraftheart:906338512184438854>'*(life - 1)}{'<:blackheart:906338619407601695>'*(11 - life)}",
                                     colour=0xF2A2C0)
-                await self.channel.send(embed=embed)
+                await self.channel.send(embed=embed, delete_after=5)
 
     async def is_tiechannel(self):
         """

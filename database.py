@@ -246,7 +246,7 @@ def get_badwords(member, guild):
 
 def insert_badword(member, domme, word, guild):
     with con:
-        cur.execute("INSERT INTO Badwords (slaveid, dommeid, guildid, word, str_time) VALUES (%(slaveid)s, %(dommeid)s %(guildid)s, %(badword)s, %(str_time)s)", {'slaveid': member,
+        cur.execute("INSERT INTO Badwords (slaveid, dommeid, guildid, word, str_time) VALUES (%(slaveid)s, %(dommeid)s, %(guildid)s, %(badword)s, %(str_time)s)", {'slaveid': member,
                                                                                                                                                                   'dommeid': domme,
                                                                                                                                                                   'guildid': guild,
                                                                                                                                                                   'badword': word,
