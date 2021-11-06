@@ -20,6 +20,8 @@ class Games(commands.Cog):
                     try:
                         if "https://disboard.org/images/bot-command-image-bump.png" == embed.to_dict()['image']['url']:
                             user_id = int(embed.to_dict()['description'][2:20].replace('>', ''))
+                            if database.is_botban(user_id) is not None:
+                                return
                             database.add_money(user_id, message.guild.id, 30, 0)
                             embed = discord.Embed(description=f"<@{user_id}> received 30 <a:pinkcoin:900000697288892416> for Bumping the server.", color=0xF2A2C0)
                             await message.channel.send(embed=embed)
@@ -27,7 +29,7 @@ class Games(commands.Cog):
                     except Exception:
                         return
 
-        if random.random() < 0.1:
+        if random.random() < 0.1 and database.is_botban(message.author.id) is None:
             database.add_money(message.author.id, message.guild.id, 1, 0)
 
         try:
@@ -51,7 +53,8 @@ class Games(commands.Cog):
             if (-1 * number) == count:
                 embed = discord.Embed(description=f"{message.author.mention} you guessed the correct number and you earned 30 <a:pinkcoin:900000697288892416>", color=0xF2A2C0)
                 await message.reply(embed=embed)
-                database.add_money(message.author.id, message.guild.id, 30, 0)
+                if database.is_botban(message.author.id) is None:
+                    database.add_money(message.author.id, message.guild.id, 30, 0)
                 data[0] = str(-1 * number + 1)
                 data[2] = str(message.author.id)
                 data[3] = str(message.id)
@@ -73,7 +76,8 @@ class Games(commands.Cog):
                 await asyncio.sleep(5)
                 await m.delete()
             elif count == number:
-                database.add_money(message.author.id, message.guild.id, 1, 0)
+                if database.is_botban(message.author.id) is None:
+                    database.add_money(message.author.id, message.guild.id, 1, 0)
                 data[0] = str(number + 1)
                 data[2] = str(message.author.id)
                 data[3] = str(message.id)
@@ -104,39 +108,66 @@ class Games(commands.Cog):
     @commands.guild_only()
     @commands.cooldown(1, 1 * 60 * 60, commands.BucketType.user)
     async def ruin(self, ctx):
-        try:
-            data = database.get_config_raw('counting', ctx.guild.id).split('_')  # [number, channel, member, message, count_length]
-        except AttributeError:
-            embed = discord.Embed(description=f"Counting channel is not configured yet, ask Admins to run **`s.setcount #countChannel`**", color=0xF2A2C0)
-            await ctx.reply(embed=embed)
+        if ctx.author.bot:
             return
-        if ctx.channel.id != int(data[1]):
-            await ctx.reply(f"You should use this command in <#{data[1]}>")
-        elif set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in ctx.author.roles]):
-            database.add_money(ctx.author.id, ctx.guild.id, int(data[4]), 0)
-            data_ = f"{-1 * random.randint(70, 1000)}_{ctx.channel.id}_0_0_0"
-            database.insert_config('counting', ctx.guild.id, data_)
-            embed = discord.Embed(description=f"{ctx.author.mention} ruined the counting and earned {data[4]} <a:pinkcoin:900000697288892416>"
-                                  f"\n\n\n> **Now guess the next number to earn more**", color=0xF2A2C0)
-            embed.set_thumbnail(url=ctx.author.avatar_url)
-            await ctx.send(embed=embed)
+        ban_data =  database.is_botban(ctx.author.id)
+        if ban_data is None:
+            try:
+                data = database.get_config_raw('counting', ctx.guild.id).split('_')  # [number, channel, member, message, count_length]
+            except AttributeError:
+                embed = discord.Embed(description=f"Counting channel is not configured yet, ask Admins to run **`s.setcount #countChannel`**", color=0xF2A2C0)
+                await ctx.reply(embed=embed)
+                return
+            if ctx.channel.id != int(data[1]):
+                await ctx.reply(f"You should use this command in <#{data[1]}>")
+            elif set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in ctx.author.roles]):
+                database.add_money(ctx.author.id, ctx.guild.id, int(data[4]), 0)
+                data_ = f"{-1 * random.randint(70, 1000)}_{ctx.channel.id}_0_0_0"
+                database.insert_config('counting', ctx.guild.id, data_)
+                embed = discord.Embed(description=f"{ctx.author.mention} ruined the counting and earned {data[4]} <a:pinkcoin:900000697288892416>"
+                                    f"\n\n\n> **Now guess the next number to earn more**", color=0xF2A2C0)
+                embed.set_thumbnail(url=ctx.author.avatar_url)
+                await ctx.send(embed=embed)
+            else:
+                roles = '>'
+                for r in database.get_config('domme', ctx.guild.id):
+                    roles = f"{roles} <@&{r}>\n>"
+                embed = discord.Embed(description=f"you don't have any of the following roles to ruin the game.\n{roles[:-2]}", color=0xF2A2C0)
+                await ctx.send(embed=embed)
         else:
-            roles = '>'
-            for r in database.get_config('domme', ctx.guild.id):
-                roles = f"{roles} <@&{r}>\n>"
-            embed = discord.Embed(description=f"you don't have any of the following roles to ruin the game.\n{roles[:-2]}", color=0xF2A2C0)
+            embed = discord.Embed(title='Bot ban',
+                                  description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{ban_data[1]}:F>",
+                                  color=0xF2A2C0)
             await ctx.send(embed=embed)
 
     @commands.command(aliases=['praise', 'simp', 'footkiss', 'feetkiss'])
     @commands.guild_only()
     async def worship(self, ctx, member: discord.Member):
+        if ctx.author.bot:
+            return
+        
+        ban_data = database.is_botban(ctx.author.id)
+        if ban_data is not None:
+            embed = discord.Embed(title='Bot ban',
+                                  description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{ban_data[1]}:F>",
+                                  color=0xF2A2C0)
+            await ctx.send(embed=embed)
+            return
+        elif database.is_botban(member.id) is not None:
+            embed = discord.Embed(title='Bot ban',
+                                  description=f"{member.mention} is banned from using {self.bot.user.mention}.",
+                                  color=0xF2A2C0)
+            await ctx.send(embed=embed)
+            return
+        
         if set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in member.roles]):
             if ctx.channel.is_nsfw():
                 money = database.get_money(ctx.author.id, ctx.guild.id)[2]
                 if money >= 100:
                     database.remove_money(ctx.author.id, ctx.guild.id, 100, 0)
-                    database.add_money(ctx.author.id, ctx.guild.id, 0, 1)
-                    database.add_money(member.id, ctx.guild.id, 0, 1)
+                    if not set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in ctx.author.roles]):
+                        database.add_money(ctx.author.id, ctx.guild.id, 0, 1)
+                        database.add_money(member.id, ctx.guild.id, 0, 20)
                     database.simp(ctx.author.id, ctx.guild.id, member.id)
                     simp_embed = discord.Embed(title=f"{ctx.author.nick or ctx.author.name} Simps for {member.nick or member.name}",
                                                description=f"",
