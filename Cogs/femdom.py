@@ -620,6 +620,9 @@ class Punishment:
                 owner = self.author.guild.get_member(database.get_owner(self.author.id, self.author.guild.id))
                 if owner is not None:
                     await owner.send(f"{self.author.mention} is gagged in the server **{self.author.guild.name}** because of our policy **Gag the brats** ")
+                else:
+                    await asyncio.sleep(30 * 60)
+                    database.update_slaveDB(self.author.id, 'gag', 'off', self.author.guild.id)
             else:
                 database.update_slaveDB(self.author.id, 'life', life-1, self.author.guild.id)
                 embed = discord.Embed(title="Nope",
