@@ -31,6 +31,10 @@ class ServerConfig(commands.Cog):
         owner_invite_embed.set_thumbnail(url=self.bot.user.avatar_url)
         owner_invite_embed.set_footer(text=f'created by {alex_wood}', icon_url=alex_wood.avatar_url)
         await guild.owner.send(embed=owner_invite_embed)
+        
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild):
+        database.remove_guild(guild.id)
 
     @commands.command()
     @commands.has_permissions(administrator=True)
