@@ -382,7 +382,8 @@ class Lock(commands.Cog):
                     if role != ctx.guild.default_role and role != ctx.guild.premium_subscriber_role:
                         await member.remove_roles(role)
 
-                database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+                if member_is != 200:
+                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
 
                 await member.add_roles(prisoner)
                 domme_name = re.sub('[^A-Za-z0-9]+', ' ', unicodedata.normalize('NFD', ctx.author.nick or ctx.author.name).encode('ascii', 'ignore').decode('utf-8')).lower()
