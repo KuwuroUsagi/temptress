@@ -198,20 +198,20 @@ class Games(commands.Cog):
     #                                                                            #
     ##############################################################################
 
-    @ruin.error
-    async def on_ruin_error(self, ctx, error):
-        if isinstance(error, commands.errors.CommandOnCooldown):
-            embed = discord.Embed(title="Ruin Cooldown is 1h",
-                                  description="{} you need to wait {:,.1f} minutes to ruin the game again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
-                                  color=0xFF2030)
-        await ctx.send(embed=embed)
+    # @ruin.error
+    # async def on_ruin_error(self, ctx, error):
+    #     if isinstance(error, commands.errors.CommandOnCooldown):
+    #         embed = discord.Embed(title="Ruin Cooldown is 1h",
+    #                               description="{} you need to wait {:,.1f} minutes to ruin the game again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
+    #                               color=0xFF2030)
+    #     await ctx.send(embed=embed)
 
-    @worship.error
-    async def on_worship_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.worship @mention`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @worship.error
+    # async def on_worship_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.worship @mention`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
 
 def setup(bot):

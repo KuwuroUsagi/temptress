@@ -512,24 +512,24 @@ class Lock(commands.Cog):
     #                                                                            #
     ##############################################################################
 
-    @lock.error
-    async def on_lock_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(title='How to use Prison?', description=f"Usage:\n> **`s.lock @mention`** "
-                                  f"\nAfter it just enjoy the slave punishment!",
-                                  color=0xFF2030)
-        elif isinstance(error, commands.errors.CommandOnCooldown):
-            embed = discord.Embed(title="Prison Cooldown is 3h",
-                                  description="{} you need to wait {:,.1f} minutes to lock a slave again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
-                                  color=0xFF2030)
-        await ctx.send(embed=embed)
+    # @lock.error
+    # async def on_lock_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(title='How to use Prison?', description=f"Usage:\n> **`s.lock @mention`** "
+    #                               f"\nAfter it just enjoy the slave punishment!",
+    #                               color=0xFF2030)
+    #     elif isinstance(error, commands.errors.CommandOnCooldown):
+    #         embed = discord.Embed(title="Prison Cooldown is 3h",
+    #                               description="{} you need to wait {:,.1f} minutes to lock a slave again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
+    #                               color=0xFF2030)
+    #     await ctx.send(embed=embed)
 
-    @unlock.error
-    async def on_unlock_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(title='How to save a slave from Prison?', description=f"Usage:\n> **`s.unlock @mention`** ",
-                                  color=0xFF2030)
-        await ctx.send(embed=embed)
+    # @unlock.error
+    # async def on_unlock_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(title='How to save a slave from Prison?', description=f"Usage:\n> **`s.unlock @mention`** ",
+    #                               color=0xFF2030)
+    #     await ctx.send(embed=embed)
 
 
 def setup(bot):

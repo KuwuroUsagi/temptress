@@ -1747,94 +1747,94 @@ class Femdom(commands.Cog):
     #                                                                            #
     ##############################################################################
 
-    @own.error
-    async def on_own_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.own @mention`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @own.error
+    # async def on_own_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.own @mention`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @disown.error
-    async def on_disown_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.disown @mention`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @disown.error
+    # async def on_disown_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.disown @mention`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @gag.error
-    async def on_gag_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.gag @mention`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @gag.error
+    # async def on_gag_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.gag @mention`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @badword.error
-    async def on_badword_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.badword @mention <bad words>`**"
-                                              f"\n> aliases = `word`, `addbadword`, `words`, `badwords`, `addbadwords`",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @badword.error
+    # async def on_badword_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.badword @mention <bad words>`**"
+    #                                           f"\n> aliases = `word`, `addbadword`, `words`, `badwords`, `addbadwords`",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @removebadword.error
-    async def on_removebadword_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.removebadword @mention <bad words>`**"
-                                              f"\n> aliases = `removeword`",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @removebadword.error
+    # async def on_removebadword_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.removebadword @mention <bad words>`**"
+    #                                           f"\n> aliases = `removeword`",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @clearbadword.error
-    async def on_clearbadword_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.clearbadword @mention`**"
-                                              f"\n> aliases = `removeallbadwords`, `clearwords`, `removeallwords`",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @clearbadword.error
+    # async def on_clearbadword_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.clearbadword @mention`**"
+    #                                           f"\n> aliases = `removeallbadwords`, `clearwords`, `removeallwords`",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @nickname.error
-    async def on_nickname_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.nickname @mention <name>`**"
-                                              f"\n> aliases = `name`, `nick`",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @nickname.error
+    # async def on_nickname_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.nickname @mention <name>`**"
+    #                                           f"\n> aliases = `name`, `nick`",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @status.error
-    async def on_status_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.status @mention`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @status.error
+    # async def on_status_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.status @mention`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @emojii.error
-    async def on_allowemoji_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.emoji @mention`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @emojii.error
+    # async def on_allowemoji_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.emoji @mention`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @tie.error
-    async def on_tie_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.tie @mention`**"
-                                              f"\nor\n**`s.tie @mention #channel`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @tie.error
+    # async def on_tie_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.tie @mention`**"
+    #                                           f"\nor\n**`s.tie @mention #channel`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @untie.error
-    async def on_untie_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.untie @mention`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @untie.error
+    # async def on_untie_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.untie @mention`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @rank.error
-    async def on_rank_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.rank @mention X`** X is the rank of slave",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @rank.error
+    # async def on_rank_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.rank @mention X`** X is the rank of slave",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
 
 def setup(bot):

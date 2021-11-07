@@ -493,30 +493,30 @@ class Femdom(commands.Cog):
     #                                                                            #
     ##############################################################################
 
-    @chastity.error
-    async def on_chastity_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.chastity @mention`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @chastity.error
+    # async def on_chastity_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.chastity @mention`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @muffs.error
-    async def on_muff_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.muffs @mention`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @muffs.error
+    # async def on_muff_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.muffs @mention`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @blind.error
-    async def on_blind_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n> **`s.blind @mention`** ",
-                                  color=0xFF2030)
-        elif isinstance(error, commands.errors.CommandOnCooldown):
-            embed = discord.Embed(title="Blindfold Cooldown is 4h",
-                                  description="{} you need to wait {:,.1f} minutes to blindfold a slave again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
-                                  color=0xFF2030)
-        await ctx.send(embed=embed)
+    # @blind.error
+    # async def on_blind_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n> **`s.blind @mention`** ",
+    #                               color=0xFF2030)
+    #     elif isinstance(error, commands.errors.CommandOnCooldown):
+    #         embed = discord.Embed(title="Blindfold Cooldown is 4h",
+    #                               description="{} you need to wait {:,.1f} minutes to blindfold a slave again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
+    #                               color=0xFF2030)
+    #     await ctx.send(embed=embed)
 
 
 def setup(bot):

@@ -334,13 +334,13 @@ class ServerConfig(commands.Cog):
             embed.set_thumbnail(url=member.avatar_url)
             await ctx.send(embed=embed)
 
-    @blacklist.error
-    async def on_blacklist_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.blacklist @mention`** to **add** or **remove** member from blacklist."
-                                              f"\n**`s.blacklist`** to see the list of blacklisted members.",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @blacklist.error
+    # async def on_blacklist_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.blacklist @mention`** to **add** or **remove** member from blacklist."
+    #                                           f"\n**`s.blacklist`** to see the list of blacklisted members.",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
 
 def setup(bot):
