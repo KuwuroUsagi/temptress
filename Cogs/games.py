@@ -120,7 +120,7 @@ class Games(commands.Cog):
                 return
             if ctx.channel.id != int(data[1]):
                 await ctx.reply(f"You should use this command in <#{data[1]}>")
-            elif set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in ctx.author.roles]):
+            elif set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in ctx.author.roles]) or set(database.get_config('slave', ctx.guild.id)) & set([role.id for role in ctx.author.roles]):
                 database.add_money(ctx.author.id, ctx.guild.id, int(data[4]), 0)
                 data_ = f"{-1 * random.randint(70, 1000)}_{ctx.channel.id}_0_0_0"
                 database.insert_config('counting', ctx.guild.id, data_)
