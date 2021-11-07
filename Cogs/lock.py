@@ -198,7 +198,7 @@ class Lock(commands.Cog):
                     prisoner = message.guild.get_role(database.get_config('prisoner', message.guild.id)[0])
                     await message.author.remove_roles(prisoner)
                     await message.reply(f"{message.author.mention} you are now released from {message.channel.mention} for being a good boy and writing the lines.")
-                    database.insert_escape(message.author.id, message.guild.id, 0.5, 'cooldown')
+                    database.insert_escape(message.author.id, message.guild.id, 0.2, 'cooldown')
                     return
                 if message.author.id == 855057142297264139:
                     await message.author.send(sentence)
@@ -404,7 +404,7 @@ class Lock(commands.Cog):
                 await asyncio.sleep(60 * 60 * 2)                
                 if prisoner.id in [role.id for role in member.roles]:
                     await member.remove_roles(prisoner)
-                    database.insert_escape(ctx.author.id, ctx.guild.id, 2, 'cooldown')
+                    database.insert_escape(ctx.author.id, ctx.guild.id, 0.5, 'cooldown')
 
             else:  # I have no power
                 no_power_embed = discord.Embed(title='I don\'t have power',
@@ -413,14 +413,14 @@ class Lock(commands.Cog):
                 await ctx.send(embed=no_power_embed)
 
         elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
-            embed = discord.Embed(description=f"{member.mention} should have any of the folloing roles \n"
+            embed = discord.Embed(description=f"{member.mention} should have any of the following roles \n"
                                   f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
                                   f"{self.list_roles(database.get_config('slave', member.guild.id))}",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
 
         elif member_is == 0:  # when the author doesn't have domme or slave role.
-            embed = discord.Embed(description=f"{ctx.author.mention}, you should have any of the folloing roles \n"
+            embed = discord.Embed(description=f"{ctx.author.mention}, you should have any of the following roles \n"
                                   f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
                                   f"{self.list_roles(database.get_config('slave', member.guild.id))}",
                                   color=0xF2A2C0)
