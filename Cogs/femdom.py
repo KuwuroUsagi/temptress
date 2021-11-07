@@ -153,10 +153,9 @@ class Action:
         removes slave from ownership from DB
         """
         database.disown_a_slave(self.member.id, self.member.guild.id)
-        disown_embed = discord.Embed(title=f'End of the story',
-                                     description=f' The {self.author.mention} decided to set you free, {self.member.mention}, she became '
-                                                 f'bored of you and now you are useless to her! You are unworthy to have an '
-                                                 f'owner, now you shall stay unowned!!',
+        disown_embed = discord.Embed(title=f'End of the Journey',
+                                     description=f'The {self.author.mention} has decided to set you free, {self.member.mention}; '
+                                                 f'therefore, your shared journey has come to an end. Hope you both had fun, but it is now time to part ways',
                                      color=0xF2A2C0)
         await self.ctx.channel.send(embed=disown_embed)
         await self.react('y')
