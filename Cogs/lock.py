@@ -257,7 +257,7 @@ class Lock(commands.Cog):
             if is_escaped[3] == 'gem':
                 embed = discord.Embed(title='Magic Gem is Real',
                                       description=f"{member.mention} used the power of Magic Gem<a:gems:899985611946078208> "
-                                      f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped + (5 * 60)}:R>.\n> *patience is a virtue*",
+                                      f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped + 5 * 60}:R>.\n> *patience is a virtue*",
                                       color=0xF47FFF)
             elif is_escaped[3] == 'cooldown':
                 embed = discord.Embed(title='Cooldown',
