@@ -413,14 +413,14 @@ class Lock(commands.Cog):
                 await ctx.send(embed=no_power_embed)
 
         elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
-            embed = discord.Embed(description=f"{member.mention} should have any of the folloing roles \n"
+            embed = discord.Embed(description=f"{member.mention} should have any of the following roles \n"
                                   f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
                                   f"{self.list_roles(database.get_config('slave', member.guild.id))}",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
 
         elif member_is == 0:  # when the author doesn't have domme or slave role.
-            embed = discord.Embed(description=f"{ctx.author.mention}, you should have any of the folloing roles \n"
+            embed = discord.Embed(description=f"{ctx.author.mention}, you should have any of the following roles \n"
                                   f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
                                   f"{self.list_roles(database.get_config('slave', member.guild.id))}",
                                   color=0xF2A2C0)

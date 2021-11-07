@@ -449,7 +449,7 @@ class Action:
                 embed = discord.Embed(title='I am not ready yet', description='ask Admins to run the command **`s.setup`**', color=0xF2A2C0)
             else:
                 embed = discord.Embed(title='I don\'t know you.',
-                                      description=f"You need any of the folloing roles:\n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
+                                      description=f"You need any of the following roles:\n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                                       color=0xF2A2C0)
 
         await self.ctx.channel.send(embed=embed)
