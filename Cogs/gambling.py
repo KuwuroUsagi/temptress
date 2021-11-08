@@ -25,7 +25,7 @@ class Gambling(commands.Cog):
 
     @commands.command(aliases=['cf'])
     @commands.guild_only()
-    # @commands.cooldown(50, 30 * 60, commands.BucketType.user)
+    @commands.cooldown(4, 30 * 60, commands.BucketType.user)
     async def coinflip(self, ctx, choice: str, bet: int):
         if ctx.author.bot:
             return
