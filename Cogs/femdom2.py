@@ -229,7 +229,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can chastity lock when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:
@@ -339,7 +339,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can Ear Muff someone when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\n I need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\n I need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:
@@ -453,7 +453,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can blindfold someone when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:

@@ -995,7 +995,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave kitty gag on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can gag when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\n I need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\n I need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave kitty gag on Domme
@@ -1078,7 +1078,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave adding badword on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can add badword when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave adding badword for Domme
@@ -1160,7 +1160,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave removing badword on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can remove badword when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave removing badword on Domme
@@ -1242,7 +1242,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave clearing badwords on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can remove badword when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave clearing badword of Domme
@@ -1318,7 +1318,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave nickname on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can change name when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave nickname on Domme
@@ -1468,7 +1468,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave emoji allow on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can control emojis when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave emoji allow on Domme
@@ -1552,7 +1552,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave tie on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can tie a slave to a channel when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave tie on Domme
@@ -1634,7 +1634,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave untie on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can untie a slave from a channel when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave untie on Domme
