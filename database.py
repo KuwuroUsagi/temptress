@@ -123,6 +123,7 @@ def remove_guild(guild):
         cur.execute("DELETE FROM Ownership WHERE guildid = %s", (guild,))
         cur.execute("DELETE FROM Badwords WHERE guildid = %s", (guild,))
         cur.execute("DELETE FROM Prison WHERE guildid = %s", (guild,))
+        cur.execute("DELETE FROM Money WHERE guildid = %s", (guild,))        
 
         ##############################################################################
         #                                                                            #
@@ -196,6 +197,7 @@ def remove_member(member, guild):
         cur.execute("DELETE FROM Badwords WHERE slaveid=%s AND guildid = %s", (member, guild))
         cur.execute("DELETE FROM Badwords WHERE dommeid=%s AND guildid = %s", (member, guild))
         cur.execute("DELETE FROM Prison WHERE slaveid=%s AND guildid = %s", (member, guild))
+        cur.execute("DELETE FROM Money WHERE memberid=%s AND guildid = %s", (member, guild))
 
 
 def get_slave_from_DB(member, guild):

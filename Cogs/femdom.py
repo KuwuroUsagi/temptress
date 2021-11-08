@@ -618,7 +618,11 @@ class Punishment:
                                       color=0xF2A2C0)
                 await self.channel.send(embed=embed)
                 owner = self.author.guild.get_member(database.get_owner(self.author.id, self.author.guild.id))
-                await owner.send(f"{self.author.mention} is gagged in the server **{self.author.guild.name}** because of our policy **Gag the brats** ")
+                if owner is not None:
+                    await owner.send(f"{self.author.mention} is gagged in the server **{self.author.guild.name}** because of our policy **Gag the brats** ")
+                else:
+                    await asyncio.sleep(30 * 60)
+                    database.update_slaveDB(self.author.id, 'gag', 'off', self.author.guild.id)
             else:
                 database.update_slaveDB(self.author.id, 'life', life-1, self.author.guild.id)
                 embed = discord.Embed(title="Nope",
@@ -1060,10 +1064,17 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
 
             elif member_is == 201:  # Domme addword on Free slave
-                embed = discord.Embed(title='Nah',
-                                      description=f"{ctx.author.mention}, you can't do such a thing. {member.mention} is a free slave!"
-                                                  f" the sub must be owned by you.",
-                                      color=0xF2A2C0)
+                gem = database.get_money(ctx.author.id, ctx.guild.id)[3]
+                if gem > 0:
+                    words = words.split(',')
+                    await action.add_badword(words)
+                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+                    return
+                else:
+                    embed = discord.Embed(title='No Gems',
+                                        description=f"{ctx.author.mention}, you don't have gems to add badword Because {member.mention} is a free slave!"
+                                                    f" or the sub must be owned by you.",
+                                        color=0xF2A2C0)
 
             elif member_is == 200:  # Domme adding badword on Owned slave
                 words = words.split(',')
@@ -1142,10 +1153,9 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
 
             elif member_is == 201:  # Domme ungaging on Free slave
-                embed = discord.Embed(title='Nah',
-                                      description=f"{ctx.author.mention}, you can't do such a thing. {member.mention} is a free slave!"
-                                                  f" the sub must be owned by you.",
-                                      color=0xF2A2C0)
+                words = words.split(',')
+                await action.remove_badword(words)
+                return
 
             elif member_is == 200:  # Domme removing badword on Owned slave
                 words = words.split(',')
@@ -1225,10 +1235,8 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
 
             elif member_is == 201:  # Domme clearing badword on Free slave
-                embed = discord.Embed(title='Nah',
-                                      description=f"{ctx.author.mention}, you can't do such a thing. {member.mention} is a free slave!"
-                                                  f" the sub must be owned by you.",
-                                      color=0xF2A2C0)
+                await action.clear_badword()
+                return
 
             elif member_is == 200:  # Domme clearing badwords on Owned slave
                 await action.clear_badword()
@@ -1253,9 +1261,8 @@ class Femdom(commands.Cog):
                                       color=0xFF2030)
 
             elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
-                embed = discord.Embed(
-                    description=f"{member.mention} should have any of the following roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
-                    color=0xF2A2C0)
+                embed = discord.Embed(description=f"{member.mention} should have any of the following roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
+                                      color=0xF2A2C0)
 
             elif member_is == 0:  # when the author doesn't have domme or slave role.
                 embed = discord.Embed(

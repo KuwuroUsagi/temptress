@@ -139,7 +139,40 @@ class Games(commands.Cog):
                                   description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{ban_data[1]}:F>",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
+            
+            
+    @commands.command()
+    @commands.guild_only()
+    async def give(self, ctx, member:discord.Member, amount:int):
+        if ctx.author.bot:
+            return
 
+        ban_data = database.is_botban(ctx.author.id)
+        if ban_data is not None:
+            embed = discord.Embed(title='Bot ban',
+                                  description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{ban_data[1]}:F>",
+                                  color=0xF2A2C0)
+            await ctx.send(embed=embed)
+            return
+        elif database.is_botban(member.id) is not None:
+            embed = discord.Embed(title='Bot ban',
+                                  description=f"{member.mention} is banned from using {self.bot.user.mention}.",
+                                  color=0xF2A2C0)
+            await ctx.send(embed=embed)
+            return
+        
+        coin = database.get_money(ctx.author.id, ctx.guild.id)[2]
+        if coin < amount:
+            await ctx.reply(f"<:staff:897777248839540757> really, you are broke, you only have {coin}<a:pinkcoin:900000697288892416>")
+        elif amount < 10:
+            await ctx.reply(f"<:staff:897777248839540757> Grrr....,  10<a:pinkcoin:900000697288892416> is minimum amount to transfer")
+        else:
+            database.add_money(member.id, ctx.guild.id, amount, 0)
+            database.remove_money(ctx.author.id, ctx.guild.id, amount, 0)
+            embed = discord.Embed(description=f"{ctx.author.mention} gave {amount} <a:pinkcoin:900000697288892416> to {member.mention}",
+                                  color=0xF2A2C0)
+            await ctx.send(embed=embed)
+        
     @commands.command(aliases=['praise', 'simp', 'footkiss', 'feetkiss'])
     @commands.guild_only()
     async def worship(self, ctx, member: discord.Member):
@@ -209,10 +242,16 @@ class Games(commands.Cog):
     @worship.error
     async def on_worship_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.worship @mention`**",
+            embed = discord.Embed(description=f"Usage:\n**`s.simp @mention`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
+    @give.error
+    async def on_give_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+            embed = discord.Embed(description=f"Usage:\n**`s.give @mention <amount>`**",
+                                  color=0xFF2030)
+            await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Games(bot))

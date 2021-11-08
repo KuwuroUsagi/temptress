@@ -11,8 +11,7 @@ main = Embed(title='Main commands (everybody can use)',
 
 nsfw = Embed(title='NSFW commands',
              description=f"> **`s.porn`** this command will show you irl femdom Pics in server."
-             f"\n> **`s.pornvideo`** this command will send you a femdom porn suggestion.:wink: :drool:"
-             f"\n> **`s.pornhub <femdom lesbians>`** you can search videos from pornhub. **`s.ph`** for short.",
+             f"\n> **`s.pornvideo`** this command will send you a femdom porn suggestion.:wink: :drool:",
              color=0x9479ED)
 
 domme = Embed(title='Domme only commands', color=0x9479ED)
@@ -20,8 +19,8 @@ domme = Embed(title='Domme only commands', color=0x9479ED)
 domme.add_field(name="To own or disown a sub.", value="> **`s.own @mention`** this prompts the mentioned user for consent to become a sub for the Domme using this command."
                 "\n> **`s.disown @mention`**  this removes the mentioned user as a sub of the Domme using this command.\n", inline=False)
 
-domme.add_field(name="To Gag Subs", value="> **`s.gag @mention`** this will gag the sub and have fun."
-                "\n**Note: Dommes have to own a sub before before converting a sub into a puppy or kitty.**\n", inline=False)
+domme.add_field(name="To Gag Subs", value="> **`s.gag @mention`** this will gag the sub and dommes can have fun."
+                "\n**Note: If the sub is not owned by Domme then gag costs a gem. (valid for 10 mins)**\n", inline=False)
 
 domme.add_field(name="To Chastity lock Subs", value="> **`s.chastity @mention`** this command will block NSFW channels from the sub."
                 "\n**Note: Dommes have to own a sub before locking a sub in chastity.**\n", inline=False)
@@ -36,7 +35,7 @@ domme.add_field(name="To add and remove badwords",
                 value="> **`s.badword @mention <word>`** this will add the word as a badword, preventing the sub from using the word again."
                 "\n> **`s.removeword @mention <word>`**  this will remove the word from the sub's list of badwords."
                 "\n> **`s.clearwords @mention`** this will clear the sub's list of badwords."
-                "\n**Note: Dommes have to own a sub first before adding or removing badwords.**\n\n\n",
+                "\n**Note: If sub is not owned by a Domme then adding a badword will cost gems.**\n\n\n",
                 inline=False)
 
 domme.add_field(name="To change Nickname of the sub.",
@@ -46,7 +45,7 @@ domme.add_field(name="To change Nickname of the sub.",
                 inline=False)
 
 domme.add_field(name="To enable and disable emoji of the sub.", value="> **`s.emoji @mention`** using this command you can toggle the sub permission to use emojis in the server."
-                "\n**Note: Dommes must own the sub to manage their emojis.**\n\n\n", inline=False)
+                "\n**Note: If the sub is not owned by a Dommes then this command costs a gem. (emoji ban is valid only for an hour)**\n\n\n", inline=False)
 
 domme.add_field(name="To tie a sub in specific text channel in server.", value="> **`s.tie @mention #channel`** this will only allow the sub to send messages in the specified text channel."
                 "\n> **`s.untie @mention`** this will allow the sub to send messages normally."
