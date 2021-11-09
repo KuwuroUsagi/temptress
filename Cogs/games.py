@@ -200,7 +200,7 @@ class Games(commands.Cog):
                     database.remove_money(ctx.author.id, ctx.guild.id, 100, 0)
                     if not set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in ctx.author.roles]):
                         database.add_money(ctx.author.id, ctx.guild.id, 0, 1)
-                        database.add_money(member.id, ctx.guild.id, 0, 20)
+                        database.add_money(member.id, ctx.guild.id, 0, 5)
                     database.simp(ctx.author.id, ctx.guild.id, member.id)
                     simp_embed = discord.Embed(title=f"{ctx.author.nick or ctx.author.name} Simps for {member.nick or member.name}",
                                                description=f"",
