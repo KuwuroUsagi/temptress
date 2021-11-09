@@ -31,7 +31,7 @@ class Misc(commands.Cog):
                 await ctx.send(embed=embed)
             else:
                 def make_embed(page):
-                    embed=discord.Embed(description=f"{response[page]['definition']}\n\nExample:\n> *{response[page]['example']}*\n\nVotes:\n> <a:upvote:907603155922071552> {response[page]['thumbs_up']}              <a:downvote:907603183117930567> {response[page]['thumbs_down']}",
+                    embed=discord.Embed(description=f"{response[page]['definition']}\n\nExample:\n> {response[page]['example']}\n\nVotes:\n> <a:upvote:907603155922071552> {response[page]['thumbs_up']}              <a:downvote:907603183117930567> {response[page]['thumbs_down']}",
                                         color=0xF2A2C0)
                     embed.set_footer(text=f"{page + 1}/{len(response)}", icon_url=self.bot.user.avatar_url)
                     embed.set_author(name=word.upper(), url=response[page]['permalink'])
