@@ -304,14 +304,14 @@ class Gambling(commands.Cog):
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
-    @subrace.error
-    async def on_subrace_error(self, ctx, error):
+    @rockpaper.error
+    async def on_rps_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.subrace @domme <bet amount>`**",
+            embed = discord.Embed(description=f"Usage:\n**`s.rps @domme <bet amount>`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.errors.CommandOnCooldown):
-            embed = discord.Embed(title="Subrace Cooldown is 4 hours",
+            embed = discord.Embed(title="rps Cooldown is 4 hours",
                                   description="{} you need to wait {:,.1f} minutes to flip coin again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
                                   color=0xFF2030)
             await ctx.send(embed=embed)
