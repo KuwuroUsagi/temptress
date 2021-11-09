@@ -27,7 +27,7 @@ class Gambling(commands.Cog):
 
     @commands.command(aliases=['cf'])
     @commands.guild_only()
-    @commands.cooldown(4, 30 * 60, commands.BucketType.user)
+    @commands.cooldown(3, 1 * 60, commands.BucketType.user)
     async def coinflip(self, ctx, choice: str, bet: int):
         if ctx.author.bot:
             return
@@ -196,7 +196,6 @@ class Gambling(commands.Cog):
     async def rockpaper(self, ctx, member: discord.Member, bet: int):
         if ctx.author.bot:
             return
-        return
         ban_data = database.is_botban(ctx.author.id)
         if ban_data is not None:
             embed = discord.Embed(title='Bot ban',
