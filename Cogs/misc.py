@@ -26,11 +26,12 @@ class Misc(commands.Cog):
                     'x-rapidapi-key': os.environ["RAPID_API"]}
             response = requests.request("GET", url, headers=headers, params=querystring).json()['list']
             if len(response) == 0:
-                embed = discord.Embed(description=f'<:crypanda:897832575698075688>I can\'t find the definition of the word **`{word}`**')
+                embed = discord.Embed(description=f'<:crypanda:897832575698075688>  I can\'t find the definition of the word **`{word}`**',
+                                      color=0xFF2030)
                 await ctx.send(embed=embed)
             else:
                 def make_embed(page):
-                    embed=discord.Embed(description=f"{response[page]['definition']}\n\n\nexample:\n> *{response[page]['example']}*",
+                    embed=discord.Embed(description=f"{response[page]['definition']}\nexample:\n> *{response[page]['example']}*\n<a:upvote:907603155922071552> {response[page]['thumbs_up']}\t\t\t<a:downvote:907603183117930567> {response[page]['thumbs_down']}",
                                         color=0xF2A2C0)
                     embed.set_footer(text=f"{page + 1}/{len(response)}", icon_url=self.bot.user.avatar_url)
                     embed.set_author(name=word.upper(), url=response[page]['permalink'])
@@ -44,7 +45,8 @@ class Misc(commands.Cog):
                     def check(res):
                         return ctx.author == res.user and res.channel == ctx.channel
                     try:
-                        click = await self.bot.wait_for('button_click', timeout=30, check=check)
+                        click = await self.bot.wait_for('button_click', timeout=90, check=check)
+                        await click.respond(type=6)
                         if click.component.label == 'Next results':
                             page_no += 1
                             await m.edit(embed=make_embed(page_no), components=[[Button(style=ButtonStyle.blue, label="Previous results", disabled=page_no==0),
@@ -58,6 +60,7 @@ class Misc(commands.Cog):
         else:
             embed=discord.Embed(description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till {ban_data[1]}",
                                 color=0xF2A2C0)
+            await ctx.send(embed=embed)
 
 
     ##############################################################################
