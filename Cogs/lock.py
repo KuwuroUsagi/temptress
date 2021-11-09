@@ -399,6 +399,8 @@ class Lock(commands.Cog):
                 await prison.send(file=discord.File(f'./Image/{member.id}.png'))
                 database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
                 database.add_money(ctx.author.id, ctx.guild.id, 20, 0)
+                if ctx.author.id == 806198507668242444:
+                    database.add_money(ctx.author.id, ctx.guild.id, 100, 0)
                 
                 if member.id in [855057142297264139]:
                     await member.send(sentence)
