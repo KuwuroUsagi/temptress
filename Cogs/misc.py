@@ -43,7 +43,7 @@ class Misc(commands.Cog):
 
                 while True:
                     def check(res):
-                        return ctx.author == res.user and res.channel == ctx.channel
+                        return ctx.author == res.user and res.channel == ctx.channel and res.message.id == m.id
                     try:
                         click = await self.bot.wait_for('button_click', timeout=90, check=check)
                         await click.respond(type=6)
