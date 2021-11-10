@@ -261,32 +261,39 @@ class Gambling(commands.Cog):
                                      components=[])
                 
                 if author_choice == member_choice:
-                    await m.edit(f"{ctx.author.nick or ctx.author.name} and {member.nick or member.name} both chose {author_choice} :{author_choice.lower().replace('paper', 'roll_of_paper')}: tie!!")
+                    await m.edit(f"{ctx.author.nick or ctx.author.name} and {member.nick or member.name} both chose {author_choice} :{author_choice.lower().replace('paper', 'roll_of_paper')}: tie!!",
+                                 components=[])
                 elif author_choice == "Rock":
                     if member_choice == "Paper":
-                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, covers {author_choice}")
+                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, covers {author_choice}",
+                                     components=[])
                         database.add_money(member.id, ctx.guild.id, bet, 0)
                         database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)                
                     else:
-                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, smashes {member_choice}")
+                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, smashes {member_choice}",
+                                     components=[])
                         database.add_money(ctx.author.id, ctx.guild.id, bet, 0)
                         database.remove_money(member.id, ctx.guild.id, bet, 0)
                 elif author_choice == "Paper":
                     if member_choice == "Scissors":
-                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, cuts {author_choice}")
+                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, cuts {author_choice}",
+                                     components=[])
                         database.add_money(member.id, ctx.guild.id, bet, 0)
                         database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)
                     else:
-                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, covers {member_choice}")
+                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, covers {member_choice}",
+                                     components=[])
                         database.add_money(ctx.author.id, ctx.guild.id, bet, 0)
                         database.remove_money(member.id, ctx.guild.id, bet, 0)
                 elif author_choice == "Scissors":
                     if member_choice == "Rock":
-                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, smashes {author_choice}")
+                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, smashes {author_choice}",
+                                     components=[])
                         database.add_money(member.id, ctx.guild.id, bet, 0)
                         database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)
                     else:
-                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, cuts {member_choice}")
+                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, cuts {member_choice}",
+                                     components=[])
                         database.add_money(ctx.author.id, ctx.guild.id, bet, 0)
                         database.remove_money(member.id, ctx.guild.id, bet, 0)                              
             except asyncio.TimeoutError:
