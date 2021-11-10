@@ -222,7 +222,7 @@ class Gambling(commands.Cog):
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
         elif bet > member_coin:
-            embed = discord.Embed(description=f"<:staff:897777248839540757>, {member.mention} only have {author_coin} <a:pinkcoin:900000697288892416>",
+            embed = discord.Embed(description=f"<:staff:897777248839540757>, {member.mention} only have {member_coin} <a:pinkcoin:900000697288892416>",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
         else:
