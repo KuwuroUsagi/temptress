@@ -259,30 +259,39 @@ class Gambling(commands.Cog):
                     except asyncio.TimeoutError:
                         await m.edit(f"I guess {ctx.author.nick or ctx.author.name} is not interested to play with {member.nick or member.name}",
                                      components=[])
-                        
-                        
-                        
+                
+                if author_choice == member_choice:
+                    await m.edit(f"{ctx.author.nick or ctx.author.name} and {member.nick or member.name} both chose {author_choice} :{author_choice.lower().replace('paper', 'roll_of_paper')}: tie!!")
+                elif author_choice == "Rock":
+                    if member_choice == "Paper":
+                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, covers {author_choice}")
+                        database.add_money(member.id, ctx.guild.id, bet, 0)
+                        database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)                
+                    else:
+                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, smashes {member_choice}")
+                        database.add_money(ctx.author.id, ctx.guild.id, bet, 0)
+                        database.remove_money(member.id, ctx.guild.id, bet, 0)
+                elif author_choice == "Paper":
+                    if member_choice == "Scissors":
+                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, cuts {author_choice}")
+                        database.add_money(member.id, ctx.guild.id, bet, 0)
+                        database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)
+                    else:
+                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, covers {member_choice}")
+                        database.add_money(ctx.author.id, ctx.guild.id, bet, 0)
+                        database.remove_money(member.id, ctx.guild.id, bet, 0)
+                elif author_choice == "Scissors":
+                    if member_choice == "Rock":
+                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, smashes {author_choice}")
+                        database.add_money(member.id, ctx.guild.id, bet, 0)
+                        database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)
+                    else:
+                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, cuts {member_choice}")
+                        database.add_money(ctx.author.id, ctx.guild.id, bet, 0)
+                        database.remove_money(member.id, ctx.guild.id, bet, 0)                              
             except asyncio.TimeoutError:
                 await m.edit(f"I guess {ctx.author.nick or ctx.author.name} and {member.nick or member.name} don't wanna play!!",
                              components=[])
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     ##############################################################################
     #                                                                            #
@@ -307,7 +316,7 @@ class Gambling(commands.Cog):
     @rockpaper.error
     async def on_rps_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.rps @domme <bet amount>`**",
+            embed = discord.Embed(description=f"Usage:\n**`s.rps @mention <bet amount>`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.errors.CommandOnCooldown):
