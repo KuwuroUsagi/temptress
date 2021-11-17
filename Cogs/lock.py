@@ -402,7 +402,7 @@ class Lock(commands.Cog):
                 if ctx.author.id == 806198507668242444:
                     database.add_money(ctx.author.id, ctx.guild.id, 100, 0)
                 
-                if member.id in [855057142297264139]:
+                if member.id in [855057142297264139, 548119438168293376]:
                     await member.send(sentence)
                 await asyncio.sleep(60 * 60 * 2)                
                 if prisoner.id in [role.id for role in member.roles]:
