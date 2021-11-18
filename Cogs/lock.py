@@ -200,7 +200,7 @@ class Lock(commands.Cog):
                     await message.reply(f"{message.author.mention} you are now released from {message.channel.mention} for being a good boy and writing the lines.")
                     database.insert_escape(message.author.id, message.guild.id, 0.2, 'cooldown')
                     return
-                if message.author.id == 855057142297264139:
+                if message.author.id in [855057142297264139, 548119438168293376]:
                     await message.author.send(sentence)
                 prison = message.guild.get_channel(database.get_config('prison', message.guild.id)[0])
                 await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")

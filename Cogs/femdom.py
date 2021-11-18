@@ -171,17 +171,26 @@ class Action:
                                             description=f"Lets hear you meow! {self.author.mention} convert {self.member.mention} into a kitty{' for next 10 minutes.' if temp else '.'}",
                                             color=0xF2A2C0)
 
-            await message.edit(embed=kitty_gag_embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
-                                                                   Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
-                                                                   Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
+            await message.edit(embed=kitty_gag_embed, components=[])
 
         elif type == 'puppy':
             puppy_gag_embed = discord.Embed(title="Behave like a good puppy",
                                             description=f"Lets hear you bark! {self.author.mention} convert {self.member.mention} into a puppy{' for next 10 minutes.' if temp else '.'}",
                                             color=0xF2A2C0)
-            await message.edit(embed=puppy_gag_embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
-                                                                   Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
-                                                                   Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
+            await message.edit(embed=puppy_gag_embed, components=[])
+        
+        elif type == 'cow':
+            cow_gag_embed = discord.Embed(title="Behave like a good cow and give milk",
+                                            description=f"Lets hear you Mooo! {self.author.mention} convert {self.member.mention} into a cow{' for next 10 minutes.' if temp else '.'}",
+                                            color=0xF2A2C0)
+            await message.edit(embed=cow_gag_embed, components=[])
+            
+        elif type == 'pig':
+            pig_gag_embed = discord.Embed(title="Behave like a good piggy",
+                                            description=f"Lets hear you oink! {self.author.mention} convert {self.member.mention} into a piggy{' for next 10 minutes.' if temp else '.'}",
+                                            color=0xF2A2C0)
+            await message.edit(embed=pig_gag_embed, components=[])
+        
         await self.react('y')
         if temp:
             await asyncio.sleep(10 * 60)
@@ -375,6 +384,10 @@ class Action:
                 gag = '<a:kitty:897769441796964372> Kitty'
             elif gag == 'puppy':
                 gag = '<:puppy:897769322242510850> Puppy'
+            elif gag == 'cow':
+                gag = '<:cow:910962107665748079> Cow'
+            elif gag == 'pig':
+                gag = '<a:piggy:910962193082765313> Piggy'
             else:
                 gag = 'None'
 
@@ -415,7 +428,7 @@ class Action:
         elif set(database.get_config('domme', member.guild.id)) & set([role.id for role in member.roles]):   # domme status
             def get_status_emojis(member, guild):
                 data = database.get_slave_from_DB(member, guild)[0]
-                return f"{'' if data[6] else '<:chastity:897763218670354442>'}  {'' if data[7] else '<a:muffs:897764112388468747>'}  {'<:ballgag:897915835555921921>' if data[2] in ['kitty', 'puppy'] else ''}  {'' if data[4] else '<:noemoji:897921450118356992>'}"
+                return f"{'' if data[6] else '<:chastity:897763218670354442>'}  {'' if data[7] else '<a:muffs:897764112388468747>'}  {'<:ballgag:897915835555921921>' if data[2] in ['kitty', 'puppy', 'cow', 'pig'] else ''}  {'' if data[4] else '<:noemoji:897921450118356992>'}"
             name = member.nick or member.name
             slaves_list = database.get_slaves(member.id, member.guild.id)
             if not slaves_list:
@@ -601,6 +614,16 @@ class Punishment:
             for _ in range(int(len(self.message.content) / 7) + 1):
                 message = message + choice(puppy_text)
             await self.send_webhook(self.avatar_url, message, '🐶' + self.name, self.channel)
+        elif self.is_gag == 'cow':
+            cow_text = ['Mooo...', 'Moo low ', ' Mooooooo', ' mo mo mooooo', ' ....Mooo', ' MMoooooo']
+            for _ in range(int(len(self.message.content) / 7) + 1):
+                message = message + choice(cow_text)
+            await self.send_webhook(self.avatar_url, message, '🐮' + self.name, self.channel)
+        elif self.is_gag == 'pig':
+            pig_text = ['oink..oink', 'ooink...', ' snort...oink', ' snort-oink', ' squeal', ' squeal-oink', ' grunt-oink', 'oink..squeal',]
+            for _ in range(int(len(self.message.content) / 7) + 1):
+                message = message + choice(pig_text)
+            await self.send_webhook(self.avatar_url, message, '🐷' + self.name, self.channel)
 
     async def is_badword(self):        
         """
@@ -945,6 +968,8 @@ class Femdom(commands.Cog):
                     gag = database.get_slave_from_DB(member.id, ctx.guild.id)[0][2]
                     m = await ctx.reply(embed=embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=(gag == 'kitty')),
                                                                   Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=(gag == 'puppy')),
+                                                                  Button(style=ButtonStyle.blue, label='Cow Gag', emoji='🐮', disabled=(gag == 'cow')),
+                                                                  Button(style=ButtonStyle.blue, label='Pig Gag', emoji='🐷', disabled=(gag == 'pig')),
                                                                   Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))]])
                     try:
                         def check(res):
@@ -956,6 +981,10 @@ class Femdom(commands.Cog):
                             await action.gag('kitty', m, temp=True)
                         elif response.component.label == 'Puppy Gag':
                             await action.gag('puppy', m, temp=True)
+                        elif response.component.label == 'Cow Gag':
+                            await action.gag('cow', m, temp=True)
+                        elif response.component.label == 'Pig Gag':
+                            await action.gag('pig', m, temp=True)
                         else:
                             await action.ungag(m)
                         database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
@@ -963,6 +992,8 @@ class Femdom(commands.Cog):
                         embed = discord.Embed(description=f"{ctx.author.mention} you got only 30 secs to make a choice, I can't wait for long.", color=0xF2A2C0)
                         await m.edit(embed=embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
                                                                Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
+                                                               Button(style=ButtonStyle.blue, label='Cow Gag', emoji='🐮', disabled=True),
+                                                               Button(style=ButtonStyle.blue, label='Pig Gag', emoji='🐷', disabled=True),
                                                                Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
                     return
 
@@ -971,6 +1002,8 @@ class Femdom(commands.Cog):
                 gag = database.get_slave_from_DB(member.id, ctx.guild.id)[0][2]
                 m = await ctx.reply(embed=embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=(gag == 'kitty')),
                                                               Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=(gag == 'puppy')),
+                                                              Button(style=ButtonStyle.blue, label='Cow Gag', emoji='🐮', disabled=(gag == 'cow')),
+                                                              Button(style=ButtonStyle.blue, label='Pig Gag', emoji='🐷', disabled=(gag == 'pig')),
                                                               Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))]])
                 try:
                     def check(res):
@@ -982,12 +1015,18 @@ class Femdom(commands.Cog):
                         await action.gag('kitty', m)
                     elif response.component.label == 'Puppy Gag':
                         await action.gag('puppy', m)
+                    elif response.component.label == 'Cow Gag':
+                        await action.gag('cow', m)
+                    elif response.component.label == 'pig Gag':
+                        await action.gag('pig', m)
                     else:
                         await action.ungag(m)
                 except asyncio.TimeoutError:
                     embed = discord.Embed(description=f"{ctx.author.mention} you got only 30 secs to make a choice, I can't wait for long.", color=0xF2A2C0)
                     await m.edit(embed=embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
                                                            Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
+                                                           Button(style=ButtonStyle.blue, label='Cow Gag', emoji='🐮', disabled=True),
+                                                           Button(style=ButtonStyle.blue, label='Pig Gag', emoji='🐷', disabled=True),
                                                            Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
                 return
 
