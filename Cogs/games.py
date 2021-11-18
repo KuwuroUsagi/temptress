@@ -246,12 +246,12 @@ class Games(commands.Cog):
     #                               color=0xFF2030)
     #         await ctx.send(embed=embed)
 
-    @give.error
-    async def on_give_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.give @mention <amount>`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @give.error
+    # async def on_give_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.give @mention <amount>`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Games(bot))
