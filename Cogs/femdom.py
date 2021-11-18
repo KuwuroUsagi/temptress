@@ -634,7 +634,7 @@ class Punishment:
             with open('Text_files/olaf.txt', 'r') as f:
                 lines = f.read().splitlines()
                 message = choice(lines)
-            await self.send_webhook(self.avatar_url, '<:olaf:910991157360750602>' + message, self.name, self.channel)
+            await self.send_webhook(self.avatar_url, message, self.name, self.channel)
 
     async def is_badword(self):        
         """
