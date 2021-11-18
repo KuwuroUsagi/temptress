@@ -201,13 +201,11 @@ class Action:
         ungags the slave and updates slave DB
         """
         database.update_slaveDB(self.member.id, 'gag', 'off', self.member.guild.id)
-        puppy_kitty_ungag_embed = discord.Embed(title=f'Fun is over…',
+        ungag_embed = discord.Embed(title=f'Fun is over…',
                                                 description=f'{self.author.mention}, converts {self.member.mention} back to a slave.',
                                                 color=0xF2A2C0)
 
-        await message.edit(embed=puppy_kitty_ungag_embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
-                                                                       Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
-                                                                       Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
+        await message.edit(embed=ungag_embed, components=[])
         await self.react('y')
 
     async def add_badword(self, badword_list):
@@ -1017,7 +1015,7 @@ class Femdom(commands.Cog):
                         await action.gag('puppy', m)
                     elif response.component.label == 'Cow Gag':
                         await action.gag('cow', m)
-                    elif response.component.label == 'pig Gag':
+                    elif response.component.label == 'Pig Gag':
                         await action.gag('pig', m)
                     else:
                         await action.ungag(m)
