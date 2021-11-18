@@ -2,6 +2,7 @@ seductress
 Organization
 nekos
 youtube_dl
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

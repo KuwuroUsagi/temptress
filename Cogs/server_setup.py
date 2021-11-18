@@ -31,6 +31,10 @@ class ServerConfig(commands.Cog):
         owner_invite_embed.set_thumbnail(url=self.bot.user.avatar_url)
         owner_invite_embed.set_footer(text=f'created by {alex_wood}', icon_url=alex_wood.avatar_url)
         await guild.owner.send(embed=owner_invite_embed)
+        
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild):
+        database.remove_guild(guild.id)
 
     @commands.command()
     @commands.has_permissions(administrator=True)
@@ -212,6 +216,10 @@ class ServerConfig(commands.Cog):
         NSFW = database.get_config('NSFW', ctx.guild.id)
         chat = database.get_config('chat', ctx.guild.id)
         locker = database.get_config('locker', ctx.guild.id)
+        t_mem = 0
+        
+        for guild in self.bot.guilds:
+            t_mem = t_mem + guild.member_count
 
         if NSFW == [0]:
             NSFW = f"> {ctx.guild.default_role}"
@@ -220,7 +228,7 @@ class ServerConfig(commands.Cog):
 
         if domme != [0]:
             stat_embed = discord.Embed(title='Status',
-                                       description=f"**I am active in {len(self.bot.guilds)} servers.**\n\n"
+                                       description=f"**I am controling {t_mem} members.**\n\n"
                                        f"Domme roles:\n{self.list_roles(domme)}\n"
                                        f"Sub roles:\n{self.list_roles(slave)}\n"
                                        f"Dommes who are strong to lock subs in <#{prison[0]}>:\n{self.list_roles(locker)}\n"

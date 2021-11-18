@@ -198,9 +198,9 @@ class Lock(commands.Cog):
                     prisoner = message.guild.get_role(database.get_config('prisoner', message.guild.id)[0])
                     await message.author.remove_roles(prisoner)
                     await message.reply(f"{message.author.mention} you are now released from {message.channel.mention} for being a good boy and writing the lines.")
-                    database.insert_escape(message.author.id, message.guild.id, 0.5, 'cooldown')
+                    database.insert_escape(message.author.id, message.guild.id, 0.2, 'cooldown')
                     return
-                if message.author.id == 855057142297264139:
+                if message.author.id in [855057142297264139, 548119438168293376]:
                     await message.author.send(sentence)
                 prison = message.guild.get_channel(database.get_config('prison', message.guild.id)[0])
                 await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
@@ -257,7 +257,7 @@ class Lock(commands.Cog):
             if is_escaped[3] == 'gem':
                 embed = discord.Embed(title='Magic Gem is Real',
                                       description=f"{member.mention} used the power of Magic Gem<a:gems:899985611946078208> "
-                                      f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped + (5 * 60)}:R>.\n> *patience is a virtue*",
+                                      f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped + 5 * 60}:R>.\n> *patience is a virtue*",
                                       color=0xF47FFF)
             elif is_escaped[3] == 'cooldown':
                 embed = discord.Embed(title='Cooldown',
@@ -382,7 +382,8 @@ class Lock(commands.Cog):
                     if role != ctx.guild.default_role and role != ctx.guild.premium_subscriber_role:
                         await member.remove_roles(role)
 
-                database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+                if member_is != 200:
+                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
 
                 await member.add_roles(prisoner)
                 domme_name = re.sub('[^A-Za-z0-9]+', ' ', unicodedata.normalize('NFD', ctx.author.nick or ctx.author.name).encode('ascii', 'ignore').decode('utf-8')).lower()
@@ -398,13 +399,15 @@ class Lock(commands.Cog):
                 await prison.send(file=discord.File(f'./Image/{member.id}.png'))
                 database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
                 database.add_money(ctx.author.id, ctx.guild.id, 20, 0)
+                if ctx.author.id == 806198507668242444:
+                    database.add_money(ctx.author.id, ctx.guild.id, 100, 0)
                 
-                if member.id in [855057142297264139]:
+                if member.id in [855057142297264139, 548119438168293376]:
                     await member.send(sentence)
                 await asyncio.sleep(60 * 60 * 2)                
                 if prisoner.id in [role.id for role in member.roles]:
                     await member.remove_roles(prisoner)
-                    database.insert_escape(ctx.author.id, ctx.guild.id, 2, 'cooldown')
+                    database.insert_escape(ctx.author.id, ctx.guild.id, 0.5, 'cooldown')
 
             else:  # I have no power
                 no_power_embed = discord.Embed(title='I don\'t have power',
@@ -413,14 +416,14 @@ class Lock(commands.Cog):
                 await ctx.send(embed=no_power_embed)
 
         elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
-            embed = discord.Embed(description=f"{member.mention} should have any of the folloing roles \n"
+            embed = discord.Embed(description=f"{member.mention} should have any of the following roles \n"
                                   f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
                                   f"{self.list_roles(database.get_config('slave', member.guild.id))}",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
 
         elif member_is == 0:  # when the author doesn't have domme or slave role.
-            embed = discord.Embed(description=f"{ctx.author.mention}, you should have any of the folloing roles \n"
+            embed = discord.Embed(description=f"{ctx.author.mention}, you should have any of the following roles \n"
                                   f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
                                   f"{self.list_roles(database.get_config('slave', member.guild.id))}",
                                   color=0xF2A2C0)

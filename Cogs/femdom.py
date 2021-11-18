@@ -153,10 +153,9 @@ class Action:
         removes slave from ownership from DB
         """
         database.disown_a_slave(self.member.id, self.member.guild.id)
-        disown_embed = discord.Embed(title=f'End of the story',
-                                     description=f' The {self.author.mention} decided to set you free, {self.member.mention}, she became '
-                                                 f'bored of you and now you are useless to her! You are unworthy to have an '
-                                                 f'owner, now you shall stay unowned!!',
+        disown_embed = discord.Embed(title=f'End of the Journey',
+                                     description=f'The {self.author.mention} has decided to set you free, {self.member.mention}; '
+                                                 f'therefore, your shared journey has come to an end. Hope you both had fun, but it is now time to part ways',
                                      color=0xF2A2C0)
         await self.ctx.channel.send(embed=disown_embed)
         await self.react('y')
@@ -172,17 +171,32 @@ class Action:
                                             description=f"Lets hear you meow! {self.author.mention} convert {self.member.mention} into a kitty{' for next 10 minutes.' if temp else '.'}",
                                             color=0xF2A2C0)
 
-            await message.edit(embed=kitty_gag_embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
-                                                                   Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
-                                                                   Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
+            await message.edit(embed=kitty_gag_embed, components=[])
 
         elif type == 'puppy':
             puppy_gag_embed = discord.Embed(title="Behave like a good puppy",
                                             description=f"Lets hear you bark! {self.author.mention} convert {self.member.mention} into a puppy{' for next 10 minutes.' if temp else '.'}",
                                             color=0xF2A2C0)
-            await message.edit(embed=puppy_gag_embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
-                                                                   Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
-                                                                   Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
+            await message.edit(embed=puppy_gag_embed, components=[])
+        
+        elif type == 'cow':
+            cow_gag_embed = discord.Embed(title="Behave like a good cow and give milk",
+                                            description=f"Lets hear you Mooo! {self.author.mention} convert {self.member.mention} into a cow{' for next 10 minutes.' if temp else '.'}",
+                                            color=0xF2A2C0)
+            await message.edit(embed=cow_gag_embed, components=[])
+            
+        elif type == 'pig':
+            pig_gag_embed = discord.Embed(title="Behave like a good piggy",
+                                            description=f"Lets hear you oink! {self.author.mention} convert {self.member.mention} into a piggy{' for next 10 minutes.' if temp else '.'}",
+                                            color=0xF2A2C0)
+            await message.edit(embed=pig_gag_embed, components=[])
+        
+        elif type == 'olaf':
+            pig_gag_embed = discord.Embed(title="Hi I'm Olaf",
+                                            description=f"{self.author.mention} convert {self.member.mention} into a Olaf with her magical powers{' for next 10 minutes.' if temp else '.'}",
+                                            color=0xF2A2C0)
+            await message.edit(embed=pig_gag_embed, components=[])
+        
         await self.react('y')
         if temp:
             await asyncio.sleep(10 * 60)
@@ -193,13 +207,11 @@ class Action:
         ungags the slave and updates slave DB
         """
         database.update_slaveDB(self.member.id, 'gag', 'off', self.member.guild.id)
-        puppy_kitty_ungag_embed = discord.Embed(title=f'Fun is over…',
+        ungag_embed = discord.Embed(title=f'Fun is over…',
                                                 description=f'{self.author.mention}, converts {self.member.mention} back to a slave.',
                                                 color=0xF2A2C0)
 
-        await message.edit(embed=puppy_kitty_ungag_embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
-                                                                       Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
-                                                                       Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
+        await message.edit(embed=ungag_embed, components=[])
         await self.react('y')
 
     async def add_badword(self, badword_list):
@@ -376,6 +388,12 @@ class Action:
                 gag = '<a:kitty:897769441796964372> Kitty'
             elif gag == 'puppy':
                 gag = '<:puppy:897769322242510850> Puppy'
+            elif gag == 'cow':
+                gag = '<:cow:910962107665748079> Cow'
+            elif gag == 'pig':
+                gag = '<a:piggy:910962193082765313> Piggy'
+            elif gag == 'olaf':
+                gag = '<:olaf:910991157360750602> Olaf'
             else:
                 gag = 'None'
 
@@ -416,7 +434,7 @@ class Action:
         elif set(database.get_config('domme', member.guild.id)) & set([role.id for role in member.roles]):   # domme status
             def get_status_emojis(member, guild):
                 data = database.get_slave_from_DB(member, guild)[0]
-                return f"{'' if data[6] else '<:chastity:897763218670354442>'}  {'' if data[7] else '<a:muffs:897764112388468747>'}  {'<:ballgag:897915835555921921>' if data[2] in ['kitty', 'puppy'] else ''}  {'' if data[4] else '<:noemoji:897921450118356992>'}"
+                return f"{'' if data[6] else '<:chastity:897763218670354442>'}  {'' if data[7] else '<a:muffs:897764112388468747>'}  {'<:ballgag:897915835555921921>' if data[2] in ['kitty', 'puppy', 'cow', 'pig', 'olaf'] else ''}  {'' if data[4] else '<:noemoji:897921450118356992>'}"
             name = member.nick or member.name
             slaves_list = database.get_slaves(member.id, member.guild.id)
             if not slaves_list:
@@ -449,7 +467,7 @@ class Action:
                 embed = discord.Embed(title='I am not ready yet', description='ask Admins to run the command **`s.setup`**', color=0xF2A2C0)
             else:
                 embed = discord.Embed(title='I don\'t know you.',
-                                      description=f"You need any of the folloing roles:\n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
+                                      description=f"You need any of the following roles:\n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
                                       color=0xF2A2C0)
 
         await self.ctx.channel.send(embed=embed)
@@ -602,6 +620,21 @@ class Punishment:
             for _ in range(int(len(self.message.content) / 7) + 1):
                 message = message + choice(puppy_text)
             await self.send_webhook(self.avatar_url, message, '🐶' + self.name, self.channel)
+        elif self.is_gag == 'cow':
+            cow_text = ['Mooo...', 'Moo low ', ' Mooooooo', ' mo mo mooooo', ' ....Mooo', ' MMoooooo']
+            for _ in range(int(len(self.message.content) / 7) + 1):
+                message = message + choice(cow_text)
+            await self.send_webhook(self.avatar_url, message, '🐮' + self.name, self.channel)
+        elif self.is_gag == 'pig':
+            pig_text = ['oink..oink', 'ooink...', ' snort...oink', ' snort-oink', ' squeal', ' squeal-oink', ' grunt-oink', 'oink..squeal',]
+            for _ in range(int(len(self.message.content) / 7) + 1):
+                message = message + choice(pig_text)
+            await self.send_webhook(self.avatar_url, message, '🐷' + self.name, self.channel)
+        elif self.is_gag == 'olaf':
+            with open('Text_files/olaf.txt', 'r') as f:
+                lines = f.read().splitlines()
+                message = choice(lines)
+            await self.send_webhook(self.avatar_url, '<:olaf:910991157360750602>' + message, self.name, self.channel)
 
     async def is_badword(self):        
         """
@@ -619,7 +652,11 @@ class Punishment:
                                       color=0xF2A2C0)
                 await self.channel.send(embed=embed)
                 owner = self.author.guild.get_member(database.get_owner(self.author.id, self.author.guild.id))
-                await owner.send(f"{self.author.mention} is gagged in the server **{self.author.guild.name}** because of our policy **Gag the brats** ")
+                if owner is not None:
+                    await owner.send(f"{self.author.mention} is gagged in the server **{self.author.guild.name}** because of our policy **Gag the brats** ")
+                else:
+                    await asyncio.sleep(30 * 60)
+                    database.update_slaveDB(self.author.id, 'gag', 'off', self.author.guild.id)
             else:
                 database.update_slaveDB(self.author.id, 'life', life-1, self.author.guild.id)
                 embed = discord.Embed(title="Nope",
@@ -942,7 +979,10 @@ class Femdom(commands.Cog):
                     gag = database.get_slave_from_DB(member.id, ctx.guild.id)[0][2]
                     m = await ctx.reply(embed=embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=(gag == 'kitty')),
                                                                   Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=(gag == 'puppy')),
-                                                                  Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))]])
+                                                                  Button(style=ButtonStyle.blue, label='Cow Gag', emoji='🐮', disabled=(gag == 'cow')),
+                                                                  Button(style=ButtonStyle.blue, label='Pig Gag', emoji='🐷', disabled=(gag == 'pig')),
+                                                                  Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))],
+                                                                 [Button(style=ButtonStyle.blue, label='Olaf Gag', disabled=(gag == 'olaf')),]])
                     try:
                         def check(res):
                             return ctx.author == res.user and res.channel == ctx.channel
@@ -953,14 +993,18 @@ class Femdom(commands.Cog):
                             await action.gag('kitty', m, temp=True)
                         elif response.component.label == 'Puppy Gag':
                             await action.gag('puppy', m, temp=True)
+                        elif response.component.label == 'Cow Gag':
+                            await action.gag('cow', m, temp=True)
+                        elif response.component.label == 'Pig Gag':
+                            await action.gag('pig', m, temp=True)
+                        elif response.component.label == 'Olaf Gag':
+                            await action.gag('olaf', m, temp=True)
                         else:
                             await action.ungag(m)
                         database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
                     except asyncio.TimeoutError:
                         embed = discord.Embed(description=f"{ctx.author.mention} you got only 30 secs to make a choice, I can't wait for long.", color=0xF2A2C0)
-                        await m.edit(embed=embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
-                                                               Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
-                                                               Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
+                        await m.edit(embed=embed, components=[])
                     return
 
             elif member_is == 200:  # Domme kitty gag on Owned slave
@@ -968,7 +1012,10 @@ class Femdom(commands.Cog):
                 gag = database.get_slave_from_DB(member.id, ctx.guild.id)[0][2]
                 m = await ctx.reply(embed=embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=(gag == 'kitty')),
                                                               Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=(gag == 'puppy')),
-                                                              Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))]])
+                                                              Button(style=ButtonStyle.blue, label='Cow Gag', emoji='🐮', disabled=(gag == 'cow')),
+                                                              Button(style=ButtonStyle.blue, label='Pig Gag', emoji='🐷', disabled=(gag == 'pig')),
+                                                              Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))],
+                                                             [Button(style=ButtonStyle.blue, label='Olaf Gag', disabled=(gag == 'olaf')),]])
                 try:
                     def check(res):
                         return ctx.author == res.user and res.channel == ctx.channel
@@ -979,13 +1026,17 @@ class Femdom(commands.Cog):
                         await action.gag('kitty', m)
                     elif response.component.label == 'Puppy Gag':
                         await action.gag('puppy', m)
+                    elif response.component.label == 'Cow Gag':
+                        await action.gag('cow', m)
+                    elif response.component.label == 'Pig Gag':
+                        await action.gag('pig', m)
+                    elif response.component.label == 'Olaf Gag':
+                        await action.gag('olaf', m)
                     else:
                         await action.ungag(m)
                 except asyncio.TimeoutError:
                     embed = discord.Embed(description=f"{ctx.author.mention} you got only 30 secs to make a choice, I can't wait for long.", color=0xF2A2C0)
-                    await m.edit(embed=embed, components=[[Button(style=ButtonStyle.blue, label='Kitty Gag', emoji='🐱', disabled=True),
-                                                           Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=True),
-                                                           Button(style=ButtonStyle.red, label='Ungag', disabled=True)]])
+                    await m.edit(embed=embed, components=[])
                 return
 
             elif member_is > 300:  # Domme gag on other domme's owned slave
@@ -996,7 +1047,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave kitty gag on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can gag when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\n I need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\n I need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave kitty gag on Domme
@@ -1061,10 +1112,17 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
 
             elif member_is == 201:  # Domme addword on Free slave
-                embed = discord.Embed(title='Nah',
-                                      description=f"{ctx.author.mention}, you can't do such a thing. {member.mention} is a free slave!"
-                                                  f" the sub must be owned by you.",
-                                      color=0xF2A2C0)
+                gem = database.get_money(ctx.author.id, ctx.guild.id)[3]
+                if gem > 0:
+                    words = words.split(',')
+                    await action.add_badword(words)
+                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+                    return
+                else:
+                    embed = discord.Embed(title='No Gems',
+                                        description=f"{ctx.author.mention}, you don't have gems to add badword Because {member.mention} is a free slave!"
+                                                    f" or the sub must be owned by you.",
+                                        color=0xF2A2C0)
 
             elif member_is == 200:  # Domme adding badword on Owned slave
                 words = words.split(',')
@@ -1079,7 +1137,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave adding badword on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can add badword when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave adding badword for Domme
@@ -1143,10 +1201,9 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
 
             elif member_is == 201:  # Domme ungaging on Free slave
-                embed = discord.Embed(title='Nah',
-                                      description=f"{ctx.author.mention}, you can't do such a thing. {member.mention} is a free slave!"
-                                                  f" the sub must be owned by you.",
-                                      color=0xF2A2C0)
+                words = words.split(',')
+                await action.remove_badword(words)
+                return
 
             elif member_is == 200:  # Domme removing badword on Owned slave
                 words = words.split(',')
@@ -1161,7 +1218,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave removing badword on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can remove badword when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave removing badword on Domme
@@ -1226,10 +1283,8 @@ class Femdom(commands.Cog):
                                       color=0xF2A2C0)
 
             elif member_is == 201:  # Domme clearing badword on Free slave
-                embed = discord.Embed(title='Nah',
-                                      description=f"{ctx.author.mention}, you can't do such a thing. {member.mention} is a free slave!"
-                                                  f" the sub must be owned by you.",
-                                      color=0xF2A2C0)
+                await action.clear_badword()
+                return
 
             elif member_is == 200:  # Domme clearing badwords on Owned slave
                 await action.clear_badword()
@@ -1243,7 +1298,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave clearing badwords on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can remove badword when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave clearing badword of Domme
@@ -1254,9 +1309,8 @@ class Femdom(commands.Cog):
                                       color=0xFF2030)
 
             elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
-                embed = discord.Embed(
-                    description=f"{member.mention} should have any of the following roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
-                    color=0xF2A2C0)
+                embed = discord.Embed(description=f"{member.mention} should have any of the following roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
+                                      color=0xF2A2C0)
 
             elif member_is == 0:  # when the author doesn't have domme or slave role.
                 embed = discord.Embed(
@@ -1319,7 +1373,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave nickname on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can change name when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave nickname on Domme
@@ -1469,7 +1523,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave emoji allow on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can control emojis when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave emoji allow on Domme
@@ -1553,7 +1607,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave tie on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can tie a slave to a channel when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave tie on Domme
@@ -1635,7 +1689,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave untie on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can untie a slave from a channel when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Lilly, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave untie on Domme
