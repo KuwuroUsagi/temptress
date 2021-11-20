@@ -634,7 +634,7 @@ class Punishment:
             with open('Text_files/olaf.txt', 'r') as f:
                 lines = f.read().splitlines()
                 message = choice(lines)
-            await self.send_webhook(self.avatar_url, '<:olaf:910991157360750602>' + message, self.name, self.channel)
+            await self.send_webhook('https://cdn.discordapp.com/attachments/896487377038610472/911027743167238174/unknown.png', message, self.name, self.channel)
 
     async def is_badword(self):        
         """
@@ -646,9 +646,9 @@ class Punishment:
             life = database.get_slave_from_DB(self.author.id, self.author.guild.id)[0][8]
             if life == 1:
                 database.update_slaveDB(self.author.id, 'life', 10, self.author.guild.id)
-                database.update_slaveDB(self.author.id, 'gag', 'kitty', self.author.guild.id)
+                database.update_slaveDB(self.author.id, 'gag', 'olaf', self.author.guild.id)
                 embed = discord.Embed(title='Gag the brats',
-                                      description=f"{self.author.mention} your are a bad kitty, you are gagged till your owner ungags you.",
+                                      description=f"{self.author.mention} you are gagged till your owner ungags you.",
                                       color=0xF2A2C0)
                 await self.channel.send(embed=embed)
                 owner = self.author.guild.get_member(database.get_owner(self.author.id, self.author.guild.id))
