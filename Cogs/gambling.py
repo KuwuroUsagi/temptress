@@ -308,40 +308,40 @@ class Gambling(commands.Cog):
     #                                                                            #
     ##############################################################################
 
-    # @coinflip.error
-    # async def on_coinflip_error(self, ctx, error):
-    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-    #         embed = discord.Embed(description=f"Usage:\n**`s.coinflip <head|tail> <bet>`**",
-    #                               color=0xFF2030)
-    #         await ctx.send(embed=embed)
-    #     elif isinstance(error, commands.errors.CommandOnCooldown):
-    #         embed = discord.Embed(title="Coinflip Cooldown is 30 minutes",
-    #                               description="{} you need to wait {:,.1f} minutes to flip coin again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
-    #                               color=0xFF2030)
-    #         await ctx.send(embed=embed)
+    @coinflip.error
+    async def on_coinflip_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+            embed = discord.Embed(description=f"Usage:\n**`s.coinflip <head|tail> <bet>`**",
+                                  color=0xFF2030)
+            await ctx.send(embed=embed)
+        elif isinstance(error, commands.errors.CommandOnCooldown):
+            embed = discord.Embed(title="Coinflip Cooldown is 30 minutes",
+                                  description="{} you need to wait {:,.1f} minutes to flip coin again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
+                                  color=0xFF2030)
+            await ctx.send(embed=embed)
 
-    # @subrace.error
-    # async def on_subrace_error(self, ctx, error):
-    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-    #         embed = discord.Embed(description=f"Usage:\n**`s.subrace @domme <bet amount>`**",
-    #                               color=0xFF2030)
-    #         await ctx.send(embed=embed)
-    #     elif isinstance(error, commands.errors.CommandOnCooldown):
-    #         embed = discord.Embed(title="Subrace Cooldown is 4 hours",
-    #                               description="{} you need to wait {:,.1f} minutes to flip coin again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
-    #                               color=0xFF2030)
-    #         await ctx.send(embed=embed)
+    @rockpaper.error
+    async def on_rps_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+            embed = discord.Embed(description=f"Usage:\n**`s.rps @mention <bet amount>`**",
+                                  color=0xFF2030)
+            await ctx.send(embed=embed)
+        elif isinstance(error, commands.errors.CommandOnCooldown):
+            embed = discord.Embed(title="rps Cooldown is 4 hours",
+                                  description="{} you need to wait {:,.1f} minutes to flip coin again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
+                                  color=0xFF2030)
+            await ctx.send(embed=embed)
 
-    # @roulete.error
-    # async def on_roulete_error(self, ctx, error):
-    #     if isinstance(error, commands.errors.CommandOnCooldown):
-    #         embed = discord.Embed(title="Cooldown",
-    #                               description="{} you need to wait {:,.1f} minutes to play roulete again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
-    #                               color=0xFF2030)
-    #     elif isinstance(error, commands.BadArgument) or isinstance(error, commands.MissingRequiredArgument):
-    #         embed = discord.Embed(description=f"Usage:\n**`h&roulete <bet amount> <space>`**",
-    #                               color=0xFF2030)
-    #     await ctx.send(embed=embed)
+    @roulete.error
+    async def on_roulete_error(self, ctx, error):
+        if isinstance(error, commands.errors.CommandOnCooldown):
+            embed = discord.Embed(title="Cooldown",
+                                  description="{} you need to wait {:,.1f} minutes to play roulete again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
+                                  color=0xFF2030)
+        elif isinstance(error, commands.BadArgument) or isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(description=f"Usage:\n**`h&roulete <bet amount> <space>`**",
+                                  color=0xFF2030)
+        await ctx.send(embed=embed)
 
 
 def setup(bot):
