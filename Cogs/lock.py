@@ -118,6 +118,29 @@ def make_image(sentence, memberid):
     img.save(f'./Image/{memberid}.png')
     return new_string
 
+def deEmojify(text):
+    "function to remove emojis from text"
+    regrex_pattern = re.compile("["
+        u"\U0001F600-\U0001F64F"  # emoticons
+        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+        u"\U0001F680-\U0001F6FF"  # transport & map symbols
+        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+        u"\U00002500-\U00002BEF"  # chinese char
+        u"\U00002702-\U000027B0"
+        u"\U00002702-\U000027B0"
+        u"\U000024C2-\U0001F251"
+        u"\U0001f926-\U0001f937"
+        u"\U00010000-\U0010ffff"
+        u"\u2640-\u2642" 
+        u"\u2600-\u2B55"
+        u"\u200d"
+        u"\u23cf"
+        u"\u23e9"
+        u"\u231a"
+        u"\ufe0f"  # dingbats
+        u"\u3030"
+                      "]+", re.UNICODE)
+    return regrex_pattern.sub(r'',text)
 
 class Lock(commands.Cog):
     def __init__(self, bot):
@@ -335,7 +358,7 @@ class Lock(commands.Cog):
                                                             Button(style=ButtonStyle.blue, label='Custom Lines', emoji='✍️', disabled=True)]])
                     try:
                         response = await self.bot.wait_for('message', timeout=120, check=check_m)
-                        sentence = response.content
+                        sentence = deEmojify(response.content)
                         if len(sentence) > 125:
                             embed = discord.Embed(title='Not more than 120 characters',
                                                     description=f'{ctx.author.mention} failed to lock {member.mention}', color=0xFF2030)
