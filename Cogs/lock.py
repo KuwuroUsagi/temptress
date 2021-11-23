@@ -280,7 +280,7 @@ class Lock(commands.Cog):
             if is_escaped[3] == 'gem':
                 embed = discord.Embed(title='Magic Gem is Real',
                                       description=f"{member.mention} used the power of Magic Gem<a:gems:899985611946078208> "
-                                      f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped + 5 * 60}:R>.\n> *patience is a virtue*",
+                                      f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped[2] + 60}:R>.\n> *patience is a virtue*",
                                       color=0xF47FFF)
             elif is_escaped[3] == 'cooldown':
                 embed = discord.Embed(title='Cooldown',
@@ -358,8 +358,15 @@ class Lock(commands.Cog):
                                                             Button(style=ButtonStyle.blue, label='Custom Lines', emoji='✍️', disabled=True)]])
                     try:
                         response = await self.bot.wait_for('message', timeout=120, check=check_m)
-                        sentence = deEmojify(response.content)
-                        if len(sentence) > 125:
+                        sentence = re.sub('[^A-Za-z0-9]+', ' ', unicodedata.normalize('NFD', response.content).encode('ascii', 'ignore').decode('utf-8')).lower()
+                        sentence = deEmojify(sentence)
+                        test_sen = sentence
+                        if test_sen.replace(' ','') == '':
+                            embed = discord.Embed(title='invalid sentance',
+                                                    description=f'{ctx.author.mention} failed to lock {member.mention}', color=0xFF2030)
+                            await m.edit(embed=embed)
+                            return
+                        elif len(sentence) > 125:
                             embed = discord.Embed(title='Not more than 120 characters',
                                                     description=f'{ctx.author.mention} failed to lock {member.mention}', color=0xFF2030)
                             await m.edit(embed=embed)
