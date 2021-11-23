@@ -1,7 +1,9 @@
 #!/bin/python3
 import psycopg2
+import pickle
 from os import environ
 from time import time
+from random import randint
 
 
 con = psycopg2.connect(environ['DATABASE_URL'])
@@ -53,6 +55,11 @@ with con:
     cur.execute("""CREATE TABLE IF NOT EXISTS Botban
         (memberid bigint, timeint bigint, reason text)""")
 
+    cur.execute("""CREATE TABLE IF NOT EXISTS ChessData
+        (memberid bigint, guildid bigint, wincount int, losecount int, drawcount int, point int, playingwith bigint)""")
+    
+    cur.execute("""CREATE TABLE IF NOT EXISTS ChessMatch
+        (player bigint, guildid bigint, game bytea, endtime bigint)""")
 
 ##############################################################################
 #                                                                            #
@@ -468,3 +475,72 @@ def is_botban(member):
         return data
     except IndexError:
         return None
+
+
+##############################################################################
+#                                                                            #
+#                                                                            #
+#                                 CHESS                                      #
+#                                                                            #
+#                                                                            #
+##############################################################################
+
+
+def insert_chessdata(member, guild):
+    with con:
+        cur.execute("INSERT INTO ChessData (memberid, guildid, wincount, losecount, drawcount, point, playingwith) VALUES (%s, %s, %s, %s, %s, %s, %s)", (member, guild, 0, 0, 0, 0, 0))
+    return (member, guild, 0, 0, 0, 0, 0)
+
+def get_chessdata(member, guild):
+    cur.execute("SELECT * FROM ChessData WHERE memberid = %s AND guildid = %s", (member, guild))
+    try:
+        data = cur.fetchall()[0]
+        return data
+    except IndexError:
+        return insert_chessdata(member, guild)
+
+def update_chessdata(member, guild, result, playingwith):
+    get_chessdata(member, guild)
+    wincount = 0
+    losecount = 0
+    drawcount = 0
+    point = 0
+    if result == 1:
+        wincount = 1
+        point = randint(75,100)
+        playingwith = 0
+    elif result == -1:
+        losecount = 1
+        point = -1 * randint(75,100)
+        playingwith = 0
+    elif result == 0:
+        drawcount = 1
+        point = randint(25,50)
+        playingwith = 0
+        
+    with con:
+        cur.execute("UPDATE ChessData SET wincount = wincount + %s, losecount = losecount + %s, drawcount = drawcount + %s, point = point + %s, playingwith = %s WHERE memberid = %s AND guildid = %s", (wincount, losecount, drawcount, point, playingwith, member, guild))
+
+def dump_chess_game(player, guild, game, endtime):
+    with con:
+        cur.execute("INSERT INTO ChessMatch (player, guildid, game, endtime) VALUES (%s, %s, %s, %s)", (player, guild, game, endtime))
+
+def load_chess_game(player, guild):
+    cur.execute("SELECT * FROM ChessMatch WHERE player = %s AND guildid = %s", (player, guild))
+    try:
+        data = cur.fetchall()[0]
+        return data
+    except IndexError:
+        return
+
+def update_chess_game(player, guild, game, newplayer):
+    with con:
+        cur.execute("UPDATE ChessMatch SET player = %s, game = %s WHERE player = %s AND guildid = %s", (newplayer, game, player, guild))
+
+def delete_chess_game(player, guild):
+    with con:
+        cur.execute("DELETE FROM ChessMatch WHERE player = %s AND guildid = %s", (player, guild))
+
+def clear_chess_game():
+    with con:
+        cur.execute("DELETE FROM ChessMatch WHERE endtime < %s", (int(str(time())[:10]),))

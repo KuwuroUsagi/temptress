@@ -9,6 +9,19 @@ from discord.ext import commands
 class Games(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        
+    def ban_check(self, author, member):
+        ban_data = database.is_botban(author.id)
+        if ban_data is not None:
+            embed = discord.Embed(title='Bot ban',
+                                  description=f"{author.mention} you are banned from using {self.bot.user.mention} till <t:{ban_data[1]}:F>",
+                                  color=0xF2A2C0)
+            return embed
+        elif database.is_botban(member.id) is not None:
+            embed = discord.Embed(title='Bot ban',
+                                  description=f"{member.mention} is banned from using {self.bot.user.mention}.",
+                                  color=0xF2A2C0)
+            return embed
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -147,18 +160,9 @@ class Games(commands.Cog):
         if ctx.author.bot:
             return
 
-        ban_data = database.is_botban(ctx.author.id)
-        if ban_data is not None:
-            embed = discord.Embed(title='Bot ban',
-                                  description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{ban_data[1]}:F>",
-                                  color=0xF2A2C0)
-            await ctx.send(embed=embed)
-            return
-        elif database.is_botban(member.id) is not None:
-            embed = discord.Embed(title='Bot ban',
-                                  description=f"{member.mention} is banned from using {self.bot.user.mention}.",
-                                  color=0xF2A2C0)
-            await ctx.send(embed=embed)
+        ban_embed = self.ban_check(ctx.author, member)
+        if ban_embed is not None:
+            await ctx.send(embed=ban_embed)
             return
         
         coin = database.get_money(ctx.author.id, ctx.guild.id)[2]
@@ -179,18 +183,9 @@ class Games(commands.Cog):
         if ctx.author.bot:
             return
         
-        ban_data = database.is_botban(ctx.author.id)
-        if ban_data is not None:
-            embed = discord.Embed(title='Bot ban',
-                                  description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{ban_data[1]}:F>",
-                                  color=0xF2A2C0)
-            await ctx.send(embed=embed)
-            return
-        elif database.is_botban(member.id) is not None:
-            embed = discord.Embed(title='Bot ban',
-                                  description=f"{member.mention} is banned from using {self.bot.user.mention}.",
-                                  color=0xF2A2C0)
-            await ctx.send(embed=embed)
+        ban_embed = self.ban_check(ctx.author, member)
+        if ban_embed is not None:
+            await ctx.send(embed=ban_embed)
             return
         
         if set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in member.roles]):
