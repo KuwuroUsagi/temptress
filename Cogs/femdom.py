@@ -430,6 +430,12 @@ class Action:
             if lines_count > 0:
                 embed.add_field(name="Lines I wrote", value=f"> {lines_count} lines written <#{database.get_config('prison', member.guild.id)[0]}>", inline=False)
             embed.set_thumbnail(url=member.avatar_url)
+            
+            #* chess status
+            chess_data = database.get_chessdata(member.id, member.guild.id)
+            total_games = chess_data[2] + chess_data[3] + chess_data[4]
+            if total_games > 0:
+                embed.add_field(name='Chess', value=f"> **Points : {chess_data[5]}**\n> Won : {chess_data[2]}\n> Lost : {chess_data[3]}\n> Draw : {chess_data[4]}\n> total game : {total_games}\n**winning chance : {int(chess_data[2]/total_games *100)}%**", inline=False)
 
         elif set(database.get_config('domme', member.guild.id)) & set([role.id for role in member.roles]):   # domme status
             def get_status_emojis(member, guild):
@@ -461,6 +467,11 @@ class Action:
                 embed.add_field(name='I Simp for', value=simps, inline=False)
 
             embed.set_thumbnail(url=member.avatar_url)
+            #* chess status
+            chess_data = database.get_chessdata(member.id, member.guild.id)
+            total_games = chess_data[2] + chess_data[3] + chess_data[4]
+            if total_games > 0:
+                embed.add_field(name='Chess', value=f"> **Points : {chess_data[5]}**\n> Won : {chess_data[2]}\n> Lost : {chess_data[3]}\n> Draw : {chess_data[4]}\n> total game : {total_games}\n**winning chance : {int(chess_data[2]/total_games *100)}%**", inline=False)
 
         else:
             if database.get_config('domme', member.guild.id) == [0]:
@@ -563,6 +574,45 @@ class Action:
                         page_number += 1
                 await box.edit(embed=embed)
 
+        elif type == 'chess':
+            data = database.get_chess_leaderboard(self.ctx.guild.id)
+
+            def page(lb_list, page, size):
+                value = ''
+                try:
+                    for x in range(((page - 1) * size), ((page - 1) * size) + size):
+                        value = value + f"> <@{lb_list[x][0]}> ({lb_list[x][1]})\n"
+                    embed = discord.Embed(title="Leaderboard • Chess", description=value, color=0xF2A2C0)
+                except IndexError:
+                    embed = discord.Embed(title="Leaderboard • Chess", description=value, color=0xF2A2C0)
+
+                embed.set_footer(text=f"On page {page}/{int(len(lb_list) / size) + (len(lb_list) % size > 0) + 1}")
+                embed.set_thumbnail(url=self.ctx.guild.icon_url)
+                return embed
+
+            embed = page(data, 1, size)
+            box = await self.ctx.channel.send(embed=embed)
+            await box.add_reaction('⏪')
+            await box.add_reaction('⏩')
+            while True:
+                try:
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
+                    await box.remove_reaction(reaction, user)
+                except asyncio.TimeoutError:
+                    break
+                if str(reaction) == '⏪':
+                    if page_number == 1:
+                        pass
+                    else:
+                        embed = page(data, page_number - 1, size)
+                        page_number -= 1
+                if str(reaction) == '⏩':
+                    if page_number == int(len(data) / size) + (len(data) % size > 0) + 1:
+                        pass
+                    else:
+                        embed = page(data, page_number + 1, size)
+                        page_number += 1
+                await box.edit(embed=embed)
 
 class Punishment:
     def __init__(self, ctx):
@@ -1785,8 +1835,8 @@ class Femdom(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        if lb_type.lower() not in ['cash', 'line']:
-            embed = discord.Embed(tite="wrong options", description="I got only few options\n> **`s.lb cash`**\n> **`s.lb line`**", color=0xFF2030)
+        if lb_type.lower() not in ['cash', 'line', 'chess']:
+            embed = discord.Embed(tite="wrong options", description="I got only few options\n> **`s.lb cash`**\n> **`s.lb line`**\n> **`s.lb chess`**", color=0xFF2030)
             await ctx.channel.send(embed=embed)
             return
 

@@ -448,6 +448,11 @@ def get_money_leaderboard(guild):
     data = cur.fetchall()
     return data
 
+def get_chess_leaderboard(guild):
+    cur.execute("SELECT memberid, point FROM ChessData WHERE guildid = %s ORDER BY point DESC", (guild,))
+    data = cur.fetchall()
+    return data
+
 ##############################################################################
 #                                                                            #
 #                                                                            #
