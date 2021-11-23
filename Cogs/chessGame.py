@@ -276,7 +276,12 @@ class Chess(commands.Cog):
             database.delete_chess_game(ctx.author.id, ctx.guild.id)
             database.delete_chess_game(playing_with, ctx.guild.id)
 
-
+    @chess.error
+    async def on_chess_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+            embed = discord.Embed(description=f"Usage:\n**`s.chess @mention`**",
+                                  color=0xFF2030)
+            await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Chess(bot))
