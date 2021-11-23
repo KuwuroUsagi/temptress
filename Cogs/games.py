@@ -160,6 +160,12 @@ class Games(commands.Cog):
         if ctx.author.bot:
             return
 
+        elif member.bot:  # when mentioned member is bot
+            embed = discord.Embed(description=f"{member.mention} is a bot not a Person!",
+                                  color=0xF2A2C0)
+            await ctx.send(embed=embed)
+            return
+        
         ban_embed = self.ban_check(ctx.author, member)
         if ban_embed is not None:
             await ctx.send(embed=ban_embed)
@@ -181,6 +187,12 @@ class Games(commands.Cog):
     @commands.guild_only()
     async def worship(self, ctx, member: discord.Member):
         if ctx.author.bot:
+            return
+        
+        elif member.bot:  # when mentioned member is bot
+            embed = discord.Embed(description=f"{member.mention} is a bot not a Person!",
+                                  color=0xF2A2C0)
+            await ctx.send(embed=embed)
             return
         
         ban_embed = self.ban_check(ctx.author, member)
@@ -218,6 +230,29 @@ class Games(commands.Cog):
             embed = discord.Embed(description=f"You can only simp/worship members with following roles.\n{roles[:-2]}", color=0xF2A2C0)
             await ctx.send(embed=embed)
 
+    @commands.command()
+    @commands.guild_only()
+    async def bal(self, ctx, member: discord.Member):
+        if ctx.author.bot:
+            return
+        
+        member = member or ctx.author
+        ban_embed = self.ban_check(ctx.author, member)
+        if ban_embed is not None:
+            await ctx.send(embed=ban_embed)
+            return
+
+        elif member.bot:  # when mentioned member is bot
+            embed = discord.Embed(description=f"{member.mention} is a bot not a Person!",
+                                  color=0xF2A2C0)
+            await ctx.send(embed=embed)
+            
+        else:
+            money = database.get_money(member.id, member.guild.id)
+            embed = discord.Embed(title="Cash",
+                                  description=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:899985611946078208> {money[3]}",
+                                  color=0xF2A2C0)
+            await ctx.send(embed)
     ##############################################################################
     #                                                                            #
     #                                                                            #
@@ -226,27 +261,27 @@ class Games(commands.Cog):
     #                                                                            #
     ##############################################################################
 
-    @ruin.error
-    async def on_ruin_error(self, ctx, error):
-        if isinstance(error, commands.errors.CommandOnCooldown):
-            embed = discord.Embed(title="Ruin Cooldown is 1h",
-                                  description="{} you need to wait {:,.1f} minutes to ruin the game again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
-                                  color=0xFF2030)
-        await ctx.send(embed=embed)
+    # @ruin.error
+    # async def on_ruin_error(self, ctx, error):
+    #     if isinstance(error, commands.errors.CommandOnCooldown):
+    #         embed = discord.Embed(title="Ruin Cooldown is 1h",
+    #                               description="{} you need to wait {:,.1f} minutes to ruin the game again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
+    #                               color=0xFF2030)
+    #     await ctx.send(embed=embed)
 
-    @worship.error
-    async def on_worship_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.worship @mention`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @worship.error
+    # async def on_worship_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.worship @mention`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
-    @give.error
-    async def on_give_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.give @mention <amount>`**",
-                                  color=0xFF2030)
-            await ctx.send(embed=embed)
+    # @give.error
+    # async def on_give_error(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
+    #         embed = discord.Embed(description=f"Usage:\n**`s.give @mention <amount>`**",
+    #                               color=0xFF2030)
+    #         await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Games(bot))

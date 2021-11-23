@@ -311,7 +311,7 @@ class Gambling(commands.Cog):
     @coinflip.error
     async def on_coinflip_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.coinflip <head|tail> <bet>`**",
+            embed = discord.Embed(description=f"Usage:\n**`s.coinflip <head|tail> <bet amount>`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.errors.CommandOnCooldown):
@@ -339,7 +339,7 @@ class Gambling(commands.Cog):
                                   description="{} you need to wait {:,.1f} minutes to play roulete again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
                                   color=0xFF2030)
         elif isinstance(error, commands.BadArgument) or isinstance(error, commands.MissingRequiredArgument):
-            embed = discord.Embed(description=f"Usage:\n**`h&roulete <bet amount> <space>`**",
+            embed = discord.Embed(description=f"Usage:\n**`s.roulete <bet amount> <space>`**",
                                   color=0xFF2030)
         await ctx.send(embed=embed)
 

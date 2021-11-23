@@ -6,6 +6,7 @@ main = Embed(title='Main commands (everybody can use)',
              description=f"**To check the status**\n> **`s.status`** this will show your status in the server."
              f"\n> **`s.status @mention`**  this will show the status of the mentioned member in the server."
              f"\n> **`s.stats`** this command will show my stats/configs in the server."
+             f"\n> **`s.bal`** this command will show your coins and gems"
              f"\n> **`s.action @mention`** actions can be **`hug`**, **`cuddle`**, **`pat`**, **`kiss`**, **`poke`**, **`slap`**, **`spank`**",
              color=0x9479ED)
 
@@ -73,3 +74,11 @@ admin = Embed(title='Admin commands',
               f"\n> **`s.blacklist @mention`** This will blacklist a mentioned member, and prevent them to lock any subs."
               f"\n> **`s.blacklist`** this will show the list of blacklisted members in the server.",
               color=0x9479ED)
+
+games = Embed(title='Games',
+             description=f"> **`s.chess @mention`** this command will challenges the mentioned member"
+             f"\n> **`s.resign`** to resign playing chess and accept your defeat"
+             f"\n> **`s.coinflip <head|tail> <bet amount>`** gamble and earn coins by flipping coins"
+             f"\n> **`s.roulete <bet amount> <space>`** gamble and coins by playing roulete"
+             f"\n> **`s.rps @mention <bet amount>`** play rock paper scissors and steal coins from them.",
+             color=0x9479ED)
