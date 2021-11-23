@@ -252,6 +252,7 @@ class Games(commands.Cog):
             embed = discord.Embed(title="Cash",
                                   description=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:899985611946078208> {money[3]}",
                                   color=0xF2A2C0)
+            embed.set_thumbnail(url=member.avatar_url)
             await ctx.send(embed=embed)
     ##############################################################################
     #                                                                            #
