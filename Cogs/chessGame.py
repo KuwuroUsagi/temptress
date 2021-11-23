@@ -191,6 +191,14 @@ class Chess(commands.Cog):
                 database.update_chessdata(winner.id, ctx.guild.id, 1, None)
                 database.update_chessdata(losser.id, ctx.guild.id, -1, None)
                 database.delete_chess_game(ctx.author.id, ctx.guild.id)
+                
+                if ctx.channel.is_nsfw():
+                    if set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in winner.roles]) and set(database.get_config('slave', ctx.guild.id)) & set([role.id for role in losser.roles]):
+                        embed = discord.Embed(title='Queen always wins',
+                                              color=0x2C42BF)
+                        embed.set_author(name=f"{winner.nick or winner.name}", icon_url=winner.avatar_url)
+                        embed.set_image(url='https://cdn.discordapp.com/attachments/912235660788768778/912485772983169024/tumblr_muq2oyoz7Y1rrcosjo1_500.png')
+                        await ctx.send(f"{losser.mention}", embed=embed)
             
             elif game_response == '0-1':
                 losser = ctx.guild.get_member(game.players[game.moves % 2])
@@ -210,6 +218,14 @@ class Chess(commands.Cog):
                 database.update_chessdata(winner.id, ctx.guild.id, 1, None)
                 database.update_chessdata(losser.id, ctx.guild.id, -1, None)
                 database.delete_chess_game(ctx.author.id, ctx.guild.id)
+                
+                if ctx.channel.is_nsfw():
+                    if set(database.get_config('domme', ctx.guild.id)) & set([role.id for role in winner.roles]) and set(database.get_config('slave', ctx.guild.id)) & set([role.id for role in losser.roles]):
+                        embed = discord.Embed(title='Queen always wins',
+                                              color=0x2C42BF)
+                        embed.set_author(name=f"{winner.nick or winner.name}", icon_url=winner.avatar_url)
+                        embed.set_image(url='https://cdn.discordapp.com/attachments/912235660788768778/912485772983169024/tumblr_muq2oyoz7Y1rrcosjo1_500.png')
+                        await ctx.send(f"{losser.mention}", embed=embed)
 
             elif game_response == '1/2-1/2':
                 svg = game.board_to_svg()
