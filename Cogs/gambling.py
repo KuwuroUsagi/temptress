@@ -133,7 +133,7 @@ class Gambling(commands.Cog):
                                     color=0xFF2030)
             elif space.lower() not in input_list:
                 embed = discord.Embed(
-                    description=f"{ctx.author.mention} you entered wrong bet space.\nUsage:\n**`h&roulete <bet amount> "
+                    description=f"{ctx.author.mention} you entered wrong bet space.\nUsage:\n**`roulette <bet amount> "
                                 f"<space>`**\n> [x36] Single Number\n> [x 3] Dozens (1-12, 13-24, 25-36)\n> [x 3] Columns "
                                 f"(1st, 2nd, 3rd)\n> [x 2] Halves (1-18, 19-36)\n> [x 2] Odd/Even\n> [x 2] Colours (red, "
                                 f"black)",
@@ -336,10 +336,10 @@ class Gambling(commands.Cog):
     async def on_roulete_error(self, ctx, error):
         if isinstance(error, commands.errors.CommandOnCooldown):
             embed = discord.Embed(title="Cooldown",
-                                  description="{} you need to wait {:,.1f} minutes to play roulete again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
+                                  description="{} you need to wait {:,.1f} minutes to play roulette again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
                                   color=0xFF2030)
         elif isinstance(error, commands.BadArgument) or isinstance(error, commands.MissingRequiredArgument):
-            embed = discord.Embed(description=f"Usage:\n**`s.roulete <bet amount> <space>`**",
+            embed = discord.Embed(description=f"Usage:\n**`s.roulette <bet amount> <space>`**",
                                   color=0xFF2030)
         await ctx.send(embed=embed)
 
