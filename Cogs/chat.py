@@ -13,7 +13,7 @@ from discord.ext import commands
 class Chat(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.botID = 106996  # NSFW Annabelle Lee = 106996, Laurel Sweet = 71367 Lil Neko = 148149 SFW Cyber Ty = 63906, prob = 23958
+        self.botID = 159644  # NSFW Annabelle Lee = 106996, Laurel Sweet = 71367 Lil Neko = 148149 SFW Cyber Ty = 63906, prob = 23958
         self.key = environ['FORGE']
         self.base_chat_url = f"https://www.personalityforge.com/api/chat/?apiKey={self.key}&chatBotID={self.botID}&message="  # "{message}&externalID=<externalID>&firstName=<firstName>&lastName=<lastName>&gender=<gender>"
 
