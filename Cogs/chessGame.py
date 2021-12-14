@@ -93,7 +93,7 @@ class Chess(commands.Cog):
             return
         
         elif member == ctx.author:
-            embed = discord.Embed(description=f"{member.mention} find a friend to play and don't be lonely like Alex",
+            embed = discord.Embed(description=f"{member.mention} find a friend to play with and don't be so lonely",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
@@ -131,7 +131,7 @@ class Chess(commands.Cog):
                 board_embed = discord.Embed(title=f"{ctx.author.nick or ctx.author.name} vs {member.nick or member.name}")
                 board_embed.set_image(url='https://cdn.discordapp.com/attachments/896487377038610472/912223704359002132/board.png')
                 board_embed.set_author(name=f"{ctx.author.nick or ctx.author.name}'s turn", icon_url=ctx.author.avatar_url)
-                board_embed.add_field(name="Commands", value="**`s.move e4`** to make a move, *use Algebraic notation* \n**`s.resign`** to resign the game", inline=False)
+                board_embed.add_field(name="Commands", value="**`t.move e4`** to make a move, *use Algebraic notation* \n**`t.resign`** to resign the game", inline=False)
                 board_embed.set_footer(text='this game will be aborted if it takes longer than 3h I don\'t care about game outcome')
                 await ctx.send(f"{ctx.author.mention} your turn", embed=board_embed)
                 game_byte = pickle.dumps(game)
@@ -253,7 +253,7 @@ class Chess(commands.Cog):
                                                 color=0xFF2030 if game.board.is_check() else 0xF2A2C0)
                     board_embed.set_image(url=f"attachment://{ctx.author.id}.png")
                     board_embed.set_author(name=f"{opp_player.nick or opp_player.name}'s turn", icon_url=opp_player.avatar_url)
-                    board_embed.add_field(name="Commands", value="**`s.move e4`** to make a move, *use Algebraic notation* \n**`s.resign`** to resign the game", inline=False)
+                    board_embed.add_field(name="Commands", value="**`t.move e4`** to make a move, *use Algebraic notation* \n**`t.resign`** to resign the game", inline=False)
                     board_embed.set_footer(text='this game will be aborted if it takes longer than 3h I don\'t care about game outcome')
                     await ctx.send(f"{opp_player.mention} your turn", embed=board_embed, file =fi)
                 game_byte = pickle.dumps(game)
@@ -295,7 +295,7 @@ class Chess(commands.Cog):
     @chess.error
     async def on_chess_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.chess @mention`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.chess @mention`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
