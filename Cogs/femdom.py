@@ -372,7 +372,7 @@ class Action:
             if owner == 0:
                 owner = f"Owned by no one, a poor lonely soul"
             else:
-                if member.id == 855057142297264139:  # Alex wood ID
+                if member.id == 104373103802466304:  # Kuro Usagi ID
                     owner = f"Owned by <@{owner}>"
                 else:
                     owner = f"Owned by <@{owner}>"
