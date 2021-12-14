@@ -628,15 +628,15 @@ class Punishment:
         this function makes webhook and send messages
         """
         hooks = await channel.webhooks()
-        if not hooks or 'seductress' not in [hook.name for hook in hooks]:
-            new_hook = await channel.create_webhook(name="seductress")
+        if not hooks or 'temptress' not in [hook.name for hook in hooks]:
+            new_hook = await channel.create_webhook(name="temptress")
             data = {'content': message,
                     'username': str(name),
                     'avatar_url': str(avatar_url)}
             requests.post(new_hook.url, data=data)
             return
         for hook in hooks:
-            if hook.name == 'seductress':
+            if hook.name == 'temptress':
                 data = {'content': message,
                         'username': str(name),
                         'avatar_url': str(avatar_url)}
@@ -795,7 +795,7 @@ class Femdom(commands.Cog):
             await ctx.send(embed=embed)
             return
     
-        if member.id == self.bot.user.id:  # Seductress ID, owning Seductress
+        if member.id == self.bot.user.id:  # Temptress ID, owning Temptress
             embed = discord.Embed(description=f"I know it is tempting to having a cute baby girl like me as your sub<:giggle:897777342791942225>"
                                               f" I know it is tempting to spank and choke me at the same time but I am"
                                               f" {self.bot.user.name}, this bitch is not for sales, I am sorry<:cya:897777567086563369>",
@@ -889,7 +889,7 @@ class Femdom(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        if member.id == self.bot.user.id:  # Seductress ID, owning Seductress
+        if member.id == self.bot.user.id:  # Temptress ID, owning Temptress
             embed = discord.Embed(description=f"<:crypanda:897832575698075688> why are you trying to disown me, am I not a good girl.",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
@@ -980,7 +980,7 @@ class Femdom(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        if member.id == self.bot.user.id:  # seductress ID, trying to kitty gag seductress.
+        if member.id == self.bot.user.id:  # temptress ID, trying to kitty gag temptress.
             embed = discord.Embed(description=f"Pff.. are you dumb like Shaman, Ahahaha!!",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
