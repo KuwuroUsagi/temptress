@@ -55,7 +55,7 @@ class Games(commands.Cog):
         try:
             count = int(message.content)
         except ValueError:
-            if message.content.lower() == 's.ruin':  # string is passed
+            if message.content.lower() == 't.ruin':  # string is passed
                 return
             else:
                 # await message.delete()
@@ -112,7 +112,7 @@ class Games(commands.Cog):
         await m.add_reaction(emoji='pinkcoin:900000697288892416')
         embed = discord.Embed(title='Counting',
                               description=f"{channel.mention} is the counting channel.\n**How to earn more pinkcoins <a:pinkcoin:900000697288892416>**"
-                              f"\n> Counting earns pinkcoins <a:pinkcoin:900000697288892416>\n> Dommes can ruin by **`s.ruin`** the game and earn pinkcoins <a:pinkcoin:900000697288892416>"
+                              f"\n> Counting earns pinkcoins <a:pinkcoin:900000697288892416>\n> Dommes can ruin by **`t.ruin`** the game and earn pinkcoins <a:pinkcoin:900000697288892416>"
                               f"\n> Guessing the correct number after ruing also gives pinkcoins <a:pinkcoin:900000697288892416>", color=0xF2A2C0)
         embed.set_thumbnail(url=self.bot.user.avatar_url)
         await ctx.send(embed=embed)
@@ -128,7 +128,7 @@ class Games(commands.Cog):
             try:
                 data = database.get_config_raw('counting', ctx.guild.id).split('_')  # [number, channel, member, message, count_length]
             except AttributeError:
-                embed = discord.Embed(description=f"Counting channel is not configured yet, ask Admins to run **`s.setcount #countChannel`**", color=0xF2A2C0)
+                embed = discord.Embed(description=f"Counting channel is not configured yet, ask Admins to run **`t.setcount #countChannel`**", color=0xF2A2C0)
                 await ctx.reply(embed=embed)
                 return
             if ctx.channel.id != int(data[1]):
@@ -273,14 +273,14 @@ class Games(commands.Cog):
     @worship.error
     async def on_worship_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.worship @mention`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.worship @mention`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
     @give.error
     async def on_give_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.give @mention <amount>`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.give @mention <amount>`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
