@@ -391,7 +391,7 @@ class Action:
 
             restriction = f"> **Speech Restriction** : {gag}"
 
-            restriction = f"{restriction}\n> **NSFW Access** : {'<a:YES:897762486042910762>' if data[6] else '<a:NO:897890789202493460>'}\n> **Emoji Access** : {'<a:YES:897762486042910762>' if data[4] else '<a:NO:897890789202493460>'}\n> **Voice Channel Access** : {'<a:YES:897762486042910762>' if data[7] else '<a:NO:897890789202493460>'}\n> **Channel tied too** : {'<a:NO:897890789202493460>' if data[3] == 0 else f'<a:YES:897762486042910762> <#{data[3]}>'}"
+            restriction = f"{restriction}\n> **NSFW Access** : {'<a:YES:920225549253754880>' if data[6] else '<a:NO:920225548997898260>'}\n> **Emoji Access** : {'<a:YES:920225549253754880>' if data[4] else '<a:NO:920225548997898260>'}\n> **Voice Channel Access** : {'<a:YES:920225549253754880>' if data[7] else '<a:NO:920225548997898260>'}\n> **Channel tied too** : {'<a:NO:920225548997898260>' if data[3] == 0 else f'<a:YES:920225549253754880> <#{data[3]}>'}"
             badwords = [word[0] for word in database.get_badwords(member.id, member.guild.id)]
             badword_count = len(badwords)
             if badword_count > 0:
@@ -406,7 +406,7 @@ class Action:
 
             money = database.get_money(member.id, member.guild.id)
 
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:899985611946078208> {money[3]}", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:920237002484494366> {money[3]}", inline=False)
             embed.add_field(name='Restrictions', value=restriction, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
@@ -445,7 +445,7 @@ class Action:
             money = database.get_money(member.id, member.guild.id)
 
             embed = discord.Embed(title=name, color=0xF2A2C0)
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:899985611946078208> {money[3]} ", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:920237002484494366> {money[3]} ", inline=False)
             embed.add_field(name='My Subs', value=owned_slaves, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
@@ -533,7 +533,7 @@ class Action:
                 value = ''
                 try:
                     for x in range(((page - 1) * size), ((page - 1) * size) + size):
-                        value = value + f"> <@{lb_list[x][0]}> {int(lb_list[x][2]/10)} <a:gems:899985611946078208>   {lb_list[x][1]} <a:pinkcoin:900000697288892416>\n"
+                        value = value + f"> <@{lb_list[x][0]}> {int(lb_list[x][2]/10)} <a:gems:920237002484494366>   {lb_list[x][1]} <a:pinkcoin:900000697288892416>\n"
                     embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
                 except IndexError:
                     embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
@@ -1008,7 +1008,7 @@ class Femdom(commands.Cog):
             elif member_is == 201:  # Domme gag in Free slave
                 if database.get_money(ctx.author.id, ctx.guild.id)[3] <= 0:
                     embed = discord.Embed(title='Nah',
-                                          description=f"{ctx.author.mention}, you don't have magic gem, you need magic gem <a:gems:899985611946078208> "
+                                          description=f"{ctx.author.mention}, you don't have magic gem, you need magic gem <a:gems:920237002484494366> "
                                           f"to gag/ungag because {member.mention} is a free slave!",
                                           color=0xF2A2C0)
                 else:
@@ -1500,7 +1500,7 @@ class Femdom(commands.Cog):
             elif member_is == 201:  # Domme ungaging on Free slave
                 if database.get_money(ctx.author.id, ctx.guild.id)[3] <= 0:
                     embed = discord.Embed(title='Nah',
-                                          description=f"{ctx.author.mention}, you don't have magic gem, you need magic gem <a:gems:899985611946078208> "
+                                          description=f"{ctx.author.mention}, you don't have magic gem, you need magic gem <a:gems:920237002484494366> "
                                           f"to ban/allow emotes because {member.mention} is a free slave!",
                                           color=0xF2A2C0)
                 else:
