@@ -406,7 +406,7 @@ class Action:
 
             money = database.get_money(member.id, member.guild.id)
 
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:920237002484494366> {money[3]}", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:920347688791310366> {money[2]}\n> <a:gems:920237002484494366> {money[3]}", inline=False)
             embed.add_field(name='Restrictions', value=restriction, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
@@ -445,7 +445,7 @@ class Action:
             money = database.get_money(member.id, member.guild.id)
 
             embed = discord.Embed(title=name, color=0xF2A2C0)
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:900000697288892416> {money[2]}\n> <a:gems:920237002484494366> {money[3]} ", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:920347688791310366> {money[2]}\n> <a:gems:920237002484494366> {money[3]} ", inline=False)
             embed.add_field(name='My Subs', value=owned_slaves, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
@@ -533,7 +533,7 @@ class Action:
                 value = ''
                 try:
                     for x in range(((page - 1) * size), ((page - 1) * size) + size):
-                        value = value + f"> <@{lb_list[x][0]}> {int(lb_list[x][2]/10)} <a:gems:920237002484494366>   {lb_list[x][1]} <a:pinkcoin:900000697288892416>\n"
+                        value = value + f"> <@{lb_list[x][0]}> {int(lb_list[x][2]/10)} <a:gems:920237002484494366>   {lb_list[x][1]} <a:pinkcoin:920347688791310366>\n"
                     embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
                 except IndexError:
                     embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
