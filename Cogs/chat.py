@@ -48,8 +48,8 @@ class Chat(commands.Cog):
                             message = choice(NSFW_reply)
                         await ctx.reply(message)
                     else:
-                        alex_wood = self.bot.get_user(855057142297264139)
-                        await alex_wood.send(f"`{data}`")
+                        kuro_usagi = self.bot.get_user(104373103802466304)
+                        await kuro_usagi.send(f"`{data}`")
                         await ctx.reply(f' I can\'t talk righ now {ctx.author.mention} I have personal stuff to do.')
             else:
                 roles = '>'

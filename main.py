@@ -11,7 +11,7 @@ from discord_components import *
 
 
 # Setting up Prefix and removing default help command.
-bot = commands.Bot(command_prefix=['s.', 'S.'], case_insensitive=True, intents=discord.Intents.all())
+bot = commands.Bot(command_prefix=['t.', 'T.'], case_insensitive=True, intents=discord.Intents.all())
 bot.remove_command('help')
 
 # Getting discord bot token from environment variable
