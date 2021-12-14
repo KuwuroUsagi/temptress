@@ -34,13 +34,13 @@ class Gambling(commands.Cog):
         ban_data =  database.is_botban(ctx.author.id)
         if ban_data is None:
             if bet < 10:
-                await ctx.reply(f"<:staff:897777248839540757> You need to bet at least 10 <a:pinkcoin:900000697288892416>")
+                await ctx.reply(f"<:staff:897777248839540757> You need to bet at least 10 <a:pinkcoin:920347688791310366>")
             elif choice.lower() not in ['head', 'tail', 'h', 't', 'heads', 'tails']:
                 await ctx.reply(f"<:staff:897777248839540757> usage: **`t.coinflip <head|tail> <bet>`**")
             else:
                 coins = database.get_money(ctx.author.id, ctx.guild.id)[2]
                 if bet > coins:
-                    await ctx.reply(f"<:staff:897777248839540757> really?, you are broke you only have {coins} <a:pinkcoin:900000697288892416>")
+                    await ctx.reply(f"<:staff:897777248839540757> really?, you are broke you only have {coins} <a:pinkcoin:920347688791310366>")
                     return
                 database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)
                 await asyncio.sleep(2)
@@ -126,10 +126,10 @@ class Gambling(commands.Cog):
                         '32', '33', '34', '35', '36']
             coin = database.get_money(ctx.author.id, ctx.guild.id)[2]
             if bet < 10:
-                embed = discord.Embed(description=f"{ctx.author.mention} minimum bet amount should be 10 <a:pinkcoin:900000697288892416>",
+                embed = discord.Embed(description=f"{ctx.author.mention} minimum bet amount should be 10 <a:pinkcoin:920347688791310366>",
                                     color=0xFF2039)
             elif bet > coin:
-                embed = discord.Embed(description=f"{ctx.author.mention} you only have {coin} <a:pinkcoin:900000697288892416>",
+                embed = discord.Embed(description=f"{ctx.author.mention} you only have {coin} <a:pinkcoin:920347688791310366>",
                                     color=0xFF2030)
             elif space.lower() not in input_list:
                 embed = discord.Embed(
@@ -152,7 +152,7 @@ class Gambling(commands.Cog):
                 if (ctx.author.name.replace(' ', '_'),) in cur.fetchall():
                     with con:
                         cur.execute(f"INSERT INTO {ctx.author.name.replace(' ', '_')} VALUES (?, ?)", [bet, space])
-                        embed = discord.Embed(description=f"{ctx.author.mention} placed a bet of {bet} <a:pinkcoin:900000697288892416> on {space}", color=0x9479ED)
+                        embed = discord.Embed(description=f"{ctx.author.mention} placed a bet of {bet} <a:pinkcoin:920347688791310366> on {space}", color=0x9479ED)
                         embed.set_footer(text='anytime now just wait!!')
                         await ctx.send(embed=embed)
                     return
@@ -160,7 +160,7 @@ class Gambling(commands.Cog):
                     with con:
                         cur.execute(f"CREATE TABLE IF NOT EXISTS {ctx.author.name.replace(' ', '_')} (bet integer, space text)")
                         cur.execute(f"INSERT INTO {ctx.author.name.replace(' ', '_')} VALUES (?, ?)", [bet, space])
-                        embed = discord.Embed(description=f"{ctx.author.mention} placed a bet of {bet} <a:pinkcoin:900000697288892416> on {space}", color=0x9479ED)
+                        embed = discord.Embed(description=f"{ctx.author.mention} placed a bet of {bet} <a:pinkcoin:920347688791310366> on {space}", color=0x9479ED)
                         embed.set_footer(text='30 seconds remaining!!')
                         await ctx.send(embed=embed)
                 await asyncio.sleep(30)
@@ -171,7 +171,7 @@ class Gambling(commands.Cog):
                     win_amount = is_win(out_come, bet_[0], bet_[1]) + win_amount
                 if win_amount != 0:
                     embed = discord.Embed(
-                        description=f"{ctx.author.mention} you won the bet **{win_amount}** <a:pinkcoin:900000697288892416>\n> ball landed on **{out_come} {roulete_color}**",
+                        description=f"{ctx.author.mention} you won the bet **{win_amount}** <a:pinkcoin:920347688791310366>\n> ball landed on **{out_come} {roulete_color}**",
                         color=0x08FF08)
                     database.add_money(ctx.author.id, ctx.guild.id, win_amount, 0)
                 else:
@@ -214,15 +214,15 @@ class Gambling(commands.Cog):
         member_coin = database.get_money(member.id, ctx.guild.id)[2]
         
         if bet < 10:
-            embed = discord.Embed(description=f"<:staff:897777248839540757> You need to bet at least 10 <a:pinkcoin:900000697288892416>",
+            embed = discord.Embed(description=f"<:staff:897777248839540757> You need to bet at least 10 <a:pinkcoin:920347688791310366>",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
         elif bet > author_coin:
-            embed = discord.Embed(description=f"{ctx.author.mention} really?, <:staff:897777248839540757> You only have {author_coin} <a:pinkcoin:900000697288892416>",
+            embed = discord.Embed(description=f"{ctx.author.mention} really?, <:staff:897777248839540757> You only have {author_coin} <a:pinkcoin:920347688791310366>",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
         elif bet > member_coin:
-            embed = discord.Embed(description=f"<:staff:897777248839540757>, {member.mention} only have {member_coin} <a:pinkcoin:900000697288892416>",
+            embed = discord.Embed(description=f"<:staff:897777248839540757>, {member.mention} only have {member_coin} <a:pinkcoin:920347688791310366>",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
         else:
@@ -265,34 +265,34 @@ class Gambling(commands.Cog):
                                  components=[])
                 elif author_choice == "Rock":
                     if member_choice == "Paper":
-                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, covers {author_choice}",
+                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:920347688791310366>, {member_choice}, covers {author_choice}",
                                      components=[])
                         database.add_money(member.id, ctx.guild.id, bet, 0)
                         database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)                
                     else:
-                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, smashes {member_choice}",
+                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:920347688791310366>, {author_choice}, smashes {member_choice}",
                                      components=[])
                         database.add_money(ctx.author.id, ctx.guild.id, bet, 0)
                         database.remove_money(member.id, ctx.guild.id, bet, 0)
                 elif author_choice == "Paper":
                     if member_choice == "Scissors":
-                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, cuts {author_choice}",
+                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:920347688791310366>, {member_choice}, cuts {author_choice}",
                                      components=[])
                         database.add_money(member.id, ctx.guild.id, bet, 0)
                         database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)
                     else:
-                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, covers {member_choice}",
+                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:920347688791310366>, {author_choice}, covers {member_choice}",
                                      components=[])
                         database.add_money(ctx.author.id, ctx.guild.id, bet, 0)
                         database.remove_money(member.id, ctx.guild.id, bet, 0)
                 elif author_choice == "Scissors":
                     if member_choice == "Rock":
-                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:900000697288892416>, {member_choice}, smashes {author_choice}",
+                        await m.edit(f"{member.nick or member.name} won! {bet} <a:pinkcoin:920347688791310366>, {member_choice}, smashes {author_choice}",
                                      components=[])
                         database.add_money(member.id, ctx.guild.id, bet, 0)
                         database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)
                     else:
-                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:900000697288892416>, {author_choice}, cuts {member_choice}",
+                        await m.edit(f"{ctx.author.nick or ctx.author.name} won! {bet} <a:pinkcoin:920347688791310366>, {author_choice}, cuts {member_choice}",
                                      components=[])
                         database.add_money(ctx.author.id, ctx.guild.id, bet, 0)
                         database.remove_money(member.id, ctx.guild.id, bet, 0)                              
