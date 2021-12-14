@@ -94,7 +94,7 @@ ___
 > - sub gains 6 hours of protection if the sub use the command `t.escape`
 
 ### Chat
-- Seductress can talk with you, if you wanna talk with seductress use 2 dots/period as prefix of the sentence.
+- Temptress can talk with you, if you wanna talk with temptress use 2 dots/period as prefix of the sentence.
   - example 1 : ```..hi baby girl how are you?```
   - example 2 : ```..what is your fantasy?```
 
