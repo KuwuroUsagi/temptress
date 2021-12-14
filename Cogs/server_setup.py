@@ -25,8 +25,8 @@ class ServerConfig(commands.Cog):
         owner_invite_embed = discord.Embed(title=f"Hi {guild.owner.name},",
                                            description=f"I have been invited to your server **{guild.name}**"
                                            "\nI am a fun bot made for Femdom Communities to help Dommes to play with their subs and also punish them."
-                                           "\n\n**My prefix is `s.`**\n> **`s.setup`** use this command to set me up in the server"
-                                           "\n> **`s.help`** use this command to know me more.",
+                                           "\n\n**My prefix is `t.`**\n> **`t.setup`** use this command to set me up in the server"
+                                           "\n> **`t.help`** use this command to know me more.",
                                            color=0xF2A2C0)
         owner_invite_embed.set_thumbnail(url=self.bot.user.avatar_url)
         owner_invite_embed.set_footer(text=f'created by {alex_wood}', icon_url=alex_wood.avatar_url)
@@ -68,13 +68,13 @@ class ServerConfig(commands.Cog):
 
         setup_embed_fail = discord.Embed(title='Failed',
                                          description=f"**I was not able to find a valid role mentioned in this message**\n"
-                                         f"you can always retry the setup again **`s.setup`**",
+                                         f"you can always retry the setup again **`t.setup`**",
                                          color=0xFF2030)
 
         setup_embed_fail.set_thumbnail(url=self.bot.user.avatar_url)
 
         setup_embed_timeout = discord.Embed(title='Times Up',
-                                            description=f"I can't wait for long, I have limited bandwidth\nits ok you can always try it again type **`s.setup`**",
+                                            description=f"I can't wait for long, I have limited bandwidth\nits ok you can always try it again type **`t.setup`**",
                                             color=0xFF2030)
 
         setup_embed_timeout.set_thumbnail(url=self.bot.user.avatar_url)
@@ -145,7 +145,7 @@ class ServerConfig(commands.Cog):
                                                                 f"\nSubs in the server are the members with the following roles{s_roles}"
                                                                 f"\nMembers with following roles can lock sub in <#{prison}> {l_roles}"
                                                                 f"\nThe channel where Dommes can torture and punish subs.\n> <#{prison}>"
-                                                                f"\n\n**Use the command `s.help` to know more about me.**",
+                                                                f"\n\n**Use the command `t.help` to know more about me.**",
                                                                 color=0x08FF08)
                             setup_embed_summary.set_thumbnail(url=self.bot.user.avatar_url)
                             await m.edit(embed=setup_embed_summary)
@@ -173,7 +173,7 @@ class ServerConfig(commands.Cog):
                                                                 f"\nSubs in the server are the members with the following roles{s_roles}"
                                                                 f"\nMembers with following roles can lock sub in <#{prison}> {l_roles}"
                                                                 f"\nThe channel where Dommes can torture and punish subs.\n> <#{prison}>"
-                                                                f"\n\n**Use the command `s.help` to know more about me.**",
+                                                                f"\n\n**Use the command `t.help` to know more about me.**",
                                                                 color=0x08FF08)
                             setup_embed_summary.set_thumbnail(url=self.bot.user.avatar_url)
                             await m.edit(embed=setup_embed_summary)
@@ -235,13 +235,13 @@ class ServerConfig(commands.Cog):
                                        f"NSFW command access is given to:\n{self.list_roles(NSFW)}\n"
                                        f"Members who have permission to talk to me:\n{self.list_roles(chat)}\n\n"
                                        f"**Dommes can torture subs in <#{prison[0]}>**\n"
-                                       f"\n> type **`s.help`** to know more about me",
+                                       f"\n> type **`t.help`** to know more about me",
                                        color=0xF2A2C0)
         else:
             stat_embed = discord.Embed(title='Status',
                                        description=f"**I am active in {len(self.bot.guilds)} servers.**\n"
-                                       f"\n> type **`s.setup`** to set me up in the server"
-                                       f"\n> type **`s.help`** to know more about me",
+                                       f"\n> type **`t.setup`** to set me up in the server"
+                                       f"\n> type **`t.help`** to know more about me",
                                        color=0xF2A2C0)
         stat_embed.set_thumbnail(url=self.bot.user.avatar_url)
         await ctx.send(embed=stat_embed)
@@ -345,8 +345,8 @@ class ServerConfig(commands.Cog):
     @blacklist.error
     async def on_blacklist_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.blacklist @mention`** to **add** or **remove** member from blacklist."
-                                              f"\n**`s.blacklist`** to see the list of blacklisted members.",
+            embed = discord.Embed(description=f"Usage:\n**`t.blacklist @mention`** to **add** or **remove** member from blacklist."
+                                              f"\n**`t.blacklist`** to see the list of blacklisted members.",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
