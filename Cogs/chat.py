@@ -47,10 +47,6 @@ class Chat(commands.Cog):
                             NSFW_reply = ['*ignoring*', 'Go watch porn pervert.', 'I am not a Pervert like you', 'I am not a pathetic slut like you.', ]
                             message = choice(NSFW_reply)
                         await ctx.reply(message)
-                    else:
-                        kuro_usagi = self.bot.get_user(104373103802466304)
-                        await kuro_usagi.send(f"`{data}`")
-                        await ctx.reply(f' I can\'t talk righ now {ctx.author.mention} I have personal stuff to do.')
             else:
                 roles = '>'
                 for r in database.get_config('chat', message.guild.id):
