@@ -15,7 +15,7 @@ bot = commands.Bot(command_prefix=['t.', 'T.'], case_insensitive=True, intents=d
 bot.remove_command('help')
 
 # Getting discord bot token from environment variable
-TOKEN = os.environ['SEDUCTRESS']
+TOKEN = os.environ['TEMPTRESS']
 
 
 # Loading Cogs and changing presence when the bot is online
@@ -26,7 +26,7 @@ async def on_ready():
         if filename.endswith('.py'):
             bot.load_extension(f"Cogs.{filename[:-3]}")
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="with your mind."))
-    print("Seductress is ready and online...")
+    print("Temptress is ready and online...")
 
 
 @bot.command(aliases=['h', '?'])

@@ -191,12 +191,6 @@ class Action:
                                             color=0xF2A2C0)
             await message.edit(embed=pig_gag_embed, components=[])
         
-        elif type == 'olaf':
-            pig_gag_embed = discord.Embed(title="Hi I'm Olaf",
-                                            description=f"{self.author.mention} convert {self.member.mention} into a Olaf with her magical powers{' for next 10 minutes.' if temp else '.'}",
-                                            color=0xF2A2C0)
-            await message.edit(embed=pig_gag_embed, components=[])
-        
         await self.react('y')
         if temp:
             await asyncio.sleep(10 * 60)
@@ -392,8 +386,6 @@ class Action:
                 gag = '<:cow:910962107665748079> Cow'
             elif gag == 'pig':
                 gag = '<a:piggy:910962193082765313> Piggy'
-            elif gag == 'olaf':
-                gag = '<:olaf:910991157360750602> Olaf'
             else:
                 gag = 'None'
 
@@ -440,7 +432,7 @@ class Action:
         elif set(database.get_config('domme', member.guild.id)) & set([role.id for role in member.roles]):   # domme status
             def get_status_emojis(member, guild):
                 data = database.get_slave_from_DB(member, guild)[0]
-                return f"{'' if data[6] else '<:chastity:897763218670354442>'}  {'' if data[7] else '<a:muffs:897764112388468747>'}  {'<:ballgag:897915835555921921>' if data[2] in ['kitty', 'puppy', 'cow', 'pig', 'olaf'] else ''}  {'' if data[4] else '<:noemoji:897921450118356992>'}"
+                return f"{'' if data[6] else '<:chastity:897763218670354442>'}  {'' if data[7] else '<a:muffs:897764112388468747>'}  {'<:ballgag:897915835555921921>' if data[2] in ['kitty', 'puppy', 'cow', 'pig'] else ''}  {'' if data[4] else '<:noemoji:897921450118356992>'}"
             name = member.nick or member.name
             slaves_list = database.get_slaves(member.id, member.guild.id)
             if not slaves_list:
@@ -475,7 +467,7 @@ class Action:
 
         else:
             if database.get_config('domme', member.guild.id) == [0]:
-                embed = discord.Embed(title='I am not ready yet', description='ask Admins to run the command **`s.setup`**', color=0xF2A2C0)
+                embed = discord.Embed(title='I am not ready yet', description='ask Admins to run the command **`t.setup`**', color=0xF2A2C0)
             else:
                 embed = discord.Embed(title='I don\'t know you.',
                                       description=f"You need any of the following roles:\n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}",
@@ -636,15 +628,15 @@ class Punishment:
         this function makes webhook and send messages
         """
         hooks = await channel.webhooks()
-        if not hooks or 'seductress' not in [hook.name for hook in hooks]:
-            new_hook = await channel.create_webhook(name="seductress")
+        if not hooks or 'temptress' not in [hook.name for hook in hooks]:
+            new_hook = await channel.create_webhook(name="temptress")
             data = {'content': message,
                     'username': str(name),
                     'avatar_url': str(avatar_url)}
             requests.post(new_hook.url, data=data)
             return
         for hook in hooks:
-            if hook.name == 'seductress':
+            if hook.name == 'temptress':
                 data = {'content': message,
                         'username': str(name),
                         'avatar_url': str(avatar_url)}
@@ -680,11 +672,6 @@ class Punishment:
             for _ in range(int(len(self.message.content) / 7) + 1):
                 message = message + choice(pig_text)
             await self.send_webhook(self.avatar_url, message, '🐷' + self.name, self.channel)
-        elif self.is_gag == 'olaf':
-            with open('Text_files/olaf.txt', 'r') as f:
-                lines = f.read().splitlines()
-                message = choice(lines)
-            await self.send_webhook('https://cdn.discordapp.com/attachments/896487377038610472/911027743167238174/unknown.png', message, self.name, self.channel)
 
     async def is_badword(self):        
         """
@@ -696,7 +683,7 @@ class Punishment:
             life = database.get_slave_from_DB(self.author.id, self.author.guild.id)[0][8]
             if life == 1:
                 database.update_slaveDB(self.author.id, 'life', 10, self.author.guild.id)
-                database.update_slaveDB(self.author.id, 'gag', 'olaf', self.author.guild.id)
+                database.update_slaveDB(self.author.id, 'gag', self.author.guild.id)
                 embed = discord.Embed(title='Gag the brats',
                                       description=f"{self.author.mention} you are gagged till your owner ungags you.",
                                       color=0xF2A2C0)
@@ -803,12 +790,12 @@ class Femdom(commands.Cog):
 
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
     
-        if member.id == self.bot.user.id:  # Seductress ID, owning Seductress
+        if member.id == self.bot.user.id:  # Temptress ID, owning Temptress
             embed = discord.Embed(description=f"I know it is tempting to having a cute baby girl like me as your sub<:giggle:897777342791942225>"
                                               f" I know it is tempting to spank and choke me at the same time but I am"
                                               f" {self.bot.user.name}, this bitch is not for sales, I am sorry<:cya:897777567086563369>",
@@ -853,7 +840,7 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # slave trying to own other slave
                 embed = discord.Embed(title='Pathetic…',
                                       description=f"<:giggle:897777342791942225>You foolish {ctx.author.mention} ahahahahha. You think you can own a sub when you are a slave?!, "
-                                                  f"Ahahahaha don't dumb like Shaman.",
+                                                  f"Ahahahaha don't be so brazen.",
                                       color=0xFF2030)
 
             elif member_is == 102:  # slave trying to own other slave.
@@ -897,12 +884,12 @@ class Femdom(commands.Cog):
         
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
 
-        if member.id == self.bot.user.id:  # Seductress ID, owning Seductress
+        if member.id == self.bot.user.id:  # Temptress ID, owning Temptress
             embed = discord.Embed(description=f"<:crypanda:897832575698075688> why are you trying to disown me, am I not a good girl.",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
@@ -988,12 +975,12 @@ class Femdom(commands.Cog):
         
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
 
-        if member.id == self.bot.user.id:  # seductress ID, trying to kitty gag seductress.
+        if member.id == self.bot.user.id:  # temptress ID, trying to kitty gag temptress.
             embed = discord.Embed(description=f"Pff.. are you dumb like Shaman, Ahahaha!!",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
@@ -1031,8 +1018,7 @@ class Femdom(commands.Cog):
                                                                   Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=(gag == 'puppy')),
                                                                   Button(style=ButtonStyle.blue, label='Cow Gag', emoji='🐮', disabled=(gag == 'cow')),
                                                                   Button(style=ButtonStyle.blue, label='Pig Gag', emoji='🐷', disabled=(gag == 'pig')),
-                                                                  Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))],
-                                                                 [Button(style=ButtonStyle.blue, label='Olaf Gag', disabled=(gag == 'olaf')),]])
+                                                                  Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))],]])
                     try:
                         def check(res):
                             return ctx.author == res.user and res.channel == ctx.channel
@@ -1047,8 +1033,6 @@ class Femdom(commands.Cog):
                             await action.gag('cow', m, temp=True)
                         elif response.component.label == 'Pig Gag':
                             await action.gag('pig', m, temp=True)
-                        elif response.component.label == 'Olaf Gag':
-                            await action.gag('olaf', m, temp=True)
                         else:
                             await action.ungag(m)
                         database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
@@ -1064,8 +1048,7 @@ class Femdom(commands.Cog):
                                                               Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=(gag == 'puppy')),
                                                               Button(style=ButtonStyle.blue, label='Cow Gag', emoji='🐮', disabled=(gag == 'cow')),
                                                               Button(style=ButtonStyle.blue, label='Pig Gag', emoji='🐷', disabled=(gag == 'pig')),
-                                                              Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))],
-                                                             [Button(style=ButtonStyle.blue, label='Olaf Gag', disabled=(gag == 'olaf')),]])
+                                                              Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))],]])
                 try:
                     def check(res):
                         return ctx.author == res.user and res.channel == ctx.channel
@@ -1080,8 +1063,6 @@ class Femdom(commands.Cog):
                         await action.gag('cow', m)
                     elif response.component.label == 'Pig Gag':
                         await action.gag('pig', m)
-                    elif response.component.label == 'Olaf Gag':
-                        await action.gag('olaf', m)
                     else:
                         await action.ungag(m)
                 except asyncio.TimeoutError:
@@ -1137,7 +1118,7 @@ class Femdom(commands.Cog):
         
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
@@ -1227,7 +1208,7 @@ class Femdom(commands.Cog):
         
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
@@ -1308,7 +1289,7 @@ class Femdom(commands.Cog):
 
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
@@ -1387,7 +1368,7 @@ class Femdom(commands.Cog):
         
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
@@ -1465,7 +1446,7 @@ class Femdom(commands.Cog):
         
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
@@ -1473,7 +1454,7 @@ class Femdom(commands.Cog):
         elif member.bot:
             if member.id == self.bot.user.id:
                 embed = discord.Embed(title='So you want to know my status?',
-                                      description=f"I am Seductress. A woman who seduces someone like you, A harsh dominant one who entices men into sexual activities and suffering.",
+                                      description=f"I am Temptress. A woman who tempts someone like you, A harsh dominant one who entices men into sexual activities and suffering.",
                                       color=0xF2A2C0)
             else:
                 embed = discord.Embed(description=f"{member.mention} is my friend to make men incel.",
@@ -1492,7 +1473,7 @@ class Femdom(commands.Cog):
         
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
@@ -1613,7 +1594,7 @@ class Femdom(commands.Cog):
         
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
@@ -1697,7 +1678,7 @@ class Femdom(commands.Cog):
         
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
@@ -1780,7 +1761,7 @@ class Femdom(commands.Cog):
         
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
@@ -1830,13 +1811,13 @@ class Femdom(commands.Cog):
 
         if not database.is_config(ctx.guild.id):  # if bot is not configred in the server
             embed = discord.Embed(title='I am not ready yet.',
-                                  description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                  description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
             return
 
         if lb_type.lower() not in ['cash', 'line', 'chess']:
-            embed = discord.Embed(tite="wrong options", description="I got only few options\n> **`s.lb cash`**\n> **`s.lb line`**\n> **`s.lb chess`**", color=0xFF2030)
+            embed = discord.Embed(tite="wrong options", description="I got only few options\n> **`t.lb cash`**\n> **`t.lb line`**\n> **`t.lb chess`**", color=0xFF2030)
             await ctx.channel.send(embed=embed)
             return
 
@@ -1854,28 +1835,28 @@ class Femdom(commands.Cog):
     @own.error
     async def on_own_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.own @mention`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.own @mention`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
     @disown.error
     async def on_disown_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.disown @mention`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.disown @mention`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
     @gag.error
     async def on_gag_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.gag @mention`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.gag @mention`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
     @badword.error
     async def on_badword_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.badword @mention <bad words>`**"
+            embed = discord.Embed(description=f"Usage:\n**`t.badword @mention <bad words>`**"
                                               f"\n> aliases = `word`, `addbadword`, `words`, `badwords`, `addbadwords`",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
@@ -1883,7 +1864,7 @@ class Femdom(commands.Cog):
     @removebadword.error
     async def on_removebadword_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.removebadword @mention <bad words>`**"
+            embed = discord.Embed(description=f"Usage:\n**`t.removebadword @mention <bad words>`**"
                                               f"\n> aliases = `removeword`",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
@@ -1891,7 +1872,7 @@ class Femdom(commands.Cog):
     @clearbadword.error
     async def on_clearbadword_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.clearbadword @mention`**"
+            embed = discord.Embed(description=f"Usage:\n**`t.clearbadword @mention`**"
                                               f"\n> aliases = `removeallbadwords`, `clearwords`, `removeallwords`",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
@@ -1899,7 +1880,7 @@ class Femdom(commands.Cog):
     @nickname.error
     async def on_nickname_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.nickname @mention <name>`**"
+            embed = discord.Embed(description=f"Usage:\n**`t.nickname @mention <name>`**"
                                               f"\n> aliases = `name`, `nick`",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
@@ -1907,36 +1888,36 @@ class Femdom(commands.Cog):
     @status.error
     async def on_status_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.status @mention`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.status @mention`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
     @emojii.error
     async def on_allowemoji_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.emoji @mention`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.emoji @mention`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
     @tie.error
     async def on_tie_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.tie @mention`**"
-                                              f"\nor\n**`s.tie @mention #channel`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.tie @mention`**"
+                                              f"\nor\n**`t.tie @mention #channel`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
     @untie.error
     async def on_untie_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.untie @mention`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.untie @mention`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 
     @rank.error
     async def on_rank_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.rank @mention X`** X is the rank of slave",
+            embed = discord.Embed(description=f"Usage:\n**`t.rank @mention X`** X is the rank of slave",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
 

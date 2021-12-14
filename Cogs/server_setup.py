@@ -74,7 +74,7 @@ class ServerConfig(commands.Cog):
         setup_embed_fail.set_thumbnail(url=self.bot.user.avatar_url)
 
         setup_embed_timeout = discord.Embed(title='Times Up',
-                                            description=f"I can't wait for long, I have limited bandwidth\nits ok you can always try it again type **`s.setup`**",
+                                            description=f"I can't wait for long, I have limited bandwidth\nits ok you can always try it again type **`t.setup`**",
                                             color=0xFF2030)
 
         setup_embed_timeout.set_thumbnail(url=self.bot.user.avatar_url)

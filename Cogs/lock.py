@@ -259,7 +259,7 @@ class Lock(commands.Cog):
 
         if not database.is_config(ctx.guild.id):  # if the server is not configured
             need_setup_embed = discord.Embed(title='I am not ready yet.',
-                                                 description=f"Ask the Admins to run the command **`s.setup`** and try again",
+                                                 description=f"Ask the Admins to run the command **`t.setup`** and try again",
                                                  color=0xF2A2C0)
             await ctx.reply(embed=need_setup_embed)
             return
@@ -425,7 +425,7 @@ class Lock(commands.Cog):
                 embed = discord.Embed(description=f"{ctx.author.mention} received 20<a:pinkcoin:900000697288892416> by locking {member.mention} in {prison.mention}",
                                       color=0x9479ED)
                 await m.edit(embed=embed)
-                await prison.send(f"{member.mention} you have to write :point_down: {num} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
+                await prison.send(f"{member.mention} you have to write :point_down: {num} times to be free or you have to wait 2h or use **`t.escape`** to be free from prison. ||(it is case sensitive)||")
                 await prison.send(file=discord.File(f'./Image/{member.id}.png'))
                 database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
                 database.add_money(ctx.author.id, ctx.guild.id, 20, 0)
@@ -530,7 +530,7 @@ class Lock(commands.Cog):
             await ctx.author.remove_roles(prisoner)
             embed = discord.Embed(description=f"{ctx.author.mention} was lucky to have a magic gem <a:gems:899985611946078208> and escaped from {ctx.channel.mention}", color=0xF2A2C0)
             await ctx.send(embed=embed)
-            database.insert_escape(ctx.author.id, ctx.guild.id, 6, 'gem')
+            database.insert_escape(ctx.author.id, ctx.guild.id, 1, 'gem')
         else:  # if prisoner does not have a gem
             embed = discord.Embed(description=f"{ctx.author.mention} you don't have magic gem <a:gems:899985611946078208> to be free.", color=0xF2A2C0)
             await ctx.reply(embed=embed)
@@ -546,7 +546,7 @@ class Lock(commands.Cog):
     @lock.error
     async def on_lock_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(title='How to use Prison?', description=f"Usage:\n> **`s.lock @mention`** "
+            embed = discord.Embed(title='How to use Prison?', description=f"Usage:\n> **`t.lock @mention`** "
                                   f"\nAfter it just enjoy the slave punishment!",
                                   color=0xFF2030)
         elif isinstance(error, commands.errors.CommandOnCooldown):
@@ -558,7 +558,7 @@ class Lock(commands.Cog):
     @unlock.error
     async def on_unlock_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(title='How to save a slave from Prison?', description=f"Usage:\n> **`s.unlock @mention`** ",
+            embed = discord.Embed(title='How to save a slave from Prison?', description=f"Usage:\n> **`t.unlock @mention`** ",
                                   color=0xFF2030)
         await ctx.send(embed=embed)
 
