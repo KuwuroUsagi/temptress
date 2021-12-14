@@ -20,7 +20,7 @@ class Neko(commands.Cog):
         await ctx.send(embed=embed)
         if member.id == self.bot.user.id:
             image_url = nekos.img('hug')
-            embed = discord.Embed(title=f"Seductress hugs {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
+            embed = discord.Embed(title=f"Temptress hugs {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
             embed.set_image(url=image_url)
             await ctx.reply(embed=embed)
 
@@ -35,7 +35,7 @@ class Neko(commands.Cog):
         await ctx.send(embed=embed)
         if member.id == self.bot.user.id:
             image_url = nekos.img('tickle')
-            embed = discord.Embed(title=f"Seductress tickles {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
+            embed = discord.Embed(title=f"Temptress tickles {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
             embed.set_image(url=image_url)
             await ctx.reply(embed=embed)
 
@@ -50,7 +50,7 @@ class Neko(commands.Cog):
         await ctx.send(embed=embed)
         if member.id == self.bot.user.id:
             image_url = nekos.img('poke')
-            embed = discord.Embed(title=f"Seductress pokes {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
+            embed = discord.Embed(title=f"Temptress pokes {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
             embed.set_image(url=image_url)
             await ctx.reply(embed=embed)
 
@@ -65,7 +65,7 @@ class Neko(commands.Cog):
         await ctx.send(embed=embed)
         if member.id == self.bot.user.id:
             image_url = nekos.img('slap')
-            embed = discord.Embed(title=f"Seductress slaps {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
+            embed = discord.Embed(title=f"Temptress slaps {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
             embed.set_image(url=image_url)
             await ctx.reply(embed=embed)
 
@@ -80,7 +80,7 @@ class Neko(commands.Cog):
         await ctx.send(embed=embed)
         if member.id == self.bot.user.id:
             image_url = nekos.img('pat')
-            embed = discord.Embed(title=f"Seductress pats {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
+            embed = discord.Embed(title=f"Temptress pats {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
             embed.set_image(url=image_url)
             await ctx.reply(embed=embed)
 
@@ -95,7 +95,7 @@ class Neko(commands.Cog):
         await ctx.send(embed=embed)
         if member.id == self.bot.user.id:
             image_url = nekos.img('kiss')
-            embed = discord.Embed(title=f"Seductress kisses {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
+            embed = discord.Embed(title=f"Temptress kisses {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
             embed.set_image(url=image_url)
             await ctx.reply(embed=embed)
 
@@ -110,7 +110,7 @@ class Neko(commands.Cog):
         await ctx.send(embed=embed)
         if member.id == self.bot.user.id:
             image_url = nekos.img('spank')
-            embed = discord.Embed(title=f"Seductress spanks {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
+            embed = discord.Embed(title=f"Temptress spanks {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
             embed.set_image(url=image_url)
             await ctx.reply(embed=embed)
 
@@ -125,7 +125,7 @@ class Neko(commands.Cog):
         await ctx.send(embed=embed)
         if member.id == self.bot.user.id:
             image_url = nekos.img('cuddle')
-            embed = discord.Embed(title=f"Seductress cuddles {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
+            embed = discord.Embed(title=f"Temptress cuddles {ctx.author.nick or ctx.author.name} back.", color=0xF2A2C0)
             embed.set_image(url=image_url)
             await ctx.reply(embed=embed)
 
