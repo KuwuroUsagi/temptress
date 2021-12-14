@@ -223,7 +223,7 @@ class Lock(commands.Cog):
                     await message.reply(f"{message.author.mention} you are now released from {message.channel.mention} for being a good boy and writing the lines.")
                     database.insert_escape(message.author.id, message.guild.id, 0.2, 'cooldown')
                     return
-                if message.author.id in [855057142297264139, 548119438168293376]:
+                if message.author.id in [104373103802466304, 548119438168293376]:
                     await message.author.send(sentence)
                 prison = message.guild.get_channel(database.get_config('prison', message.guild.id)[0])
                 await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
@@ -430,7 +430,7 @@ class Lock(commands.Cog):
                 database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
                 database.add_money(ctx.author.id, ctx.guild.id, 20, 0)
                 
-                if member.id in [855057142297264139, 548119438168293376]:
+                if member.id in [104373103802466304, 548119438168293376]:
                     await member.send(sentence)
                 await asyncio.sleep(60 * 60 * 2)                
                 if prisoner.id in [role.id for role in member.roles]:
@@ -523,8 +523,8 @@ class Lock(commands.Cog):
             await ctx.reply(embed=embed)
             return
 
-        if database.get_money(ctx.author.id, ctx.guild.id)[3] != 0 or ctx.author.id == 855057142297264139:  # if prisoner have gems
-            if ctx.author.id != 855057142297264139:
+        if database.get_money(ctx.author.id, ctx.guild.id)[3] != 0 or ctx.author.id == 104373103802466304:  # if prisoner have gems
+            if ctx.author.id != 104373103802466304:
                 database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
             prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
             await ctx.author.remove_roles(prisoner)
