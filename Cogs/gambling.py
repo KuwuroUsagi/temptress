@@ -36,7 +36,7 @@ class Gambling(commands.Cog):
             if bet < 10:
                 await ctx.reply(f"<:staff:897777248839540757> You need to bet at least 10 <a:pinkcoin:900000697288892416>")
             elif choice.lower() not in ['head', 'tail', 'h', 't', 'heads', 'tails']:
-                await ctx.reply(f"<:staff:897777248839540757> usage: **`s.coinflip <head|tail> <bet>`**")
+                await ctx.reply(f"<:staff:897777248839540757> usage: **`t.coinflip <head|tail> <bet>`**")
             else:
                 coins = database.get_money(ctx.author.id, ctx.guild.id)[2]
                 if bet > coins:
@@ -311,7 +311,7 @@ class Gambling(commands.Cog):
     @coinflip.error
     async def on_coinflip_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.coinflip <head|tail> <bet amount>`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.coinflip <head|tail> <bet amount>`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.errors.CommandOnCooldown):
@@ -323,7 +323,7 @@ class Gambling(commands.Cog):
     @rockpaper.error
     async def on_rps_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(description=f"Usage:\n**`s.rps @mention <bet amount>`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.rps @mention <bet amount>`**",
                                   color=0xFF2030)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.errors.CommandOnCooldown):
@@ -339,7 +339,7 @@ class Gambling(commands.Cog):
                                   description="{} you need to wait {:,.1f} minutes to play roulette again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
                                   color=0xFF2030)
         elif isinstance(error, commands.BadArgument) or isinstance(error, commands.MissingRequiredArgument):
-            embed = discord.Embed(description=f"Usage:\n**`s.roulette <bet amount> <space>`**",
+            embed = discord.Embed(description=f"Usage:\n**`t.roulette <bet amount> <space>`**",
                                   color=0xFF2030)
         await ctx.send(embed=embed)
 
