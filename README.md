@@ -1,10 +1,6 @@
 # ![seductress](seductress_icon.jpg)<br>Seductress (Femdom Discord Bot) 
 
-[![GitHub](https://img.shields.io/static/v1?label=Github&logo=github&message=%20&color=ffffff&style=plastic)](https://github.com/Seductress-5834/Indroduction "GitHub Page")
-[![invite](https://img.shields.io/static/v1?label=Bot%20invite&logo=robot&message=here&color=green&style=plastic)](https://bit.ly/3uZ0PNG "Bot Invite link")
-[![discord](https://img.shields.io/discord/895203728230064150?color=F2A2C0&label=Seductress%20Support%20Server&logo=discord&logoColor=F2A2C0&style=plastic)](https://discord.gg/9gGJamu2Mk "Join Server")
-<br>[![BTC](https://img.shields.io/static/v1?label=BTC&logo=bitcoin&message=39beULEyEDSEoa7VqaqaPinty4MGcujBfM&color=yellow&style=plastic)](BTC.svg "BTC QR Code")
-<br>[![ETC](https://img.shields.io/static/v1?label=ETC&logo=ethereum&message=0x97B5dD5D5a0dC15A5798Cb7444CdC2F2884763AA&color=blue&style=plastic)](ETC.svg "ETC QR Code")
+
 ___
 
 Seductress is a Discord bot coded in Python with [Discord.py](https://discordpy.readthedocs.io/en/master/api.html "Docs") library.
