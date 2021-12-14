@@ -75,7 +75,7 @@ class Misc(commands.Cog):
     @define.error
     async def on_define_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument):
-            embed = discord.Embed(description=f"Usage:\n> **`s.define <word>`** ",
+            embed = discord.Embed(description=f"Usage:\n> **`t.define <word>`** ",
                                   color=0xFF2030)
         await ctx.send(embed=embed)
         
