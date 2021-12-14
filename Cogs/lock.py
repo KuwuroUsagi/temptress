@@ -213,7 +213,7 @@ class Lock(commands.Cog):
             data = database.get_prisoner(message.author.id, message.guild.id)
             if message.content == data[4]:
                 await message.add_reaction(emoji='YES:897762486042910762')
-                await message.add_reaction(emoji='pinkcoin:900000697288892416')
+                await message.add_reaction(emoji='pinkcoin:920347688791310366')
                 sentence = make_image(message.content, message.author.id).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
                 database.update_lock(message.author.id, sentence, message.guild.id)
@@ -223,8 +223,6 @@ class Lock(commands.Cog):
                     await message.reply(f"{message.author.mention} you are now released from {message.channel.mention} for being a good boy and writing the lines.")
                     database.insert_escape(message.author.id, message.guild.id, 0.2, 'cooldown')
                     return
-                if message.author.id in [104373103802466304, 548119438168293376]:
-                    await message.author.send(sentence)
                 prison = message.guild.get_channel(database.get_config('prison', message.guild.id)[0])
                 await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
                 await prison.send(file=discord.File(f'./Image/{message.author.id}.png'))
@@ -422,7 +420,7 @@ class Lock(commands.Cog):
                 sentence = sentence.replace('#slave', sub_name)
                 sentence = make_image(sentence, member.id).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
-                embed = discord.Embed(description=f"{ctx.author.mention} received 20<a:pinkcoin:900000697288892416> by locking {member.mention} in {prison.mention}",
+                embed = discord.Embed(description=f"{ctx.author.mention} received 20<a:pinkcoin:920347688791310366> by locking {member.mention} in {prison.mention}",
                                       color=0x9479ED)
                 await m.edit(embed=embed)
                 await prison.send(f"{member.mention} you have to write :point_down: {num} times to be free or you have to wait 2h or use **`t.escape`** to be free from prison. ||(it is case sensitive)||")
