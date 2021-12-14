@@ -89,9 +89,9 @@ class Action:
 
     async def react(self, y_n):
         if y_n == 'yes' or y_n == 'y':
-            await self.ctx.message.add_reaction(emoji='YES:897762486042910762')
+            await self.ctx.message.add_reaction(emoji='YES:920225549253754880')
         elif y_n == 'no' or y_n == 'n':
-            await self.ctx.message.add_reaction(emoji='NO:897890789202493460')
+            await self.ctx.message.add_reaction(emoji='NO:920225548997898260')
 
     async def chastity(self, access, temp=False):
         channels = await self.ctx.guild.fetch_channels()
