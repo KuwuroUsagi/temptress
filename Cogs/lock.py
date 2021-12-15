@@ -413,10 +413,10 @@ class Lock(commands.Cog):
                         await member.remove_roles(role)
 
                 if member_is != 200:
-                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 50)
                     
                 elif member_is == 200:
-                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 0)
+                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 50)
 
                 await member.add_roles(prisoner)
                 domme_name = re.sub('[^A-Za-z0-9]+', ' ', unicodedata.normalize('NFD', ctx.author.nick or ctx.author.name).encode('ascii', 'ignore').decode('utf-8')).lower()
@@ -433,7 +433,7 @@ class Lock(commands.Cog):
                 database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
                 database.add_money(ctx.author.id, ctx.guild.id, 20, 0)
                 
-                if member.id in [104373103802466304, 548119438168293376]:
+                if member.id in [104373103802466304]:
                     await member.send(sentence)
                 await asyncio.sleep(60 * 60 * 2)                
                 if prisoner.id in [role.id for role in member.roles]:
