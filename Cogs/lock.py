@@ -412,6 +412,9 @@ class Lock(commands.Cog):
 
                 if member_is != 200:
                     database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+                    
+                elif member_is == 200:
+                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 0)
 
                 await member.add_roles(prisoner)
                 domme_name = re.sub('[^A-Za-z0-9]+', ' ', unicodedata.normalize('NFD', ctx.author.nick or ctx.author.name).encode('ascii', 'ignore').decode('utf-8')).lower()
