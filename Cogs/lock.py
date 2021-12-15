@@ -212,7 +212,7 @@ class Lock(commands.Cog):
         if set(database.get_config('prisoner', message.guild.id)) & set([role.id for role in message.author.roles]):
             data = database.get_prisoner(message.author.id, message.guild.id)
             if message.content == data[4]:
-                await message.add_reaction(emoji='YES:897762486042910762')
+                await message.add_reaction(emoji='YES:920225549253754880')
                 await message.add_reaction(emoji='pinkcoin:920347688791310366')
                 sentence = make_image(message.content, message.author.id).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
@@ -227,7 +227,7 @@ class Lock(commands.Cog):
                 await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
                 await prison.send(file=discord.File(f'./Image/{message.author.id}.png'))
             else:
-                await message.add_reaction(emoji='NO:897890789202493460')
+                await message.add_reaction(emoji='NO:920225548997898260')
                 if random() < 0.1:
                     database.remove_money(message.author.id, message.guild.id, 2, 0)
 
@@ -277,7 +277,7 @@ class Lock(commands.Cog):
         if is_escaped is not None:  # if the member is under gem cooldown or 30 mins cooldown.
             if is_escaped[3] == 'gem':
                 embed = discord.Embed(title='Magic Gem is Real',
-                                      description=f"{member.mention} used the power of Magic Gem<a:gems:899985611946078208> "
+                                      description=f"{member.mention} used the power of Magic Gem<a:gems:920237002484494366> "
                                       f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped[2] + 60}:R>.\n> *patience is a virtue*",
                                       color=0xF47FFF)
             elif is_escaped[3] == 'cooldown':
@@ -405,7 +405,7 @@ class Lock(commands.Cog):
                 pass
             i_have_power = ctx.guild.get_member(self.bot.user.id).top_role > member.top_role and ctx.guild.owner.id != member.id
             if i_have_power:  # starts to locking the member
-                embed = discord.Embed(description=f"I am locking {member.mention} <a:loading:903864796418564188>",
+                embed = discord.Embed(description=f"I am locking {member.mention} <a:loading:920610479058063360>",
                                       color=0xFF2030)
                 m = await ctx.send(embed=embed)
                 for role in member.roles:
