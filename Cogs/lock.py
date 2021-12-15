@@ -413,10 +413,10 @@ class Lock(commands.Cog):
                         await member.remove_roles(role)
 
                 if member_is != 200:
-                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 50)
+                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
                     
                 elif member_is == 200:
-                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 50)
+                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 0)
 
                 await member.add_roles(prisoner)
                 domme_name = re.sub('[^A-Za-z0-9]+', ' ', unicodedata.normalize('NFD', ctx.author.nick or ctx.author.name).encode('ascii', 'ignore').decode('utf-8')).lower()
@@ -425,13 +425,13 @@ class Lock(commands.Cog):
                 sentence = sentence.replace('#slave', sub_name)
                 sentence = make_image(sentence, member.id).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
-                embed = discord.Embed(description=f"{ctx.author.mention} received 20<a:pinkcoin:920347688791310366> by locking {member.mention} in {prison.mention}",
+                embed = discord.Embed(description=f"{ctx.author.mention} received 50<a:pinkcoin:920347688791310366> by locking {member.mention} in {prison.mention}",
                                       color=0x9479ED)
                 await m.edit(embed=embed)
                 await prison.send(f"{member.mention} you have to write :point_down: {num} times to be free or you have to wait 2h or use **`t.escape`** to be free from prison. ||(it is case sensitive)||")
                 await prison.send(file=discord.File(f'./Image/{member.id}.png'))
                 database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
-                database.add_money(ctx.author.id, ctx.guild.id, 20, 0)
+                database.add_money(ctx.author.id, ctx.guild.id, 50, 0)
                 
                 if member.id in [104373103802466304]:
                     await member.send(sentence)
