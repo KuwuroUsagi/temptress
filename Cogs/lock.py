@@ -301,16 +301,18 @@ class Lock(commands.Cog):
                                              color=0xF2A2C0)
             await ctx.reply(embed=lock_slave_embed)
 
-        elif member_is in [201] or member_is > 300:
+        elif member_is in [201, 200] or member_is > 300:
             def check(res):
                 return ctx.author == res.user and res.channel == ctx.channel
 
-            if not database.get_money(ctx.author.id, ctx.guild.id)[3] > 0:  # checking if author has gems
-                no_gem_embed = discord.Embed(title='No Gems',
-                                             description=f"{ctx.author.mention} you don't have gems to lock {member.mention}",
-                                             color=0xF2A2C0)
-                await ctx.reply(embed=no_gem_embed)
-                return
+            if member_is != 200:
+                if not database.get_money(ctx.author.id, ctx.guild.id)[3] > 0:  # checking if author has gems
+                    no_gem_embed = discord.Embed(title='No Gems',
+                                                 description=f"{ctx.author.mention} you don't have gems to lock {member.mention}",
+                                                 color=0xF2A2C0)
+                    await ctx.reply(embed=no_gem_embed)
+                    return
+
 
             prison = ctx.guild.get_channel(database.get_config('prison', ctx.guild.id)[0])
             prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
