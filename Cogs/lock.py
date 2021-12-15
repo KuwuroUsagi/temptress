@@ -301,7 +301,7 @@ class Lock(commands.Cog):
                                              color=0xF2A2C0)
             await ctx.reply(embed=lock_slave_embed)
 
-        elif member_is in [201, 200] or member_is > 300:
+        elif member_is in [201] or member_is > 300:
             def check(res):
                 return ctx.author == res.user and res.channel == ctx.channel
 
