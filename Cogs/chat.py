@@ -1,4 +1,4 @@
-r#!/bin/python3
+#!/bin/python3
 """
 by using API from personalityforge bot can talk like it does, for documentation visit https://www.personalityforge.com/chatbot-api-docs.php
 """
