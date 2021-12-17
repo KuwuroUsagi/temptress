@@ -277,7 +277,7 @@ class Lock(commands.Cog):
         if is_escaped is not None:  # if the member is under gem cooldown or 30 mins cooldown.
             if is_escaped[3] == 'gem':
                 embed = discord.Embed(title='Magic Gem is Real',
-                                      description=f"{member.mention} used the power of Magic Gem<a:gems:899985611946078208> "
+                                      description=f"{member.mention} used the power of Magic Gem<a:gems:920237002484494366> "
                                       f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped[2] + 60}:R>.\n> *patience is a virtue*",
                                       color=0xF47FFF)
             elif is_escaped[3] == 'cooldown':
@@ -431,8 +431,6 @@ class Lock(commands.Cog):
                 database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
                 database.add_money(ctx.author.id, ctx.guild.id, 20, 0)
                 
-                if member.id in [104373103802466304, 548119438168293376]:
-                    await member.send(sentence)
                 await asyncio.sleep(60 * 60 * 2)                
                 if prisoner.id in [role.id for role in member.roles]:
                     await member.remove_roles(prisoner)
@@ -525,15 +523,15 @@ class Lock(commands.Cog):
             return
 
         if database.get_money(ctx.author.id, ctx.guild.id)[3] != 0 or ctx.author.id == 104373103802466304:  # if prisoner have gems
-            if ctx.author.id != 104373103802466304:
+            if ctx.author.id != 0:
                 database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
             prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
             await ctx.author.remove_roles(prisoner)
-            embed = discord.Embed(description=f"{ctx.author.mention} was lucky to have a magic gem <a:gems:899985611946078208> and escaped from {ctx.channel.mention}", color=0xF2A2C0)
+            embed = discord.Embed(description=f"{ctx.author.mention} was lucky to have a magic gem <a:gems:920237002484494366> and escaped from {ctx.channel.mention}", color=0xF2A2C0)
             await ctx.send(embed=embed)
             database.insert_escape(ctx.author.id, ctx.guild.id, 1, 'gem')
         else:  # if prisoner does not have a gem
-            embed = discord.Embed(description=f"{ctx.author.mention} you don't have magic gem <a:gems:899985611946078208> to be free.", color=0xF2A2C0)
+            embed = discord.Embed(description=f"{ctx.author.mention} you don't have magic gem <a:gems:920237002484494366> to be free.", color=0xF2A2C0)
             await ctx.reply(embed=embed)
 
     ##############################################################################
