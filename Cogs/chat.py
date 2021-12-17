@@ -46,7 +46,7 @@ class Chat(commands.Cog):
                     emotion = data['message']['emotion']
                     if emotion == 'happy-9':
                         # await ctx.message.add_reaction(emoji='simp:858985009905664040')
-                        message_data = message_data + ' <:giggle:897777342791942225>'
+                        message_data = message_data + ' <:heheheh_TFD:901546792477401089>'
                     if 'cowboy!' in message_data:
                         NSFW_reply = ['*ignoring*', 'Go watch porn pervert.', 'I am not a Pervert like you', 'I am not a pathetic slut like you.', ]
                         message_data = choice(NSFW_reply)
