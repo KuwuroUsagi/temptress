@@ -250,7 +250,7 @@ class Games(commands.Cog):
         else:
             money = database.get_money(member.id, member.guild.id)
             embed = discord.Embed(title="Cash",
-                                  description=f"\n> <a:pinkcoin:920347688791310366> {money[2]}\n> <a:gems:899985611946078208> {money[3]}",
+                                  description=f"\n> <a:pinkcoin:920347688791310366> {money[2]}\n> <a:gems:920237002484494366> {money[3]}",
                                   color=0xF2A2C0)
             embed.set_thumbnail(url=member.avatar_url)
             await ctx.send(embed=embed)
