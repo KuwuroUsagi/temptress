@@ -50,7 +50,6 @@ class Chat(commands.Cog):
                     if 'cowboy!' in message_data:
                         NSFW_reply = ['*ignoring*', 'Go watch porn pervert.', 'I am not a Pervert like you', 'I am not a pathetic slut like you.', ]
                         message_data = choice(NSFW_reply)
-                    print('last part is also fine')
                     await ctx.reply(message_data)
                         
             else:
