@@ -13,7 +13,7 @@ from discord.ext import commands
 class Chat(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.botID = 157181 # NSFW Annabelle Lee = 106996, Laurel Sweet = 71367 Lil Neko = 148149 SFW Cyber Ty = 63906, prob = 23958, 157181
+        self.botID = 157181  # NSFW Annabelle Lee = 106996, Laurel Sweet = 71367 Lil Neko = 148149 SFW Cyber Ty = 63906, prob = 23958
         self.key = environ['FORGE']
         self.base_chat_url = f"https://www.personalityforge.com/api/chat/?apiKey={self.key}&chatBotID={self.botID}&message="  # "{message}&externalID=<externalID>&firstName=<firstName>&lastName=<lastName>&gender=<gender>"
 
@@ -42,11 +42,15 @@ class Chat(commands.Cog):
                         emotion = data['message']['emotion']
                         if emotion == 'happy-9':
                             # await ctx.message.add_reaction(emoji='simp:858985009905664040')
-                            message = message + ' <:giggle:897777342791942225>'
+                            message = message + ' <:blushcat:879560974925959178>'
                         if 'cowboy!' in message:
                             NSFW_reply = ['*ignoring*', 'Go watch porn pervert.', 'I am not a Pervert like you', 'I am not a pathetic slut like you.', ]
                             message = choice(NSFW_reply)
                         await ctx.reply(message)
+                    else:
+                        alex_wood = self.bot.get_user(855057142297264139)
+                        await alex_wood.send(f"`{data}`")
+                        await ctx.reply(f' I can\'t talk right now {ctx.author.mention} I have personal stuff to do.')
             else:
                 roles = '>'
                 for r in database.get_config('chat', message.guild.id):
