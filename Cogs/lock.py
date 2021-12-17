@@ -212,7 +212,7 @@ class Lock(commands.Cog):
         if set(database.get_config('prisoner', message.guild.id)) & set([role.id for role in message.author.roles]):
             data = database.get_prisoner(message.author.id, message.guild.id)
             if message.content == data[4]:
-                await message.add_reaction(emoji='YES:897762486042910762')
+                await message.add_reaction(emoji='YES:920225549253754880')
                 await message.add_reaction(emoji='pinkcoin:920347688791310366')
                 sentence = make_image(message.content, message.author.id).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
@@ -227,7 +227,7 @@ class Lock(commands.Cog):
                 await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
                 await prison.send(file=discord.File(f'./Image/{message.author.id}.png'))
             else:
-                await message.add_reaction(emoji='NO:897890789202493460')
+                await message.add_reaction(emoji='NO:920225548997898260')
                 if random() < 0.1:
                     database.remove_money(message.author.id, message.guild.id, 2, 0)
 
@@ -301,16 +301,18 @@ class Lock(commands.Cog):
                                              color=0xF2A2C0)
             await ctx.reply(embed=lock_slave_embed)
 
-        elif member_is in [201] or member_is > 300:
+        elif member_is in [201, 200] or member_is > 300:
             def check(res):
                 return ctx.author == res.user and res.channel == ctx.channel
 
-            if not database.get_money(ctx.author.id, ctx.guild.id)[3] > 0:  # checking if author has gems
-                no_gem_embed = discord.Embed(title='No Gems',
-                                             description=f"{ctx.author.mention} you don't have gems to lock {member.mention}",
-                                             color=0xF2A2C0)
-                await ctx.reply(embed=no_gem_embed)
-                return
+            if member_is != 200:
+                if not database.get_money(ctx.author.id, ctx.guild.id)[3] > 0:  # checking if author has gems
+                    no_gem_embed = discord.Embed(title='No Gems',
+                                                 description=f"{ctx.author.mention} you don't have gems to lock {member.mention}",
+                                                 color=0xF2A2C0)
+                    await ctx.reply(embed=no_gem_embed)
+                    return
+
 
             prison = ctx.guild.get_channel(database.get_config('prison', ctx.guild.id)[0])
             prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
@@ -403,7 +405,7 @@ class Lock(commands.Cog):
                 pass
             i_have_power = ctx.guild.get_member(self.bot.user.id).top_role > member.top_role and ctx.guild.owner.id != member.id
             if i_have_power:  # starts to locking the member
-                embed = discord.Embed(description=f"I am locking {member.mention} <a:loading:903864796418564188>",
+                embed = discord.Embed(description=f"I am locking {member.mention} <a:loading:920610479058063360>",
                                       color=0xFF2030)
                 m = await ctx.send(embed=embed)
                 for role in member.roles:
@@ -423,13 +425,13 @@ class Lock(commands.Cog):
                 sentence = sentence.replace('#slave', sub_name)
                 sentence = make_image(sentence, member.id).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
-                embed = discord.Embed(description=f"{ctx.author.mention} received 20<a:pinkcoin:920347688791310366> by locking {member.mention} in {prison.mention}",
+                embed = discord.Embed(description=f"{ctx.author.mention} received 50<a:pinkcoin:920347688791310366> by locking {member.mention} in {prison.mention}",
                                       color=0x9479ED)
                 await m.edit(embed=embed)
                 await prison.send(f"{member.mention} you have to write :point_down: {num} times to be free or you have to wait 2h or use **`t.escape`** to be free from prison. ||(it is case sensitive)||")
                 await prison.send(file=discord.File(f'./Image/{member.id}.png'))
                 database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
-                database.add_money(ctx.author.id, ctx.guild.id, 20, 0)
+                database.add_money(ctx.author.id, ctx.guild.id, 50, 0)
                 
                 await asyncio.sleep(60 * 60 * 2)                
                 if prisoner.id in [role.id for role in member.roles]:

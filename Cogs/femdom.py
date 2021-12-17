@@ -1048,7 +1048,7 @@ class Femdom(commands.Cog):
                                                               Button(style=ButtonStyle.blue, label='Puppy Gag', emoji='🐶', disabled=(gag == 'puppy')),
                                                               Button(style=ButtonStyle.blue, label='Cow Gag', emoji='🐮', disabled=(gag == 'cow')),
                                                               Button(style=ButtonStyle.blue, label='Pig Gag', emoji='🐷', disabled=(gag == 'pig')),
-                                                              Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))],]])
+                                                              Button(style=ButtonStyle.red, label='Ungag', disabled=(gag == 'off'))],])
                 try:
                     def check(res):
                         return ctx.author == res.user and res.channel == ctx.channel
