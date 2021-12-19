@@ -274,15 +274,11 @@ class Lock(commands.Cog):
             return
 
         is_escaped = database.is_escaped(member.id, ctx.guild.id)
-        if is_escaped is not None:  # if the member is under gem cooldown or 30 mins cooldown.
+        if is_escaped is not None:  # if the member is under gem cooldown or 30 mins cooldown. 12/19- removed cooldown?
             if is_escaped[3] == 'gem':
                 embed = discord.Embed(title='Magic Gem is Real',
                                       description=f"{member.mention} used the power of Magic Gem<a:gems:920237002484494366> "
                                       f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped[2] + 60}:R>.\n> *patience is a virtue*",
-                                      color=0xF47FFF)
-            elif is_escaped[3] == 'cooldown':
-                embed = discord.Embed(title='Cooldown',
-                                      description=f'{ctx.author.mention} you can lock {member.mention} <t:{is_escaped[2]}:R>',
                                       color=0xF47FFF)
             await ctx.reply(embed=embed)
             return
