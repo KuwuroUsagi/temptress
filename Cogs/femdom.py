@@ -100,9 +100,9 @@ class Action:
         reacts check/cross to the message
         """
         if y_n == 'yes' or y_n == 'y':
-            await self.ctx.message.add_reaction(emoji='YES:897762486042910762')
+            await self.ctx.message.add_reaction(emoji='yes:968277243359027221')
         elif y_n == 'no' or y_n == 'n':
-            await self.ctx.message.add_reaction(emoji='NO:897890789202493460')
+            await self.ctx.message.add_reaction(emoji='no:968277243266756618')
 
     async def own(self):
         """
@@ -279,15 +279,15 @@ class Action:
                     await self.ctx.channel.send(embed=name_embed)
                     await self.react('y')
                 else:
-                    no_power_embed = discord.Embed(description=f'{self.member.mention} have higher role than me <:crypanda:897832575698075688>',
+                    no_power_embed = discord.Embed(description=f'{self.member.mention} have higher role than me <:cry:968287446217400320>',
                                                    color=0xFF2030)
                     await self.ctx.send(embed=no_power_embed)
             else:
-                no_power_embed = discord.Embed(description=f'I don\'t have administrator permission in the server <:crypanda:897832575698075688>',
+                no_power_embed = discord.Embed(description=f'I don\'t have administrator permission in the server <:cry:968287446217400320>',
                                                color=0xFF2030)
                 await self.ctx.send(embed=no_power_embed)
         else:
-            no_power_embed = discord.Embed(description=f'{self.member.mention} in the server owner I don\'t have permission to change nickname <:crypanda:897832575698075688>',
+            no_power_embed = discord.Embed(description=f'{self.member.mention} in the server owner I don\'t have permission to change nickname <:cry:968287446217400320>',
                                            color=0xFF2030)
             await self.ctx.send(embed=no_power_embed)
 
@@ -391,7 +391,7 @@ class Action:
 
             restriction = f"> **Speech Restriction** : {gag}"
 
-            restriction = f"{restriction}\n> **NSFW Access** : {'<a:YES:920225549253754880>' if data[6] else '<a:NO:920225548997898260>'}\n> **Emoji Access** : {'<a:YES:920225549253754880>' if data[4] else '<a:NO:920225548997898260>'}\n> **Voice Channel Access** : {'<a:YES:920225549253754880>' if data[7] else '<a:NO:920225548997898260>'}\n> **Channel tied too** : {'<a:NO:920225548997898260>' if data[3] == 0 else f'<a:YES:920225549253754880> <#{data[3]}>'}"
+            restriction = f"{restriction}\n> **NSFW Access** : {'<a:yes:968277243359027221>' if data[6] else '<a:no:968277243266756618>'}\n> **Emoji Access** : {'<a:yes:968277243359027221>' if data[4] else '<a:no:968277243266756618>'}\n> **Voice Channel Access** : {'<a:yes:968277243359027221>' if data[7] else '<a:no:968277243266756618>'}\n> **Channel tied too** : {'<a:no:968277243266756618>' if data[3] == 0 else f'<a:yes:968277243359027221> <#{data[3]}>'}"
             badwords = [word[0] for word in database.get_badwords(member.id, member.guild.id)]
             badword_count = len(badwords)
             if badword_count > 0:
@@ -406,7 +406,7 @@ class Action:
 
             money = database.get_money(member.id, member.guild.id)
 
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:920347688791310366> {money[2]}\n> <a:gems:920237002484494366> {money[3]}", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:968277243946233906> {money[2]}\n> <a:gems:968277243581325313> {money[3]}", inline=False)
             embed.add_field(name='Restrictions', value=restriction, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
@@ -445,7 +445,7 @@ class Action:
             money = database.get_money(member.id, member.guild.id)
 
             embed = discord.Embed(title=name, color=0xF2A2C0)
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:920347688791310366> {money[2]}\n> <a:gems:920237002484494366> {money[3]} ", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:968277243946233906> {money[2]}\n> <a:gems:968277243581325313> {money[3]} ", inline=False)
             embed.add_field(name='My Subs', value=owned_slaves, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
@@ -533,7 +533,7 @@ class Action:
                 value = ''
                 try:
                     for x in range(((page - 1) * size), ((page - 1) * size) + size):
-                        value = value + f"> <@{lb_list[x][0]}> {int(lb_list[x][2]/10)} <a:gems:920237002484494366>   {lb_list[x][1]} <a:pinkcoin:920347688791310366>\n"
+                        value = value + f"> <@{lb_list[x][0]}> {int(lb_list[x][2]/10)} <a:gems:968277243581325313>   {lb_list[x][1]} <a:pinkcoin:968277243946233906>\n"
                     embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
                 except IndexError:
                     embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
