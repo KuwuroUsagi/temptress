@@ -212,8 +212,8 @@ class Lock(commands.Cog):
         if set(database.get_config('prisoner', message.guild.id)) & set([role.id for role in message.author.roles]):
             data = database.get_prisoner(message.author.id, message.guild.id)
             if message.content == data[4]:
-                await message.add_reaction(emoji='YES:920225549253754880')
-                await message.add_reaction(emoji='pinkcoin:920347688791310366')
+                await message.add_reaction(emoji='yes:968277243359027221')
+                await message.add_reaction(emoji='pinkcoin:968277243946233906')
                 sentence = make_image(message.content, message.author.id).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
                 database.update_lock(message.author.id, sentence, message.guild.id)
@@ -227,7 +227,7 @@ class Lock(commands.Cog):
                 await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
                 await prison.send(file=discord.File(f'./Image/{message.author.id}.png'))
             else:
-                await message.add_reaction(emoji='NO:920225548997898260')
+                await message.add_reaction(emoji='no:968277243266756618')
                 if random() < 0.1:
                     database.remove_money(message.author.id, message.guild.id, 2, 0)
 
@@ -277,7 +277,7 @@ class Lock(commands.Cog):
         if is_escaped is not None:  # if the member is under gem cooldown or 30 mins cooldown.
             if is_escaped[3] == 'gem':
                 embed = discord.Embed(title='Magic Gem is Real',
-                                      description=f"{member.mention} used the power of Magic Gem<a:gems:920237002484494366> "
+                                      description=f"{member.mention} used the power of Magic Gem<a:gems:968277243581325313> "
                                       f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped[2] + 60}:R>.\n> *patience is a virtue*",
                                       color=0xF47FFF)
             elif is_escaped[3] == 'cooldown':
@@ -405,7 +405,7 @@ class Lock(commands.Cog):
                 pass
             i_have_power = ctx.guild.get_member(self.bot.user.id).top_role > member.top_role and ctx.guild.owner.id != member.id
             if i_have_power:  # starts to locking the member
-                embed = discord.Embed(description=f"I am locking {member.mention} <a:loading:920610479058063360>",
+                embed = discord.Embed(description=f"I am locking {member.mention} <a:loading:968277243283521536>",
                                       color=0xFF2030)
                 m = await ctx.send(embed=embed)
                 for role in member.roles:
@@ -425,7 +425,7 @@ class Lock(commands.Cog):
                 sentence = sentence.replace('#slave', sub_name)
                 sentence = make_image(sentence, member.id).replace('\n', ' ')
                 sentence = sentence.replace('  ', ' ')
-                embed = discord.Embed(description=f"{ctx.author.mention} received 50<a:pinkcoin:920347688791310366> by locking {member.mention} in {prison.mention}",
+                embed = discord.Embed(description=f"{ctx.author.mention} received 50<a:pinkcoin:968277243946233906> by locking {member.mention} in {prison.mention}",
                                       color=0x9479ED)
                 await m.edit(embed=embed)
                 await prison.send(f"{member.mention} you have to write :point_down: {num} times to be free or you have to wait 2h or use **`t.escape`** to be free from prison. ||(it is case sensitive)||")
@@ -440,7 +440,7 @@ class Lock(commands.Cog):
 
             else:  # I have no power
                 no_power_embed = discord.Embed(title='I don\'t have power',
-                                                description=f'{member.mention} might be server owner or having higher role than me <:crypanda:897832575698075688>',
+                                                description=f'{member.mention} might be server owner or having higher role than me <:cry:968287446217400320>',
                                                 color=0xFF2030)
                 await ctx.send(embed=no_power_embed)
 
@@ -529,11 +529,11 @@ class Lock(commands.Cog):
                 database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
             prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
             await ctx.author.remove_roles(prisoner)
-            embed = discord.Embed(description=f"{ctx.author.mention} was lucky to have a magic gem <a:gems:920237002484494366> and escaped from {ctx.channel.mention}", color=0xF2A2C0)
+            embed = discord.Embed(description=f"{ctx.author.mention} was lucky to have a magic gem <a:gems:968277243581325313> and escaped from {ctx.channel.mention}", color=0xF2A2C0)
             await ctx.send(embed=embed)
             database.insert_escape(ctx.author.id, ctx.guild.id, 1, 'gem')
         else:  # if prisoner does not have a gem
-            embed = discord.Embed(description=f"{ctx.author.mention} you don't have magic gem <a:gems:920237002484494366> to be free.", color=0xF2A2C0)
+            embed = discord.Embed(description=f"{ctx.author.mention} you don't have magic gem <a:gems:968277243581325313> to be free.", color=0xF2A2C0)
             await ctx.reply(embed=embed)
 
     ##############################################################################
