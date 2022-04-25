@@ -26,12 +26,12 @@ class Misc(commands.Cog):
                     'x-rapidapi-key': os.environ["RAPID_API"]}
             response = requests.request("GET", url, headers=headers, params=querystring).json()['list']
             if len(response) == 0:
-                embed = discord.Embed(description=f'<:crypanda:897832575698075688>  I can\'t find the definition of the word **`{word}`**',
+                embed = discord.Embed(description=f'<:cry:968287446217400320>  I can\'t find the definition of the word **`{word}`**',
                                       color=0xFF2030)
                 await ctx.send(embed=embed)
             else:
                 def make_embed(page):
-                    embed=discord.Embed(description=f"{response[page]['definition']}\n\nExample:\n> {response[page]['example']}\n\nVotes:\n> <a:upvote:907603155922071552> {response[page]['thumbs_up']}              <a:downvote:907603183117930567> {response[page]['thumbs_down']}",
+                    embed=discord.Embed(description=f"{response[page]['definition']}\n\nExample:\n> {response[page]['example']}\n\nVotes:\n> <a:upvote:968292752813068298> {response[page]['thumbs_up']}              <a:downvote:968293083982729247> {response[page]['thumbs_down']}",
                                         color=0xF2A2C0)
                     embed.set_footer(text=f"{page + 1}/{len(response)}", icon_url=self.bot.user.avatar_url)
                     embed.set_author(name=word.upper(), url=response[page]['permalink'])

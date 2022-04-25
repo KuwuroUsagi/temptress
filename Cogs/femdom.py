@@ -100,9 +100,9 @@ class Action:
         reacts check/cross to the message
         """
         if y_n == 'yes' or y_n == 'y':
-            await self.ctx.message.add_reaction(emoji='YES:897762486042910762')
+            await self.ctx.message.add_reaction(emoji='yes:968277243359027221')
         elif y_n == 'no' or y_n == 'n':
-            await self.ctx.message.add_reaction(emoji='NO:897890789202493460')
+            await self.ctx.message.add_reaction(emoji='no:968277243266756618')
 
     async def own(self):
         """
@@ -279,15 +279,15 @@ class Action:
                     await self.ctx.channel.send(embed=name_embed)
                     await self.react('y')
                 else:
-                    no_power_embed = discord.Embed(description=f'{self.member.mention} have higher role than me <:crypanda:897832575698075688>',
+                    no_power_embed = discord.Embed(description=f'{self.member.mention} have higher role than me <:cry:968287446217400320>',
                                                    color=0xFF2030)
                     await self.ctx.send(embed=no_power_embed)
             else:
-                no_power_embed = discord.Embed(description=f'I don\'t have administrator permission in the server <:crypanda:897832575698075688>',
+                no_power_embed = discord.Embed(description=f'I don\'t have administrator permission in the server <:cry:968287446217400320>',
                                                color=0xFF2030)
                 await self.ctx.send(embed=no_power_embed)
         else:
-            no_power_embed = discord.Embed(description=f'{self.member.mention} in the server owner I don\'t have permission to change nickname <:crypanda:897832575698075688>',
+            no_power_embed = discord.Embed(description=f'{self.member.mention} in the server owner I don\'t have permission to change nickname <:cry:968287446217400320>',
                                            color=0xFF2030)
             await self.ctx.send(embed=no_power_embed)
 
@@ -391,7 +391,7 @@ class Action:
 
             restriction = f"> **Speech Restriction** : {gag}"
 
-            restriction = f"{restriction}\n> **NSFW Access** : {'<a:YES:920225549253754880>' if data[6] else '<a:NO:920225548997898260>'}\n> **Emoji Access** : {'<a:YES:920225549253754880>' if data[4] else '<a:NO:920225548997898260>'}\n> **Voice Channel Access** : {'<a:YES:920225549253754880>' if data[7] else '<a:NO:920225548997898260>'}\n> **Channel tied too** : {'<a:NO:920225548997898260>' if data[3] == 0 else f'<a:YES:920225549253754880> <#{data[3]}>'}"
+            restriction = f"{restriction}\n> **NSFW Access** : {'<a:yes:968277243359027221>' if data[6] else '<a:no:968277243266756618>'}\n> **Emoji Access** : {'<a:yes:968277243359027221>' if data[4] else '<a:no:968277243266756618>'}\n> **Voice Channel Access** : {'<a:yes:968277243359027221>' if data[7] else '<a:no:968277243266756618>'}\n> **Channel tied too** : {'<a:no:968277243266756618>' if data[3] == 0 else f'<a:yes:968277243359027221> <#{data[3]}>'}"
             badwords = [word[0] for word in database.get_badwords(member.id, member.guild.id)]
             badword_count = len(badwords)
             if badword_count > 0:
@@ -406,7 +406,7 @@ class Action:
 
             money = database.get_money(member.id, member.guild.id)
 
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:920347688791310366> {money[2]}\n> <a:gems:920237002484494366> {money[3]}", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:968277243946233906> {money[2]}\n> <a:gems:968277243581325313> {money[3]}", inline=False)
             embed.add_field(name='Restrictions', value=restriction, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
@@ -445,7 +445,7 @@ class Action:
             money = database.get_money(member.id, member.guild.id)
 
             embed = discord.Embed(title=name, color=0xF2A2C0)
-            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:920347688791310366> {money[2]}\n> <a:gems:920237002484494366> {money[3]} ", inline=False)
+            embed.add_field(name='Cash', value=f"\n> <a:pinkcoin:968277243946233906> {money[2]}\n> <a:gems:968277243581325313> {money[3]} ", inline=False)
             embed.add_field(name='My Subs', value=owned_slaves, inline=False)
 
             simp_list = database.get_simp(member.id, member.guild.id)
@@ -533,7 +533,7 @@ class Action:
                 value = ''
                 try:
                     for x in range(((page - 1) * size), ((page - 1) * size) + size):
-                        value = value + f"> <@{lb_list[x][0]}> {int(lb_list[x][2]/10)} <a:gems:920237002484494366>   {lb_list[x][1]} <a:pinkcoin:920347688791310366>\n"
+                        value = value + f"> <@{lb_list[x][0]}> {int(lb_list[x][2]/10)} <a:gems:968277243581325313>   {lb_list[x][1]} <a:pinkcoin:968277243946233906>\n"
                     embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
                 except IndexError:
                     embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
@@ -698,7 +698,7 @@ class Punishment:
                 database.update_slaveDB(self.author.id, 'life', life-1, self.author.guild.id)
                 embed = discord.Embed(title="Nope",
                                     description=f"{self.mention} can't say that word little one! Better watch that mouth!, you lost 1 life."
-                                    f"\n\n\n**life**\n> {'<:fullheart:923089991469510667>'*(life - 1)}{'<:emptyheart:923092707939848213>'*(11 - life)}",
+                                    f"\n\n\n**life**\n> {'<:fullheart:968298305178202205>'*(life - 1)}{'<:emptyheart:968298304855224403>'*(11 - life)}",
                                     colour=0xF2A2C0)
                 await self.channel.send(embed=embed, delete_after=5)
 
@@ -796,9 +796,9 @@ class Femdom(commands.Cog):
             return
     
         if member.id == self.bot.user.id:  # Temptress ID, owning Temptress
-            embed = discord.Embed(description=f"I know it is tempting to having a cute baby girl like me as your sub<:giggle:897777342791942225>"
+            embed = discord.Embed(description=f"I know it is tempting to have a cute girl like me as your sub <:giggle:968277440516481054>"
                                               f" I know it is tempting to spank and choke me at the same time but I am"
-                                              f" {self.bot.user.name}, this bitch is not for sales, I am sorry<:cya:897777567086563369>",
+                                              f" {self.bot.user.name}, this bitch is not for sale, sorry! <:cya:968277440516489246>",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
 
@@ -839,7 +839,7 @@ class Femdom(commands.Cog):
 
             elif member_is == 101:  # slave trying to own other slave
                 embed = discord.Embed(title='Pathetic…',
-                                      description=f"<:giggle:897777342791942225>You foolish {ctx.author.mention} ahahahahha. You think you can own a sub when you are a slave?!, "
+                                      description=f"<:giggle:968277440516481054>You foolish {ctx.author.mention} ahahahahha. You think you can own a sub when you are a slave?!, "
                                                   f"Ahahahaha don't be so brazen.",
                                       color=0xFF2030)
 
@@ -890,7 +890,7 @@ class Femdom(commands.Cog):
             return
 
         if member.id == self.bot.user.id:  # Temptress ID, owning Temptress
-            embed = discord.Embed(description=f"<:crypanda:897832575698075688> why are you trying to disown me, am I not a good girl.",
+            embed = discord.Embed(description=f"<:cry:968287446217400320> why are you trying to disown me, am I not a good girl.",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
 
@@ -930,7 +930,7 @@ class Femdom(commands.Cog):
             elif member_is > 300:  # Domme disowning other dommes owned slave
                 embed = discord.Embed(title='Nah',
                                       description=f"You can't disown {member.mention}, is "
-                                                  f"owned by another Domme, <@{member_is}>. ||but you can block {member.mention} <:giggle:897777342791942225>||",
+                                                  f"owned by another Domme, <@{member_is}>. ||but you can block {member.mention} <:giggle:968277440516481054>||",
                                       color=0xFF2030)
 
             elif member_is == 101:  # Slave disowning Slave
@@ -981,7 +981,7 @@ class Femdom(commands.Cog):
             return
 
         if member.id == self.bot.user.id:  # temptress ID, trying to kitty gag temptress.
-            embed = discord.Embed(description=f"Pff.. are you dumb like Shaman, Ahahaha!!",
+            embed = discord.Embed(description=f"Pff.. are you dumb, Ahahaha!!",
                                   color=0xF2A2C0)
             await ctx.send(embed=embed)
 
@@ -1008,7 +1008,7 @@ class Femdom(commands.Cog):
             elif member_is == 201:  # Domme gag in Free slave
                 if database.get_money(ctx.author.id, ctx.guild.id)[3] <= 0:
                     embed = discord.Embed(title='Nah',
-                                          description=f"{ctx.author.mention}, you don't have magic gem, you need magic gem <a:gems:920237002484494366> "
+                                          description=f"{ctx.author.mention}, you don't have magic gem, you need magic gem <a:gems:968277243581325313> "
                                           f"to gag/ungag because {member.mention} is a free slave!",
                                           color=0xF2A2C0)
                 else:
@@ -1084,8 +1084,8 @@ class Femdom(commands.Cog):
             elif member_is == 102:  # slave kitty gag on Domme
                 embed = discord.Embed(title=f'You shall not try such thing!',
                                       description=f'{ctx.author.mention}, you are a slave, you are not as powerful as a domme and you '
-                                                  f'will never be! How could you even consider trying something s'
-                                                  f'o foolish!! {member.mention} I think someone needs to learn a lesson!!!, brainless slave',
+                                                  f'will never be! How could you even consider trying something '
+                                                  f'so foolish!! {member.mention} I think someone needs to learn a lesson!!!, brainless slave',
                                       color=0xFF2030)
 
             elif member_is == 222 or member_is == 111:  # when mentioned member doesn't have slave or domme role
@@ -1168,14 +1168,14 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave adding badword on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can add badword when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to a Domme, she would love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave adding badword for Domme
                 embed = discord.Embed(title=f'You shall not try such thing!',
                                       description=f'{ctx.author.mention}, you are a slave, you are not as powerful as a domme and you '
-                                                  f'will never be! How could you even consider trying something s'
-                                                  f'o foolish!! {member.mention} I think someone needs to learn a lesson!!!, brainless slave',
+                                                  f'will never be! How could you even consider trying something '
+                                                  f'so foolish!! {member.mention} I think someone needs to learn a lesson!, brainless slave',
                                       color=0xFF2030)
 
             elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
@@ -1304,7 +1304,7 @@ class Femdom(commands.Cog):
             member_is = who_is(ctx.author, member)
             if member_is == 1:  # slave self clearing all badwords
                 embed = discord.Embed(title='Pathetic...',
-                                      description=f"Pathetic!!, This simpleton slave is trying to be remove badword himself! {ctx.author.mention} only a "
+                                      description=f"Pathetic!!, This simpleton slave is trying to be remove a bad word himself! {ctx.author.mention} only a "
                                                   f"Domme can do it.",
                                       color=0xF2A2C0)
 
@@ -1329,14 +1329,14 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave clearing badwords on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can remove badword when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to a Domme, she would love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave clearing badword of Domme
                 embed = discord.Embed(title=f'You shall not try such thing!',
                                       description=f'{ctx.author.mention}, you are a slave, you are not as powerful as a domme and you '
-                                                  f'will never be! How could you even consider trying something s'
-                                                  f'o foolish!! {member.mention} I think someone needs to learn a lesson!!!, brainless slave',
+                                                  f'will never be! How could you even consider trying something '
+                                                  f'so foolish!! {member.mention} I think someone needs to learn a lesson!!!, brainless slave',
                                       color=0xFF2030)
 
             elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
@@ -1404,14 +1404,14 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave nickname on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can change name when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to a Domme, she would love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave nickname on Domme
                 embed = discord.Embed(title=f'You shall not try such thing!',
                                       description=f'{ctx.author.mention}, you are a slave, you are not as powerful as a domme and you '
-                                                  f'will never be! How could you even consider trying something s'
-                                                  f'o foolish!! {member.mention} I think someone needs to learn a lesson!!!, brainless slave',
+                                                  f'will never be! How could you even consider trying something '
+                                                  f'so foolish!! {member.mention} I think someone needs to learn a lesson!, brainless slave',
                                       color=0xFF2030)
 
             elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
@@ -1454,10 +1454,10 @@ class Femdom(commands.Cog):
         elif member.bot:
             if member.id == self.bot.user.id:
                 embed = discord.Embed(title='So you want to know my status?',
-                                      description=f"I am Temptress. A woman who tempts someone like you, A harsh dominant one who entices men into sexual activities and suffering.",
+                                      description=f"I am Temptress. A woman who tempts someone like you, A harsh dominant, one who entices men into sexual activities and suffering.",
                                       color=0xF2A2C0)
             else:
-                embed = discord.Embed(description=f"{member.mention} is my friend to make men incel.",
+                embed = discord.Embed(description=f"{member.mention} is my friend to make men incels.",
                                       color=0xF2A2C0)
             embed.set_thumbnail(url=member.avatar_url)
         else:
@@ -1497,10 +1497,10 @@ class Femdom(commands.Cog):
                                                   f"a Domme being punished. so you have emoji access always",
                                       color=0xF2A2C0)
 
-            elif member_is == 201:  # Domme ungaging on Free slave
+            elif member_is == 201:  # Domme ungagging a Free slave
                 if database.get_money(ctx.author.id, ctx.guild.id)[3] <= 0:
                     embed = discord.Embed(title='Nah',
-                                          description=f"{ctx.author.mention}, you don't have magic gem, you need magic gem <a:gems:920237002484494366> "
+                                          description=f"{ctx.author.mention}, you don't have magic gems, you need magic gems <a:gems:968277243581325313> "
                                           f"to ban/allow emotes because {member.mention} is a free slave!",
                                           color=0xF2A2C0)
                 else:
@@ -1560,8 +1560,8 @@ class Femdom(commands.Cog):
             elif member_is == 102:  # slave emoji allow on Domme
                 embed = discord.Embed(title=f'You shall not try such thing!',
                                       description=f'{ctx.author.mention}, you are a slave, you are not as powerful as a domme and you '
-                                                  f'will never be! How could you even consider trying something s'
-                                                  f'o foolish!! {member.mention} I think someone needs to learn a lesson!!!, brainless slave',
+                                                  f'will never be! How could you even consider trying something '
+                                                  f'so foolish!! {member.mention} I think someone needs to learn a lesson!, brainless slave',
                                       color=0xFF2030)
 
             elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
@@ -1638,14 +1638,14 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave tie on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can tie a slave to a channel when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to a Domme, she would love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave tie on Domme
                 embed = discord.Embed(title=f'You shall not try such thing!',
                                       description=f'{ctx.author.mention}, you are a slave, you are not as powerful as a domme and you '
-                                                  f'will never be! How could you even consider trying something s'
-                                                  f'o foolish!! {member.mention} I think someone needs to learn a lesson!!!, brainless slave',
+                                                  f'will never be! How could you even consider trying something '
+                                                  f'so foolish!! {member.mention} I think someone needs to learn a lesson!, brainless slave',
                                       color=0xFF2030)
 
             elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
@@ -1720,14 +1720,14 @@ class Femdom(commands.Cog):
             elif member_is == 101:  # Slave untie on Slave
                 embed = discord.Embed(title='Pathetic...',
                                       description=f"You foolish slave. You think you can untie a slave from a channel when you are a slave, {ctx.author.mention}! "
-                                                  f"how Pathetic!!!\nI need to tell this joke to Deity, she will love it.",
+                                                  f"how Pathetic!!!\nI need to tell this joke to a Domme, she would love it.",
                                       color=0xF2A2C0)
 
             elif member_is == 102:  # slave untie on Domme
                 embed = discord.Embed(title=f'You shall not try such thing!',
                                       description=f'{ctx.author.mention}, you are a slave, you are not as powerful as a domme and you '
-                                                  f'will never be! How could you even consider trying something s'
-                                                  f'o foolish!! {member.mention} I think someone needs to learn a lesson!!!, brainless slave',
+                                                  f'will never be! How could you even consider trying something '
+                                                  f'so foolish!! {member.mention} I think someone needs to learn a lesson!, brainless slave',
                                       color=0xFF2030)
 
             elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
