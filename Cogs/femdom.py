@@ -698,7 +698,7 @@ class Punishment:
                 database.update_slaveDB(self.author.id, 'life', life-1, self.author.guild.id)
                 embed = discord.Embed(title="Nope",
                                     description=f"{self.mention} can't say that word little one! Better watch that mouth!, you lost 1 life."
-                                    f"\n\n\n**life**\n> {'<:fullheart:923089991469510667>'*(life - 1)}{'<:emptyheart:923092707939848213>'*(11 - life)}",
+                                    f"\n\n\n**life**\n> {'<:fullheart:968298305178202205>'*(life - 1)}{'<:emptyheart:968298304855224403>'*(11 - life)}",
                                     colour=0xF2A2C0)
                 await self.channel.send(embed=embed, delete_after=5)
 
