@@ -89,9 +89,9 @@ class Action:
 
     async def react(self, y_n):
         if y_n == 'yes' or y_n == 'y':
-            await self.ctx.message.add_reaction(emoji='YES:920225549253754880')
+            await self.ctx.message.add_reaction(emoji='yes:968277243359027221')
         elif y_n == 'no' or y_n == 'n':
-            await self.ctx.message.add_reaction(emoji='NO:920225548997898260')
+            await self.ctx.message.add_reaction(emoji='no:968277243266756618')
 
     async def chastity(self, access, temp=False):
         channels = await self.ctx.guild.fetch_channels()
@@ -161,7 +161,7 @@ class Femdom(commands.Cog):
         if member.bot:
             if member.id == self.bot.user.id:
                 embed = discord.Embed(title='Nah',
-                                      description=f"You can't deny my cum permission, I will cum all day long and you can't stop me.<:devilpanda:897834095474778153>",
+                                      description=f"You can't deny my cum permission, I will cum all day long and you can't stop me.<a:bully:968288741733064814>",
                                       color=0xF2A2C0)
                 await ctx.send(embed=embed)
             else:
