@@ -432,7 +432,7 @@ class Action:
         elif set(database.get_config('domme', member.guild.id)) & set([role.id for role in member.roles]):   # domme status
             def get_status_emojis(member, guild):
                 data = database.get_slave_from_DB(member, guild)[0]
-                return f"{'' if data[6] else '<:chastity:897763218670354442>'}  {'' if data[7] else '<a:muffs:897764112388468747>'}  {'<:ballgag:897915835555921921>' if data[2] in ['kitty', 'puppy', 'cow', 'pig'] else ''}  {'' if data[4] else '<:noemoji:897921450118356992>'}"
+                return f"{'' if data[6] else '<:chastity:968301157451710484>'}  {'' if data[7] else '<a:muffs:968300953700806716>'}  {'<:ballgag:968301157535604777>' if data[2] in ['kitty', 'puppy', 'cow', 'pig'] else ''}  {'' if data[4] else '<:noemoji:968300952727740456>'}"
             name = member.nick or member.name
             slaves_list = database.get_slaves(member.id, member.guild.id)
             if not slaves_list:
