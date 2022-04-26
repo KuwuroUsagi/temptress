@@ -14,8 +14,9 @@ She will punish and gag them till they break and will rebuild them. Commands are
 > Bot prefix is **`t.`**
 
  1. Invite the bot to server. https://discord.com/api/oauth2/authorize?client_id=920155888977850388&permissions=8&scope=bot<br>
- 1. Use the Command **`t.setup`** in the server to start initializing. *(required Administrative Permission.)*
+ 2. Use the Command **`t.setup`** in the server to start initializing. *(required Administrative Permission.)*
  > Note: Domme roles and Sub roles should be made in the server before initializing the Bot.
+3. If you enjoy the bot and want to see updates and improvements please consider contributing! https://ko-fi.com/kuwurousagi
 ___
 
 ## Features
