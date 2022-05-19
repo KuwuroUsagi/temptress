@@ -17,7 +17,7 @@ She will punish and gag them till they break and will rebuild them. Commands are
  2. Use the Command **`t.setup`** in the server to start initializing. *(required Administrative Permission.)*
  > Note: Domme roles and Sub roles should be made in the server before initializing the Bot.
  3. For support join the Discord: https://discord.gg/4bQguQW4eG  (ie. Removing an owner from someone or resetting a currency to an amount etc.)
- 4. If you enjoy the bot and want to see updates and improvements please consider contributing! https://ko-fi.com/kuwurousagi
+ 4. If you enjoy the bot and want to see updates and improvements please consider contributing either via a pull request or donating for getting developers to work on Temptress! https://ko-fi.com/kuwurousagi
 ___
 
 ## Features
