@@ -229,7 +229,8 @@ class Lock(commands.Cog):
             else:
                 await message.add_reaction(emoji='no:968277243266756618')
                 if random() < 0.1:
-                    database.remove_money(message.author.id, message.guild.id, 2, 0)
+                    coins_to_remove = (2 + random.randint(0, 3))
+                    database.remove_money(message.author.id, message.guild.id, coins_to_remove, 0)
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
