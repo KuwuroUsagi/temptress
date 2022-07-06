@@ -35,8 +35,9 @@ class Games(commands.Cog):
                             user_id = int(embed.to_dict()['description'][2:20].replace('>', ''))
                             if database.is_botban(user_id) is not None:
                                 return
-                            database.add_money(user_id, message.guild.id, 50, 0)
-                            embed = discord.Embed(description=f"<@{user_id}> received 50 <a:pinkcoin:968277243946233906> for Bumping the server.", color=0xF2A2C0)
+                            coins_to_add = 100 + random.randint(0, 50)
+                            database.add_money(user_id, message.guild.id, coins_to_add, 0)
+                            embed = discord.Embed(description=f"<@{user_id}> received {coins_to_add} <a:pinkcoin:968277243946233906> for Bumping the server.", color=0xF2A2C0)
                             await message.channel.send(embed=embed)
                             return
                     except Exception:
