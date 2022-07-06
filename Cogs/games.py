@@ -44,7 +44,8 @@ class Games(commands.Cog):
                         return
 
         if random.random() < 0.1 and database.is_botban(message.author.id) is None:
-            database.add_money(message.author.id, message.guild.id, 1, 0)
+            coins_to_add = 3
+            database.add_money(message.author.id, message.guild.id, coins_to_add, 0)
 
         try:
             data = database.get_config_raw('counting', message.guild.id).split('_')  # [number, channel, member, message, count_length]
