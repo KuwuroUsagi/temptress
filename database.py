@@ -1,4 +1,5 @@
 #!/bin/python3
+import random
 import psycopg2
 import pickle
 from os import environ
@@ -336,7 +337,8 @@ def lock(slave, guild, domme, num, sentence, roles):
 def update_lock(slave, sentence, guild):
     with con:
         cur.execute("UPDATE Prison SET num = num - 1, sentence = %s, count = count + 1 WHERE slaveid = %s AND guildid = %s", (sentence, slave, guild))
-    add_money(slave, guild, 15, 0)
+    coins_to_add = (30 + random.randint(0, 20))
+    add_money(slave, guild, coins_to_add, 0)
 
 
 def get_prisoner(slave, guild):
