@@ -15,555 +15,651 @@ on_prison_delete    |   deletes the prisoner role and unlocks all the prisoners
 
 Note: a slave can't be locked multiple times without 30 minutes of cooldown in between
 """
-import discord
-import database
-import textwrap
 import asyncio
-import unicodedata
+import contextlib
+import random
 import re
-from random import choice, randint, getrandbits, random
-from discord.ext import commands, tasks
-from discord_components import *
-from PIL import Image, ImageDraw, ImageFont
+import textwrap
+from random import choice, getrandbits
 from string import ascii_letters
+
+import database
+import discord
+import unicodedata
+from PIL import Image, ImageDraw, ImageFont
+from discord import ButtonStyle
+from discord.ext import commands, tasks
 
 
 def who_is(author, member):
-    """
-    returns int depends on relationship between author and member.
+  """
+  returns int depends on relationship between author and member.
 
-    2       author and member is the same person + has locker role
+  2       author and member is the same person + has locker role
 
-    202     both author and member have locker role
+  202     both author and member have locker role
 
-    200     member is owned by author
+  200     member is owned by author
 
-    201     member is unowned by author
+  201     member is unowned by author
 
-    >300    discord id of member's owner
+  >300    discord id of member's owner
 
-    222     member does not have locker or slave role and author has locker role
+  222     member does not have locker or slave role and author has locker role
 
-    1       author and member is the same person + has slave role
+  1       author and member is the same person + has slave role
 
-    101     both author and member have slave role
+  101     both author and member have slave role
 
-    102     author has slave role and member has locker role
+  102     author has slave role and member has locker role
 
-    111     member does not have locker or slave role and author has slave role
+  111     member does not have locker or slave role and author has slave role
 
-    0       author does not have both slave and locker role
+  0       author does not have both slave and locker role
 
-    -1      member is bot banned
+  -1      member is bot banned
 
-    <-1     unixtime till author is banned
-    """
-    ban_data = database.is_botban(author.id)
-    if ban_data is None:
-        if database.is_botban(member.id) is None:
-            if set(database.get_config('locker', member.guild.id)) & set([role.id for role in author.roles]):
-                if author.id == member.id:
-                    return 2
-                if set(database.get_config('locker', member.guild.id)) & set([role.id for role in member.roles]):
-                    return 202
-                elif set(database.get_config('slave', member.guild.id)) & set([role.id for role in member.roles]):
-                    ownerid = database.get_owner(member.id, member.guild.id)
-                    if ownerid == author.id:
-                        return 200
-                    elif ownerid == 0:
-                        return 201
-                    elif ownerid > 300:
-                        return ownerid
-                else:
-                    return 222
-            elif set(database.get_config('slave', member.guild.id)) & set([role.id for role in author.roles]):
-                if author.id == member.id:
-                    return 1
-                if set(database.get_config('slave', member.guild.id)) & set([role.id for role in member.roles]):
-                    return 101
-                if set(database.get_config('locker', member.guild.id)) & set([role.id for role in member.roles]):
-                    return 102
-                else:
-                    return 111
-            else:
-                return 0
+  <-1     unixtime till author is banned
+  """
+  ban_data = database.is_botban(author.id)
+  if ban_data is None:
+    if database.is_botban(member.id) is None:
+      if set(database.get_config('locker', member.guild.id)) & set([str(role.id) for role in author.roles]):
+        if author.id == member.id:
+          return 2
+        if set(database.get_config('locker', member.guild.id)) & set([str(role.id) for role in member.roles]):
+          return 202
+        elif set(database.get_config('slave', member.guild.id)) & set([str(role.id) for role in member.roles]):
+          ownerid = database.get_owner(member.id, member.guild.id)
+          if ownerid == author.id:
+            return 200
+          elif ownerid == 0:
+            return 201
+          elif ownerid > 300:
+            return ownerid
         else:
-            return -1
+          return 222
+      elif set(database.get_config('slave', member.guild.id)) & set([str(role.id) for role in author.roles]):
+        if author.id == member.id:
+          return 1
+        if set(database.get_config('slave', member.guild.id)) & set([str(role.id) for role in member.roles]):
+          return 101
+        if set(database.get_config('locker', member.guild.id)) & set([str(role.id) for role in member.roles]):
+          return 102
+        else:
+          return 111
+      else:
+        return 0
     else:
-        return -1 * ban_data[1]
+      return -1
+  else:
+    return -1 * ban_data[1]
 
 
 def make_image(sentence, memberid):
-    """
-    Saves lines png in ./Image with filename coresponding to member's ID
-    returns randomly capitalized string.
+  """
+  Saves lines png in ./Image with filename coresponding to member's ID
+  returns randomly capitalized string.
 
-    Note string includes newline as character
-    """
-    new_string = ''
-    for character in sentence:
-        if bool(getrandbits(1)):
-            new_string += character.upper()
-        else:
-            new_string += character.lower()
+  Note string includes newline as character
+  """
+  new_string = ''
+  for character in sentence:
+    if bool(getrandbits(1)):
+      new_string += character.upper()
+    else:
+      new_string += character.lower()
 
-    img = Image.open('./Image/blank_discord_bg.png')
-    font = ImageFont.truetype('./Fonts/LadylikeBB.ttf', 53)
-    draw = ImageDraw.Draw(img)
-    avg_char_width = sum(font.getsize(char)[0] for char in ascii_letters) / len(ascii_letters)
-    max_char_count = int(img.size[0] * .95 / avg_char_width)  # 618
-    new_string = textwrap.fill(text=new_string, width=max_char_count)
+  img = Image.open('./Image/blank_discord_bg.png')
+  font = ImageFont.truetype('./Fonts/Kalam-Bold.ttf', 43)
+  draw = ImageDraw.Draw(img)
+  avg_char_width = sum(font.getsize(char)[0] for char in ascii_letters) / len(ascii_letters)
+  max_char_count = int(img.size[0] * .95 / avg_char_width)  # 618
+  new_string = textwrap.fill(text=new_string, width=max_char_count)
 
-    draw.text(xy=(img.size[0] / 2, img.size[1] / 2), text=new_string, font=font, fill='#ffffff', anchor='mm')
-    img.save(f'./Image/{memberid}.png')
-    return new_string
+  draw.text(xy=(img.size[0] / 2, img.size[1] / 2), text=new_string, font=font, fill='#ffffff', anchor='mm')
+  img.save(f'./Image/{memberid}.png')
+  return new_string
+
 
 def deEmojify(text):
-    "function to remove emojis from text"
-    regrex_pattern = re.compile("["
-        u"\U0001F600-\U0001F64F"  # emoticons
-        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-        u"\U0001F680-\U0001F6FF"  # transport & map symbols
-        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-        u"\U00002500-\U00002BEF"  # chinese char
-        u"\U00002702-\U000027B0"
-        u"\U00002702-\U000027B0"
-        u"\U000024C2-\U0001F251"
-        u"\U0001f926-\U0001f937"
-        u"\U00010000-\U0010ffff"
-        u"\u2640-\u2642" 
-        u"\u2600-\u2B55"
-        u"\u200d"
-        u"\u23cf"
-        u"\u23e9"
-        u"\u231a"
-        u"\ufe0f"  # dingbats
-        u"\u3030"
-                      "]+", re.UNICODE)
-    return regrex_pattern.sub(r'',text)
+  "function to remove emojis from text"
+  regrex_pattern = re.compile("["
+                              u"\U0001F600-\U0001F64F"  # emoticons
+                              u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                              u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                              u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                              u"\U00002500-\U00002BEF"  # chinese char
+                              u"\U00002702-\U000027B0"
+                              u"\U00002702-\U000027B0"
+                              u"\U000024C2-\U0001F251"
+                              u"\U0001f926-\U0001f937"
+                              u"\U00010000-\U0010ffff"
+                              u"\u2640-\u2642"
+                              u"\u2600-\u2B55"
+                              u"\u200d"
+                              u"\u23cf"
+                              u"\u23e9"
+                              u"\u231a"
+                              u"\ufe0f"  # dingbats
+                              u"\u3030"
+                              "]+", re.UNICODE)
+  return regrex_pattern.sub(r'', text)
+
+
+class LockActionButton(discord.ui.Button):
+  def __init__(self, ctx, member, member_is, key, **kw):
+    self.ctx = ctx
+    self.member = member
+    self.key = key
+    self.member_is = member_is
+    self.sentence = kw.pop('sentence', None)
+
+    super().__init__(**kw)
+
+  async def first_stage(self, it: discord.Interaction):
+    if self.key == 'praise':
+      print('HEI')
+      with open('Text_files/praise.txt', 'r') as praise:
+        lines = praise.read().splitlines()
+        sentence = choice(lines)
+    elif self.key == 'degrade':
+      with open('Text_files/degrade.txt', 'r') as degrade:
+        lines = degrade.read().splitlines()
+        sentence = choice(lines)
+    elif self.key == 'custom':
+      check = lambda m: self.ctx.author.id == m.author.id and m.channel.id == self.ctx.channel.id
+
+      em = discord.Embed(title='Type the Custom line.', description='not more that 120 characters', color=0x9479ED)
+      await it.message.edit(embed=em, view=None)
+
+      try:
+        m = await self.ctx.bot.wait_for('message', timeout=120, check=check)
+        sentence = re.sub('[^A-Za-z0-9]+', ' ',
+                          unicodedata.normalize('NFD', m.content).encode('ascii', 'ignore').decode(
+                            'utf-8')).lower()
+        sentence = deEmojify(sentence)
+
+        if sentence.replace(' ', '') == '':
+          embed = discord.Embed(title='Invalid Sentence',
+                                description=f'{self.ctx.author.mention} failed to lock {self.member.mention}',
+                                color=0xFF2030)
+          return await it.message.edit(embed=embed)
+        elif len(sentence) > 125:
+          embed = discord.Embed(title='Not more than 120 characters',
+                                description=f'{self.ctx.author.mention} failed to lock {self.member.mention}',
+                                color=0xFF2030)
+          return await it.message.edit(embed=embed)
+
+        await m.delete()
+      except TimeoutError:
+        em = discord.Embed(title='Time is over the slave escaped from prison', color=0x9479ED)
+        return await it.message.edit(embed=em)
+
+    # torture level
+    self.view.clear_items()
+    self.view.add_item(
+      LockActionButton(self.ctx, self.member, self.member_is, sentence=sentence, key="easy", style=ButtonStyle.green,
+                       label="Easy", emoji='🥱'))
+    self.view.add_item(
+      LockActionButton(self.ctx, self.member, self.member_is, sentence=sentence, key="medium",
+                       style=ButtonStyle.blurple, label="Medium", emoji='😈'))
+    self.view.add_item(
+      LockActionButton(self.ctx, self.member, self.member_is, sentence=sentence, key="hard", style=ButtonStyle.red,
+                       label="Hard", emoji='💀'))
+
+    em = discord.Embed(title='Which level of torture do you prefer?', color=0x9479ED)
+
+    await it.message.delete()
+    await it.response.send_message(embed=em, view=self.view)
+
+  async def second_stage(self, it: discord.Interaction):
+    if self.key == 'easy':
+      num = random.randint(2, 3)
+    elif self.key == 'medium':
+      num = random.randint(3, 5)
+    elif self.key == 'hard':
+      num = random.randint(7, 10)
+
+    roles = "".join([str(role.id) for role in self.member.roles][1:])
+
+    with contextlib.suppress(AttributeError):
+      roles = roles.replace(str(self.ctx.guild.premium_subscriber_role.id), '')
+
+    i_have_power = self.ctx.guild.get_member(
+      self.ctx.bot.user.id).top_role > self.member.top_role and self.ctx.guild.owner.id != self.member.id
+
+    if not i_have_power:
+      no_power_embed = discord.Embed(title='I don\'t have power',
+                                     description=f'{self.member.mention} might be server owner or having higher role than me <:cry:968287446217400320>',
+                                     color=0xFF2030)
+      return await it.message.edit(embed=no_power_embed)
+
+    embed = discord.Embed(description=f"I am locking {self.member.mention} ⏱️", color=0xFF2030)
+    await it.message.edit(embed=embed)
+
+    for role in self.member.roles:
+      if role != self.ctx.guild.default_role and role != self.ctx.guild.premium_subscriber_role:
+        await self.member.remove_roles(role)
+
+    if self.member_is == 200:
+      database.remove_money(self.ctx.author.id, self.ctx.guild.id, 0, 0)
+    else:
+      database.remove_money(self.ctx.author.id, self.ctx.guild.id, 0, 10)
+
+    prisoner = self.ctx.guild.get_role(int(database.get_config('prisoner', self.ctx.guild.id)[0]))
+    await self.member.add_roles(prisoner)
+    domme_name = re.sub('[^A-Za-z0-9]+', ' ',
+                        unicodedata.normalize('NFD', self.ctx.author.name).encode('ascii', 'ignore').decode(
+                          'utf-8')).lower()
+    sub_name = re.sub('[^A-Za-z0-9]+', ' ',
+                      unicodedata.normalize('NFD', self.member.name).encode('ascii', 'ignore').decode(
+                        'utf-8')).lower()
+
+    sentence = self.sentence.replace('#domme', domme_name).replace('#slave', sub_name)
+
+    # todo: suggestion to have a different font for each difficulty
+    #       pass self.key to make_image and use it to select the font
+    #       with a mapping dict or something.
+
+    sentence = make_image(sentence, self.member.id, level=self.key).replace('\n', ' ')
+    sentence = sentence.replace('  ', ' ')
+
+    prison = self.ctx.guild.get_channel(int(database.get_config('prison', self.ctx.guild.id)[0]))
+
+    embed = discord.Embed(
+      description=f"{self.ctx.author.mention} received 50🪙 by locking {self.member.mention} in {prison.mention}",
+      color=0x9479ED)
+    await it.message.edit(embed=embed, view=None)
+    await it.response.defer()
+
+    await prison.send(
+      f"{self.member.mention} you have to write 👇 {num} times to be free or you have to wait 2h or use **`/escape`** to be free from prison. ||(it is case sensitive)||")
+    await prison.send(file=discord.File(f'./Image/{self.member.id}.png'))
+    database.lock(self.member.id, self.ctx.guild.id, self.ctx.author.id, num, sentence, roles)
+    database.add_money(self.ctx.author.id, self.ctx.guild.id, 50, 0)
+
+    await asyncio.sleep(60 * 60 * 2)
+    if prisoner.id in [str(role.id) for role in self.member.roles]:
+      await self.member.remove_roles(prisoner)
+      database.insert_escape(self.ctx.author.id, self.ctx.guild.id, 0.5, 'cooldown')
+
+  async def callback(self, it: discord.Interaction):
+    if self.key in ['praise', 'degrade', 'custom']:
+      await self.first_stage(it)
+    elif self.key in ['easy', 'medium', 'hard']:
+      await self.second_stage(it)
+
+
+class LockActionView(discord.ui.View):
+  def __init__(self, ctx, member, member_is):
+    self.ctx = ctx
+    self.member = member
+
+    super().__init__(timeout=60 * 30)
+
+    self.add_item(
+      LockActionButton(ctx, member, member_is, key="praise", style=ButtonStyle.green, label="Praise", emoji='🛐'))
+    self.add_item(
+      LockActionButton(ctx, member, member_is, key="degrade", style=ButtonStyle.red, label="Degrade", emoji='🙇‍♂️'))
+    self.add_item(
+      LockActionButton(ctx, member, member_is, key="custom", style=ButtonStyle.blurple, label="Custom Lines",
+                       emoji='✍️'))
+
+  async def interaction_check(self, it: discord.Interaction):
+    return it.user == self.ctx.author
+
 
 class Lock(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-        self.escape_cleanup.start()
-        DiscordComponents(bot)
+  def __init__(self, bot):
+    self.bot = bot
+    self.escape_cleanup.start()
 
-    def list_roles(self, roles):
-        """
-        returns string-metion-roles for embed
-        """
-        if isinstance(roles, list):
-            role = '>'
-            for r in roles:
-                role = f"{role} <@&{r}>\n>"
-            return role[:-2]
-        else:
-            return roles
+  def list_roles(self, roles):
+    """
+    returns string-metion-roles for embed
+    """
+    if isinstance(roles, list):
+      role = '>'
+      for r in roles:
+        role = f"{role} <@&{r}>\n>"
+      return role[:-2]
+    else:
+      return roles
 
-    @tasks.loop(seconds=60 * 5)
-    async def escape_cleanup(self):
-        """
-        clears escape and botban DB
-        """
-        database.clear_escape()
+  @tasks.loop(seconds=60 * 5)
+  async def escape_cleanup(self):
+    """
+    clears escape and botban DB
+    """
+    database.clear_escape()
 
-    @commands.Cog.listener()
-    async def on_member_update(self, before, after):
-        """
-        gives back all the roles of member when prisoner role is removed from member or when role gets deleted.
-        """
-        prisoner = before.guild.get_role(database.get_config('prisoner', before.guild.id)[0])
-        if prisoner is not None:
-            if set([prisoner.id]) & set([role.id for role in before.roles]) and not (set([prisoner.id]) & set([role.id for role in after.roles])):
-                roles = database.release_prison(after.id, after.guild.id)
-                if roles != [0]:
-                    for role in roles:
-                        r = after.guild.get_role(role)
-                        await after.add_roles(r)
-                    await after.send(f"You are now released from <#{database.get_config('prison', before.guild.id)[0]}> of {after.guild.name}")
+  @commands.Cog.listener()
+  async def on_member_update(self, before, after):
+    """
+    gives back all the roles of member when prisoner role is removed from member or when role gets deleted.
+    """
+    prisoner = before.guild.get_role(int(database.get_config('prisoner', before.guild.id)[0]))
+    if prisoner is not None:
+      if {prisoner.id} & set([str(role.id) for role in before.roles]) and not (
+          {prisoner.id} & set([str(role.id) for role in after.roles])):
+        roles = database.release_prison(after.id, after.guild.id)
+        if roles != [0]:
+          for role in roles:
+            r = after.guild.get_role(role)
+            await after.add_roles(r)
+          await after.send(
+            f"You are now released from <#{database.get_config('prison', before.guild.id)[0]}> of {after.guild.name}")
 
-    @commands.Cog.listener()
-    async def on_guild_channel_create(self, channel):
-        """
-        when new channel is created, bot added prisoner role to the channel.
-        if prisoner role is not found bot creates it and add it to all channel.
-        """
-        prisoner = channel.guild.get_role(database.get_config('prisoner', channel.guild.id)[0])
-        if prisoner is None:
-            prisoner = await channel.guild.create_role(name='Prisoner', color=0x591B32)
-            database.insert_config('prisoner', channel.guild.id, prisoner.id)
-            channels = await channel.guild.fetch_channels()
-            for ch in channels:
-                await ch.set_permissions(prisoner, view_channel=False, send_messages=False)
-            prison = channel.guild.get_channel(database.get_config('prison', channel.guild.id)[0])
-            if prison is not None:
-                await prison.set_permissions(prisoner, view_channel=True, send_messages=True, read_message_history=True)
-        await channel.set_permissions(prisoner, view_channel=False, send_messages=False)
+  @commands.Cog.listener()
+  async def on_guild_channel_create(self, channel):
+    """
+    when new channel is created, bot added prisoner role to the channel.
+    if prisoner role is not found bot creates it and add it to all channel.
+    """
+    prisoner = channel.guild.get_role(int(database.get_config('prisoner', channel.guild.id)[0]))
+    if prisoner is None:
+      prisoner = await channel.guild.create_role(name='Prisoner', color=0x591B32)
+      database.insert_config('prisoner', channel.guild.id, prisoner.id)
+      channels = await channel.guild.fetch_channels()
+      for ch in channels:
+        await ch.set_permissions(prisoner, view_channel=False, send_messages=False)
+      prison = channel.guild.get_channel(database.get_config('prison', channel.guild.id)[0])
+      if prison is not None:
+        await prison.set_permissions(prisoner, view_channel=True, send_messages=True, read_message_history=True)
+    await channel.set_permissions(prisoner, view_channel=False, send_messages=False)
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        """
-        if author have prisoner role checks if its correct line and updates prison DB
-        there is 10% of lossing 2 coins on every wrong lines
-        """
-        if message.author.bot:
-            return
+  @commands.Cog.listener()
+  async def on_message(self, message):
+    """
+    if author have prisoner role checks if its correct line and updates prison DB
+    there is 10% of lossing 2 coins on every wrong lines
+    """
+    if message.author.bot:
+      return
 
-        if set(database.get_config('prisoner', message.guild.id)) & set([role.id for role in message.author.roles]):
-            data = database.get_prisoner(message.author.id, message.guild.id)
-            if message.content == data[4]:
-                await message.add_reaction(emoji='yes:968277243359027221')
-                await message.add_reaction(emoji='pinkcoin:968277243946233906')
-                sentence = make_image(message.content, message.author.id).replace('\n', ' ')
-                sentence = sentence.replace('  ', ' ')
-                database.update_lock(message.author.id, sentence, message.guild.id)
-                if data[3] == 1:
-                    prisoner = message.guild.get_role(database.get_config('prisoner', message.guild.id)[0])
-                    await message.author.remove_roles(prisoner)
-                    await message.reply(f"{message.author.mention} you are now released from {message.channel.mention} for being a good boy and writing the lines.")
-                    database.insert_escape(message.author.id, message.guild.id, 0.2, 'cooldown')
-                    return
-                prison = message.guild.get_channel(database.get_config('prison', message.guild.id)[0])
-                await prison.send(f"{message.author.mention} you have to write :point_down: {int(data[3] - 1)} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
-                await prison.send(file=discord.File(f'./Image/{message.author.id}.png'))
-            else:
-                await message.add_reaction(emoji='no:968277243266756618')
-                if random() < 0.1:
-                    coins_to_remove = (2 + random.randint(0, 3))
-                    database.remove_money(message.author.id, message.guild.id, coins_to_remove, 0)
+    if str(database.get_config('prisoner', message.guild.id)[0]) in [str(role.id) for role in message.author.roles]:
+      data = database.get_prisoner(message.author.id, message.guild.id)
+      print('man in prison sent a message', message.content, 'vs', data[4])
+      if message.content.lower() == data[4].lower():
+        await message.add_reaction('👌')
+        await message.add_reaction('🪙')
+        sentence = make_image(message.content, message.author.id).replace('\n', ' ')
+        sentence = sentence.replace('  ', ' ')
+        database.update_lock(message.author.id, sentence, message.guild.id)
+        if data[3] == 1:
+          prisoner = message.guild.get_role(int(database.get_config('prisoner', message.guild.id)[0]))
+          await message.author.remove_roles(prisoner)
+          await message.reply(
+            f"{message.author.mention} you are now released from {message.channel.mention} for being a good boy and writing the lines.")
+          database.insert_escape(message.author.id, message.guild.id, 0.2, 'cooldown')
+          await member.add_roles(ctx.guild.get_role(int(database.get_config('slave', member.guild.id)[0])))
 
-    @commands.Cog.listener()
-    async def on_guild_channel_delete(self, channel):
-        """
-        deletes prisoner role of prison channel is deleted to release all prisoner from prison
-        """
-        if channel.id == database.get_config('prison', channel.guild.id)[0]:
-            prisoner = channel.guild.get_role(database.get_config('prisoner', channel.guild.id)[0])
-            await prisoner.delete()
+          return
+        prison = message.guild.get_channel(int(database.get_config('prison', message.guild.id)[0]))
+        await prison.send(
+          f"{message.author.mention} you have to write 👇 {int(data[3] - 1)} times to be free or you have to wait 2h or use **`s.escape`** to be free from prison. ||(it is case sensitive)||")
+        await prison.send(file=discord.File(f'./Image/{message.author.id}.png'))
+      else:
+        await message.add_reaction('🙅‍♀️')
+        if random.random() < 0.1:
+          coins_to_remove = (2 + random.randint(0, 3))
+          database.remove_money(message.author.id, message.guild.id, coins_to_remove, 0)
 
-    @commands.command()
-    @commands.guild_only()
-    # @commands.cooldown(2, 3 * 60 * 60, commands.BucketType.user)
-    async def lock(self, ctx, member: discord.Member):
-        """
-        the might lock command which brings chaos to servers
-        """
-        if ctx.author.bot:  # returns if the author is a bot
-            return
+  @commands.Cog.listener()
+  async def on_guild_channel_delete(self, channel):
+    """
+    deletes prisoner role of prison channel is deleted to release all prisoner from prison
+    """
+    if channel.id == database.get_config('prison', channel.guild.id)[0]:
+      prisoner = channel.guild.get_role(int(database.get_config('prisoner', channel.guild.id)[0]))
+      await prisoner.delete()
 
-        if member.bot:  # if the mentioned member is a bot
-            member_bot_embed = discord.Embed(title='Nah.', description=f"Bots are too powerful you can't lock them.", color=0xF2A2C0)
-            await ctx.reply(embed=member_bot_embed)
-            return
+  @commands.hybrid_command()
+  @commands.guild_only()
+  # @commands.cooldown(2, 3 * 60 * 60, commands.BucketType.user)
+  async def lock(self, ctx, member: discord.Member):
+    """
+    the might lock command which brings chaos to servers
+    """
+    if ctx.author.bot:  # returns if the author is a bot
+      return
 
-        if not database.is_config(ctx.guild.id):  # if the server is not configured
-            need_setup_embed = discord.Embed(title='I am not ready yet.',
-                                                 description=f"Ask the Admins to run the command **`t.setup`** and try again",
-                                                 color=0xF2A2C0)
-            await ctx.reply(embed=need_setup_embed)
-            return
+    if member.bot:  # if the mentioned member is a bot
+      member_bot_embed = discord.Embed(title='Nah.', description=f"Bots are too powerful you can't lock them.",
+                                       color=0xF2A2C0)
+      await ctx.reply(embed=member_bot_embed)
+      return
 
-        if ctx.author.id in database.get_blacklist(ctx.guild.id):  # if the author is a blacklisted member
-            await ctx.reply('you are blacklisted by the Admins ¯\\_(ツ)_/¯')
-            return
+    if not database.is_config(ctx.guild.id):  # if the server is not configured
+      need_setup_embed = discord.Embed(title='I am not ready yet.',
+                                       description=f"Ask the Admins to run the command **`/setup`** and try again",
+                                       color=0xF2A2C0)
+      await ctx.reply(embed=need_setup_embed)
+      return
 
-        if set(database.get_config('prisoner', ctx.guild.id)) & set([role.id for role in member.roles]):  # if the mentioned member already having prisoner role.
-            embed = discord.Embed(title='Already suffering',
-                                  description=f"{member.mention} is already suffering in <#{database.get_config('prison', ctx.guild.id)[0]}>",
-                                  color=0xF2A2C0)
-            await ctx.reply(embed=embed)
-            return
+    if ctx.author.id in database.get_blacklist(ctx.guild.id):  # if the author is a blacklisted member
+      await ctx.reply('you are blacklisted by the Admins ¯\\_(ツ)_/¯')
+      return
 
-        is_escaped = database.is_escaped(member.id, ctx.guild.id)
-        if is_escaped is not None:  # if the member is under gem cooldown or 30 mins cooldown.
-            if is_escaped[3] == 'gem':
-                embed = discord.Embed(title='Magic Gem is Real',
-                                      description=f"{member.mention} used the power of Magic Gem<a:gems:968277243581325313> "
-                                      f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped[2] + 60}:R>.\n> *patience is a virtue*",
-                                      color=0xF47FFF)
-            elif is_escaped[3] == 'cooldown':
-                embed = discord.Embed(title='Cooldown',
-                                      description=f'{ctx.author.mention} you can lock {member.mention} <t:{is_escaped[2]}:R>',
-                                      color=0xF47FFF)
-            await ctx.reply(embed=embed)
-            return
+    if set(str(database.get_config('prisoner', ctx.guild.id))) & set(
+        [str(role.id) for role in member.roles]):  # if the mentioned member already having prisoner role.
+      embed = discord.Embed(title='Already suffering',
+                            description=f"{member.mention} is already suffering in <#{database.get_config('prison', ctx.guild.id)[0]}>",
+                            color=0xF2A2C0)
+      await ctx.reply(embed=embed)
+      return
 
-        member_is = who_is(ctx.author, member)  # checking relationship between author and member
+    is_escaped = database.is_escaped(member.id, ctx.guild.id)
+    if is_escaped is not None:  # if the member is under gem cooldown or 30 mins cooldown.
+      if is_escaped[3] == 'gem':
+        embed = discord.Embed(title='Magic Gem is Real',
+                              description=f"{member.mention} used the power of Magic Gem💎 "
+                                          f"to be free, Magic Gem's Power will deteriorate <t:{is_escaped[2] + 60}:R>.\n> *patience is a virtue*",
+                              color=0xF47FFF)
+      elif is_escaped[3] == 'cooldown':
+        embed = discord.Embed(title='Cooldown',
+                              description=f'{ctx.author.mention} you can lock {member.mention} <t:{is_escaped[2]}:R>',
+                              color=0xF47FFF)
+      await ctx.reply(embed=embed)
+      return
 
-        if member_is in [2, 202]:
-            lock_domme_embed = discord.Embed(title='Nah',
-                                             description=f"Only Subs can be locked in punished in <#{database.get_config('prison', ctx.guild.id)[0]}>",
-                                             color=0xF2A2C0)
-            await ctx.reply(embed=lock_domme_embed)
+    member_is = who_is(ctx.author, member)  # checking relationship between author and member
 
-        elif member_is in [1, 101, 102]:
-            lock_slave_embed = discord.Embed(title='Pathetic…',
-                                             description=f"{ctx.author.mention} you are not worthy to use this command.",
-                                             color=0xF2A2C0)
-            await ctx.reply(embed=lock_slave_embed)
+    if member_is in [2, 202]:
+      lock_domme_embed = discord.Embed(title='Nah',
+                                       description=f"Only Subs can be locked in punished in <#{database.get_config('prison', ctx.guild.id)[0]}>",
+                                       color=0xF2A2C0)
+      await ctx.reply(embed=lock_domme_embed)
 
-        elif member_is in [201, 200] or member_is > 300:
-            def check(res):
-                return ctx.author == res.user and res.channel == ctx.channel
+    elif member_is in [1, 101, 102]:
+      lock_slave_embed = discord.Embed(title='Pathetic…',
+                                       description=f"{ctx.author.mention} you are not worthy to use this command.",
+                                       color=0xF2A2C0)
+      await ctx.reply(embed=lock_slave_embed)
 
-            if member_is != 200:
-                if not database.get_money(ctx.author.id, ctx.guild.id)[3] > 0:  # checking if author has gems
-                    no_gem_embed = discord.Embed(title='No Gems',
-                                                 description=f"{ctx.author.mention} you don't have gems to lock {member.mention}",
-                                                 color=0xF2A2C0)
-                    await ctx.reply(embed=no_gem_embed)
-                    return
+    elif member_is in [201, 200] or member_is > 300:
+      def check(res):
+        return ctx.author == res.user and res.channel == ctx.channel
 
+      if member_is != 200:
+        if not database.get_money(ctx.author.id, ctx.guild.id)[3] > 0:  # checking if author has gems
+          no_gem_embed = discord.Embed(title='No Gems',
+                                       description=f"{ctx.author.mention} you don't have gems to lock {member.mention}",
+                                       color=0xF2A2C0)
+          await ctx.reply(embed=no_gem_embed)
+          return
 
-            prison = ctx.guild.get_channel(database.get_config('prison', ctx.guild.id)[0])
-            prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
-            
-            if prisoner is None:  # if prisoner role is deleted makes a new prisoner role and configures it
-                prisoner = await ctx.guild.create_role(name='Prisoner', color=0x591B32)
-                database.insert_config('prisoner', ctx.guild.id, prisoner.id)
-                channels = await ctx.guild.fetch_channels()
-                for channel in channels:
-                    await channel.set_permissions(prisoner, view_channel=False, send_messages=False)
-                await prison.set_permissions(prisoner, view_channel=True, send_messages=True, read_message_history=True)
+      prison = ctx.guild.get_channel(int(database.get_config('prison', ctx.guild.id)[0]))
+      prisoner = ctx.guild.get_role(int(database.get_config('prisoner', ctx.guild.id)[0]))
 
-            embed = discord.Embed(title='What should this slave do while he is in prison?', color=0x9479ED)
-            timeout_embed = discord.Embed(title='Time is over the slave escaped from prison', color=0x9479ED)
+      print(f'{prison=} {prisoner=}')
 
-            m = await ctx.reply(embed=embed, components=[[Button(style=ButtonStyle.green, label="Praise", emoji='🛐'),
-                                                            Button(style=ButtonStyle.red, label='Degrade', emoji='🙇‍♂️'),
-                                                            Button(style=ButtonStyle.blue, label='Custom Lines', emoji='✍️',)]])
-            try:
-                response = await self.bot.wait_for('button_click', timeout=30, check=check)
-                if response.component.label == 'Praise':
-                    await response.respond(type=6)
-                    with open('Text_files/praise.txt', 'r') as praise:
-                        lines = praise.read().splitlines()
-                        sentence = choice(lines)
+      if prisoner is None:  # if prisoner role is deleted makes a new prisoner role and configures it
+        prisoner = await ctx.guild.create_role(name='Prisoner', color=0x591B32)
+        database.insert_config('prisoner', ctx.guild.id, prisoner.id)
+        channels = await ctx.guild.fetch_channels()
+        for channel in channels:
+          if channel.id == prison.id:
+            continue
+          await channel.set_permissions(prisoner, view_channel=False, send_messages=False)
 
-                elif response.component.label == 'Degrade':
-                    await response.respond(type=6)
-                    with open('Text_files/degrade.txt', 'r') as degrade:
-                        lines = degrade.read().splitlines()
-                        sentence = choice(lines)
+        await prison.set_permissions(prisoner, view_channel=True, send_messages=True, read_message_history=True)
+        print(f'fix {prison}')
 
-                elif response.component.label == 'Custom Lines':
-                    await response.respond(type=6)
-
-                    def check_m(res):
-                        return ctx.author == res.author and res.channel == ctx.channel
-
-                    embed = discord.Embed(title='Type the Custom line.',
-                                            description='not more that 120 characters', color=0x9479ED)
-                    await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label="Praise", emoji='🛐', disabled=True),
-                                                            Button(style=ButtonStyle.red, label='Degrade', emoji='🙇‍♂️', disabled=True),
-                                                            Button(style=ButtonStyle.blue, label='Custom Lines', emoji='✍️', disabled=True)]])
-                    try:
-                        response = await self.bot.wait_for('message', timeout=120, check=check_m)
-                        sentence = re.sub('[^A-Za-z0-9]+', ' ', unicodedata.normalize('NFD', response.content).encode('ascii', 'ignore').decode('utf-8')).lower()
-                        sentence = deEmojify(sentence)
-                        test_sen = sentence
-                        if test_sen.replace(' ','') == '':
-                            embed = discord.Embed(title='invalid sentance',
-                                                    description=f'{ctx.author.mention} failed to lock {member.mention}', color=0xFF2030)
-                            await m.edit(embed=embed)
-                            return
-                        elif len(sentence) > 125:
-                            embed = discord.Embed(title='Not more than 120 characters',
-                                                    description=f'{ctx.author.mention} failed to lock {member.mention}', color=0xFF2030)
-                            await m.edit(embed=embed)
-                            return
-                        await response.delete()
-
-                    except asyncio.TimeoutError:
-                        await m.edit(embed=timeout_embed)
-                        return
-
-                embed = discord.Embed(title='Which level of torture do you prefer?', color=0x9479ED)
-                await m.edit(embed=embed, components=[[Button(style=ButtonStyle.green, label='Easy'),
-                                                        Button(style=ButtonStyle.blue, label='Medium'),
-                                                        Button(style=ButtonStyle.red, label='Hard')]])
-
-                try:
-                    response = await self.bot.wait_for('button_click', timeout=30, check=check)
-                    if response.component.label == 'Easy':
-                        num = randint(2, 3)
-                    elif response.component.label == 'Medium':
-                        num = randint(3, 5)
-                    elif response.component.label == 'Hard':
-                        num = randint(7, 10)
-                    await response.respond(type=6)
-                    await m.delete()
-                except asyncio.TimeoutError:
-                    await m.edit(embed=timeout_embed)
-                    return
-            except asyncio.TimeoutError:
-                await m.edit(embed=timeout_embed)
-                return
-            roles = "".join([str(role.id) for role in member.roles][1:])
-            try:
-                roles = roles.replace(str(ctx.guild.premium_subscriber_role.id), '')
-            except AttributeError:
-                pass
-            i_have_power = ctx.guild.get_member(self.bot.user.id).top_role > member.top_role and ctx.guild.owner.id != member.id
-            if i_have_power:  # starts to locking the member
-                embed = discord.Embed(description=f"I am locking {member.mention} <a:loading:968277243283521536>",
-                                      color=0xFF2030)
-                m = await ctx.send(embed=embed)
-                for role in member.roles:
-                    if role != ctx.guild.default_role and role != ctx.guild.premium_subscriber_role:
-                        await member.remove_roles(role)
-
-                if member_is != 200:
-                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
-                    
-                elif member_is == 200:
-                    database.remove_money(ctx.author.id, ctx.guild.id, 0, 0)
-
-                await member.add_roles(prisoner)
-                domme_name = re.sub('[^A-Za-z0-9]+', ' ', unicodedata.normalize('NFD', ctx.author.nick or ctx.author.name).encode('ascii', 'ignore').decode('utf-8')).lower()
-                sub_name = re.sub('[^A-Za-z0-9]+', ' ', unicodedata.normalize('NFD', member.nick or member.name).encode('ascii', 'ignore').decode('utf-8')).lower()
-                sentence = sentence.replace('#domme', domme_name)
-                sentence = sentence.replace('#slave', sub_name)
-                sentence = make_image(sentence, member.id).replace('\n', ' ')
-                sentence = sentence.replace('  ', ' ')
-                embed = discord.Embed(description=f"{ctx.author.mention} received 50<a:pinkcoin:968277243946233906> by locking {member.mention} in {prison.mention}",
-                                      color=0x9479ED)
-                await m.edit(embed=embed)
-                await prison.send(f"{member.mention} you have to write :point_down: {num} times to be free or you have to wait 2h or use **`t.escape`** to be free from prison. ||(it is case sensitive)||")
-                await prison.send(file=discord.File(f'./Image/{member.id}.png'))
-                database.lock(member.id, ctx.guild.id, ctx.author.id, num, sentence, roles)
-                database.add_money(ctx.author.id, ctx.guild.id, 50, 0)
-                
-                await asyncio.sleep(60 * 60 * 2)                
-                if prisoner.id in [role.id for role in member.roles]:
-                    await member.remove_roles(prisoner)
-                    database.insert_escape(ctx.author.id, ctx.guild.id, 0.5, 'cooldown')
-
-            else:  # I have no power
-                no_power_embed = discord.Embed(title='I don\'t have power',
-                                                description=f'{member.mention} might be server owner or having higher role than me <:cry:968287446217400320>',
-                                                color=0xFF2030)
-                await ctx.send(embed=no_power_embed)
-
-        elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
-            embed = discord.Embed(description=f"{member.mention} should have any of the following roles \n"
-                                  f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
-                                  f"{self.list_roles(database.get_config('slave', member.guild.id))}",
-                                  color=0xF2A2C0)
-            await ctx.send(embed=embed)
-
-        elif member_is == 0:  # when the author doesn't have domme or slave role.
-            embed = discord.Embed(description=f"{ctx.author.mention}, you should have any of the following roles \n"
-                                  f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
-                                  f"{self.list_roles(database.get_config('slave', member.guild.id))}",
-                                  color=0xF2A2C0)
-            await ctx.send(embed=embed)
-            
-        elif member_is == -1:  # when member is bot banned
-            embed = discord.Embed(description=f"{member.mention} is banned from using {self.bot.user.mention}",
-                                  color=0xF2A2c0)
-            await ctx.send(embed=embed)
-        
-        elif member_is < -1:  # when author is bot banned
-            embed = discord.Embed(description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{-1 * member_is}:F>",
-                                  color=0xF2A2C0)
-            await ctx.send(embed=embed)
-
-    @commands.command()
-    @commands.guild_only()
-    async def unlock(self, ctx, member: discord.Member):
-        """
-        unlock command unlocks prisoner and sets them free
-        """
-        if ctx.author.bot:  # returns if the author is a bot
-            return
-
-        if not set(database.get_config('prisoner', ctx.guild.id)) & set([role.id for role in member.roles]) or member.bot:  # if member does not have prisoner role
-            embed = discord.Embed(title='Already Free', description=f"{member.mention} is already in woods enjoying the sun.", color=0xF2A2C0)
-            await ctx.reply(embed=embed)
-            return
-
-        member_is = who_is(ctx.author, member)
-        prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
-        
-        if member_is < -1: #  if author is bot banned
-            embed = discord.Embed(description=f"{ctx.author.mention} you are banned from {self.bot.user.nick or self.bot.user.name} till <t:{-1 * member_is}:F>",
-                                  color=0xF2A2C0)
-            await ctx.reply(embed=embed)
-
-        elif member_is in [2, 202]:  # when locker is self unlocking or unlocking a locker.
-            embed = discord.Embed(description=f"{member.mention} is free in Woods enjoying the sun, nobody can lock the Domme.", color=0xF2A2C0)
-            await ctx.reply(embed=embed)
-
-        elif member_is in [222] or ctx.author.guild_permissions.administrator: #  locker/admin unlocking a slave
-            domme = database.get_prisoner(member.id, ctx.guild.id)[2]
-            if ctx.author.id == int(domme) or ctx.author.guild_permissions.administrator:
-                await member.remove_roles(prisoner)
-                embed = discord.Embed(description=f'{member.mention} is free now, released by {ctx.author.mention}', color=0xF2A2C0)
-                await ctx.reply(embed=embed)
-            else: 
-                embed = discord.Embed(title='Nah', description=f"Only <@{domme}> or the Admins can set {member.mention} free.", color=0xF2A2C0)
-                await ctx.reply(embed=embed)
-
-        else:
-            unlock_slave_embed = discord.Embed(title='Pathetic…',
-                                               description=f"you are not worthy to use this command.",
-                                               color=0xF2A2C0)
-            await ctx.reply(embed=unlock_slave_embed)
-
-    @commands.command()
-    @commands.guild_only()
-    async def escape(self, ctx):
-        """
-        this command will enable prisoner to escape from prison and grand 6h of protection.
-        """
-        if ctx.author.bot:
-            return
-
-        if not set(database.get_config('prisoner', ctx.guild.id)) & set([role.id for role in ctx.author.roles]):  # if author does not have prisoner role
-            embed = discord.Embed(title='Already Free', description=f"{ctx.author.mention} is already in woods enjoying the sun.", color=0xF2A2C0)
-            await ctx.reply(embed=embed)
-            return
-
-        if database.get_money(ctx.author.id, ctx.guild.id)[3] != 0 or ctx.author.id == 104373103802466304:  # if prisoner have gems
-            if ctx.author.id != 0:
-                database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
-            prisoner = ctx.guild.get_role(database.get_config('prisoner', ctx.guild.id)[0])
-            await ctx.author.remove_roles(prisoner)
-            embed = discord.Embed(description=f"{ctx.author.mention} was lucky to have a magic gem <a:gems:968277243581325313> and escaped from {ctx.channel.mention}", color=0xF2A2C0)
-            await ctx.send(embed=embed)
-            database.insert_escape(ctx.author.id, ctx.guild.id, 1, 'gem')
-        else:  # if prisoner does not have a gem
-            embed = discord.Embed(description=f"{ctx.author.mention} you don't have magic gem <a:gems:968277243581325313> to be free.", color=0xF2A2C0)
-            await ctx.reply(embed=embed)
-
-    ##############################################################################
-    #                                                                            #
-    #                                                                            #
-    #                                  ERRORS                                    #
-    #                                                                            #
-    #                                                                            #
-    ##############################################################################
-
-    @lock.error
-    async def on_lock_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(title='How to use Prison?', description=f"Usage:\n> **`t.lock @mention`** "
-                                  f"\nAfter it just enjoy the slave punishment!",
-                                  color=0xFF2030)
-        elif isinstance(error, commands.errors.CommandOnCooldown):
-            embed = discord.Embed(title="Prison Cooldown is 3h",
-                                  description="{} you need to wait {:,.1f} minutes to lock a slave again.".format(ctx.author.mention, (error.retry_after // 60) + 1),
-                                  color=0xFF2030)
-        await ctx.send(embed=embed)
-
-    @unlock.error
-    async def on_unlock_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(error, commands.MemberNotFound):
-            embed = discord.Embed(title='How to save a slave from Prison?', description=f"Usage:\n> **`t.unlock @mention`** ",
-                                  color=0xFF2030)
-        await ctx.send(embed=embed)
+      em = discord.Embed(title='What should this slave do while he is in prison?', color=0x9479ED)
+      await ctx.send(embed=em, view=LockActionView(ctx, member, member_is))
 
 
-def setup(bot):
-    bot.add_cog(Lock(bot))
+    elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
+      embed = discord.Embed(description=f"{member.mention} should have any of the following roles \n"
+                                        f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
+                                        f"{self.list_roles(database.get_config('slave', member.guild.id))}",
+                            color=0xF2A2C0)
+      await ctx.send(embed=embed)
+
+    elif member_is == 0:  # when the author doesn't have domme or slave role.
+      embed = discord.Embed(description=f"{ctx.author.mention}, you should have any of the following roles \n"
+                                        f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
+                                        f"{self.list_roles(database.get_config('slave', member.guild.id))}",
+                            color=0xF2A2C0)
+      await ctx.send(embed=embed)
+
+    elif member_is == -1:  # when member is bot banned
+      embed = discord.Embed(description=f"{member.mention} is banned from using {self.bot.user.mention}",
+                            color=0xF2A2c0)
+      await ctx.send(embed=embed)
+
+    elif member_is < -1:  # when author is bot banned
+      embed = discord.Embed(
+        description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{-1 * member_is}:F>",
+        color=0xF2A2C0)
+      await ctx.send(embed=embed)
+
+  @commands.hybrid_command()
+  @commands.guild_only()
+  async def unlock(self, ctx, member: discord.Member):
+    """
+    unlock command unlocks prisoner and sets them free
+    """
+    if ctx.author.bot:  # returns if the author is a bot
+      return
+
+    sroles = [str(role.id) for role in member.roles]
+    prrole = database.get_config('prisoner', ctx.guild.id)[0]
+
+    if prrole not in sroles or member.bot:
+      print('already free here')
+      embed = discord.Embed(title='Already Free', description=f"{member.mention} is already in woods enjoying the sun.",
+                            color=0xF2A2C0)
+      await ctx.reply(embed=embed)
+      return
+
+    member_is = who_is(ctx.author, member)
+    prisoner = ctx.guild.get_role(int(database.get_config('prisoner', ctx.guild.id)[0]))
+
+    if member_is < -1:  # if author is bot banned
+      embed = discord.Embed(
+        description=f"{ctx.author.mention} you are banned from {self.bot.user.nick or self.bot.user.name} till <t:{-1 * member_is}:F>",
+        color=0xF2A2C0)
+      await ctx.reply(embed=embed)
+
+    elif member_is in [2, 202]:  # when locker is self unlocking or unlocking a locker.
+      embed = discord.Embed(
+        description=f"{member.mention} is free in Woods enjoying the sun, nobody can lock the Domme.", color=0xF2A2C0)
+      await ctx.reply(embed=embed)
+
+    elif member_is in [222] or ctx.author.guild_permissions.administrator:  # locker/admin unlocking a slave
+      domme = database.get_prisoner(member.id, ctx.guild.id)[2]
+      if ctx.author.id == int(domme) or ctx.author.guild_permissions.administrator:
+        await member.remove_roles(prisoner)
+
+        await member.add_roles(ctx.guild.get_role(int(database.get_config('slave', member.guild.id)[0])))
+
+        embed = discord.Embed(description=f'{member.mention} is free now, released by {ctx.author.mention}',
+                              color=0xF2A2C0)
+        await ctx.reply(embed=embed)
+      else:
+        embed = discord.Embed(title='Nah', description=f"Only <@{domme}> or the Admins can set {member.mention} free.",
+                              color=0xF2A2C0)
+        await ctx.reply(embed=embed)
+
+    else:
+      unlock_slave_embed = discord.Embed(title='Pathetic…',
+                                         description=f"you are not worthy to use this command.",
+                                         color=0xF2A2C0)
+      await ctx.reply(embed=unlock_slave_embed)
+
+  @commands.hybrid_command()
+  @commands.guild_only()
+  async def escape(self, ctx):
+    """
+    this command will enable prisoner to escape from prison and grand 6h of protection.
+    """
+    if ctx.author.bot:
+      return
+
+    if not set(str(role.id) for role in ctx.author.roles).intersection(
+        str(database.get_config('prisoner', ctx.guild.id)[0])):  # if author does not have prisoner role
+      print('already freee there')
+      embed = discord.Embed(title='Already Free',
+                            description=f"{ctx.author.mention} is already in woods enjoying the sun.", color=0xF2A2C0)
+      await ctx.reply(embed=embed)
+      return
+
+    if database.get_money(ctx.author.id, ctx.guild.id)[
+      3] != 0 or ctx.author.id == 104373103802466304:  # if prisoner have gems
+      if ctx.author.id != 0:
+        database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+      prisoner = ctx.guild.get_role(int(database.get_config('prisoner', ctx.guild.id)[0]))
+      await ctx.author.remove_roles(prisoner)
+      embed = discord.Embed(
+        description=f"{ctx.author.mention} was lucky to have a magic gem 💎 and escaped from {ctx.channel.mention}",
+        color=0xF2A2C0)
+      await ctx.send(embed=embed)
+      database.insert_escape(ctx.author.id, ctx.guild.id, 1, 'gem')
+    else:  # if prisoner does not have a gem
+      embed = discord.Embed(
+        description=f"{ctx.author.mention} you don't have magic gem 💎 to be free.",
+        color=0xF2A2C0)
+      await ctx.reply(embed=embed)
+
+  ##############################################################################
+  #                                                                            #
+  #                                                                            #
+  #                                  ERRORS                                    #
+  #                                                                            #
+  #                                                                            #
+  ##############################################################################
+
+  @lock.error
+  async def on_lock_error(self, ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(
+        error, commands.MemberNotFound):
+      embed = discord.Embed(title='How to use Prison?', description=f"Usage:\n> **`/lock @mention`** "
+                                                                    f"\nAfter it just enjoy the slave punishment!",
+                            color=0xFF2030)
+      await ctx.send(embed=embed)
+
+    elif isinstance(error, commands.errors.CommandOnCooldown):
+      embed = discord.Embed(title="Prison Cooldown is 3h",
+                            description="{} you need to wait {:,.1f} minutes to lock a slave again.".format(
+                              ctx.author.mention, (error.retry_after // 60) + 1),
+                            color=0xFF2030)
+      await ctx.send(embed=embed)
+    else:
+      raise error
+
+  @unlock.error
+  async def on_unlock_error(self, ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(
+        error, commands.MemberNotFound):
+      embed = discord.Embed(title='How to save a slave from Prison?', description=f"Usage:\n> **`t.unlock @mention`** ",
+                            color=0xFF2030)
+      await ctx.send(embed=embed)
+
+    raise error
+
+
+async def setup(bot):
+  await bot.add_cog(Lock(bot))
