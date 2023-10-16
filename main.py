@@ -199,7 +199,7 @@ class TemptressBot(commands.Bot):
     await it.response.defer(ephemeral=it.user.id in self.privates)
     await self.message_queue.put((it, user_message))
 
-  async def send_message(self, message, maybeuser_message):
+  async def send_message(self, message, user_message):
     if self.is_replying_all == "False":
       author = message.user.id
     else:
