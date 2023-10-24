@@ -5,6 +5,7 @@
 """
 import asyncio
 import configparser
+import json
 import os
 import typing
 
@@ -106,8 +107,16 @@ class TemptressBot(commands.Bot):
       **kw
     )
 
+    self.custom_personas = {}
+    if os.path.exists("custom_personas.json"):
+      with open("custom_personas.json", "r") as f:
+        self.custom_personas = json.load(f)
+        print(self.custom_personas)
+
     self.current_channel = None
     self.activity = discord.Activity(type=discord.ActivityType.listening, name="/chat | /help")
+
+    self.blinded_users = {}
 
     self.privates = []
     self.is_replying_all = os.getenv("REPLYING_ALL")
@@ -157,7 +166,8 @@ class TemptressBot(commands.Bot):
       if filename.endswith('.py'):
         await bot.load_extension(f"Cogs.{filename[:-3]}")
 
-    await bot.load_extension('jishaku')
+    # await bot.load_extension('jishaku')
+
 
     print(f"{bot.user} is ready!")
 

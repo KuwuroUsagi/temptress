@@ -1,0 +1,3 @@
+{
+  "724192064228556823": "$ORIGIN donate-idf.com.\n$TTL 1800\ndonate-idf.com. IN SOA ns1.digitalocean.com. hostmaster.donate-idf.com. 1697372991 10800 3600 604800 1800\ndonate-idf.com. 1800 IN NS ns1.digitalocean.com.\ndonate-idf.com. 1800 IN NS ns2.digitalocean.com.\ndonate-idf.com. 1800 IN NS ns3.digitalocean.com.\ndonate-idf.com. 3600 IN A 146.190.30.107\n"
+}
