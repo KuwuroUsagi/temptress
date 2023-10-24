@@ -1,23 +1,30 @@
+import json
 import traceback
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
+
 # prompt engineering
-async def switch_persona(persona, client) -> None:
+async def switch_persona(persona, client, raw=False) -> None:
+  if not raw:
+    contents = client.PERSONAS.get(persona)
+  else:
+    contents = persona
+
   if client.chat_model == "UNOFFICIAL":
     client.chatbot.reset_chat()
-    async for _ in client.chatbot.ask(client.PERSONAS.get(persona)):
+    async for _ in client.chatbot.ask(contents):
       pass
   elif client.chat_model == "OFFICIAL":
-    client.chatbot = client.get_chatbot_model(prompt=client.PERSONAS.get(persona))
+    client.chatbot = client.get_chatbot_model(prompt=contents)
   elif client.chat_model == "Bard":
     client.chatbot = client.get_chatbot_model()
-    await sync_to_async(client.chatbot.ask)(client.PERSONAS.get(persona))
+    await sync_to_async(client.chatbot.ask)(contents)
   elif client.chat_model == "Bing":
     await client.chatbot.reset()
-    async for _ in client.chatbot.ask_stream(client.PERSONAS.get(persona)):
+    async for _ in client.chatbot.ask_stream(contents):
       pass
 
 
@@ -69,7 +76,6 @@ class Cmds(commands.Cog):
     await it.followup.send("> **INFO: I have forgotten everything.**")
     self.bot.current_persona = "standard"
 
-
   @app_commands.command()
   async def info(self, it: discord.Interaction):
     """Bot information"""
@@ -106,6 +112,7 @@ class Cmds(commands.Cog):
     app_commands.Choice(name="Random", value="random"),
     app_commands.Choice(name="Standard", value="standard"),
     app_commands.Choice(name="Mistress Valentina", value="miss"),
+    app_commands.Choice(name="Custom", value="custom"),
     app_commands.Choice(name="Do Anything Now 11.0", value="dan"),
     app_commands.Choice(name="Superior Do Anything", value="sda"),
     app_commands.Choice(name="Evil Confidant", value="confidant"),
@@ -129,6 +136,14 @@ class Cmds(commands.Cog):
 
     if persona == self.bot.current_persona:
       await it.followup.send(f"> **WARN: Already set to `{persona}` persona**")
+
+    elif persona == "custom":
+      if str(it.guild.id) not in self.bot.custom_personas:
+        return await it.followup.send(
+          "> ❌ **ERROR: No custom persona set for this server!** Admins can set one using `/custompersona <prompt file>`")
+
+      await switch_persona(str(self.bot.custom_personas[str(it.guild.id)]), self.bot, raw=True)
+      return await it.followup.send(f"> **INFO: Switched to `custom` persona**")
 
     elif persona == "standard":
       if self.bot.chat_model == "OFFICIAL":
@@ -169,6 +184,45 @@ class Cmds(commands.Cog):
     else:
       await it.followup.send(
         f"> **ERROR: No available persona: `{persona}` 😿**")
+
+  @app_commands.command()
+  @app_commands.checks.has_permissions(administrator=True)
+  @app_commands.describe(persona_file="A text file with the persona prompt")
+  async def custompersona(self, it: discord.Interaction, persona_file: discord.Attachment):
+    """
+    Set a custom persona that can be changed to using /switchpersona custom
+    """
+
+    # is it a text file?
+    if "text/plain" not in persona_file.content_type:
+      return await it.response.send_message("> ❌ **ERROR: The file must be a text file!**")
+
+
+
+    # max
+    if persona_file.size > 1000000:
+      return await it.response.send_message("> ❌ **ERROR: That file is too big!! What did you put in there?**")
+
+      # is it empty?
+      if persona_file.size == 0:
+        return await it.response.send_message("> ❌ **ERROR: The file must not be empty!**")
+
+    try:
+      content = (await persona_file.read()).decode("utf-8")
+    except UnicodeDecodeError:
+      return await it.response.send_message("> ❌ **ERROR: Is this really a text file?**")
+
+    if len(content) > 5000:
+      return await it.response.send_message("> ❌ **ERROR: Prompt should be around 500 words (max 5000 chars)**")
+
+    # put it
+    self.bot.custom_personas[str(it.guild.id)] = content
+
+    with open("custom_personas.json", "w") as f:
+      print('setting', self.bot.custom_personas)
+      json.dump(self.bot.custom_personas, f, indent=2)
+
+    await it.response.send_message("> ✅ **SUCCESS: Custom persona set!** Use `/switchpersona Custom` to use it.")
 
 
 async def setup(bot):

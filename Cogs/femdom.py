@@ -1,5 +1,6 @@
 #!/bin/python3
 import asyncio
+import contextlib
 import re
 from random import choice
 
@@ -75,6 +76,30 @@ def who_is(author, member):
       return -1
   else:
     return -1 * ban_data[1]
+
+
+class YesNoView(discord.ui.View):
+  def __init__(self, member: discord.Member, action, msg: dict):
+    super().__init__(timeout=5 * 60)
+
+    self.member = member
+    self.action = action
+    self.msg = msg
+
+  @discord.ui.button(label='Yes', style=ButtonStyle.green, emoji='🫡')
+  async def yes(self, it: discord.Interaction, btn: discord.ui.Button):
+    await it.response.defer()
+    with contextlib.suppress(discord.NotFound):
+      await self.action(self.member)
+    await it.message.edit(view=None, embed=discord.Embed(
+      title=self.msg['title'],
+      description=self.msg['description'],
+      color=discord.Color.brand_green()
+    ))
+
+  @discord.ui.button(label='No', style=ButtonStyle.red, emoji='🙅‍♀️')
+  async def no(self, it: discord.Interaction, btn: discord.ui.Button):
+    await it.message.edit(view=None)
 
 
 class EmojiButton(discord.ui.Button):
@@ -493,7 +518,7 @@ class Action:
       money = database.get_money(member.id, member.guild.id)
 
       embed.add_field(name='Cash',
-                      value=f"\n> 🪙 {money[2]}\n> 💎 {money[3]}",
+                      value=f"\n> <a:pinkcoin:968277243946233906> {money[2]}\n> 💎 {money[3]}",
                       inline=False)
       embed.add_field(name='Restrictions', value=restriction, inline=False)
 
@@ -540,7 +565,7 @@ class Action:
 
       embed = discord.Embed(title=name, color=0xF2A2C0)
       embed.add_field(name='Cash',
-                      value=f"\n> 🪙 {money[2]}\n> 💎 {money[3]} ",
+                      value=f"\n> <a:pinkcoin:968277243946233906> {money[2]}\n> 💎 {money[3]} ",
                       inline=False)
       embed.add_field(name='My Subs', value=owned_slaves, inline=False)
 
@@ -632,7 +657,7 @@ class Action:
         value = ''
         try:
           for x in range(((page - 1) * size), ((page - 1) * size) + size):
-            value = value + f"> <@{lb_list[x][0]}> {int(lb_list[x][2] / 10)} 💎   {lb_list[x][1]} 🪙\n"
+            value = value + f"> <@{lb_list[x][0]}> {int(lb_list[x][2] / 10)} 💎   {lb_list[x][1]} <a:pinkcoin:968277243946233906>\n"
           embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
         except IndexError:
           embed = discord.Embed(title="Leaderboard • Cash", description=value, color=0xF2A2C0)
@@ -1236,6 +1261,7 @@ class Femdom(commands.Cog):
                                 color=0xF2A2C0)
         else:
           # HERE DO HERE
+
           embed = discord.Embed(title="Behave like a slave, shut up!", color=discord.Color.brand_red())
           embed.description = f"Enough, just don't talk at all! {ctx.author.mention} did a full gag on {member.mention} and closed their mouth for the next 10 minutes."
 
@@ -1246,6 +1272,14 @@ class Femdom(commands.Cog):
             role = await ctx.guild.create_role(name="Muted", color=discord.Color.brand_red())
             for channel in ctx.guild.channels:
               await channel.set_permissions(role, speak=False, send_messages=False)
+
+          if role in member.roles:
+            em = discord.Embed(title='They are already fullgagged!', description='Do you want to remove the gag?',
+                               color=discord.Color.brand_red())
+            return await ctx.send(embed=em, view=YesNoView(member, action=lambda m: m.remove_roles(role), msg=dict(
+              title='🫡 Gag Removed!',
+              description=f'{member.mention} can now speak!'
+            )))
 
           await member.add_roles(role)
           await ctx.send(embed=embed)
@@ -1267,11 +1301,17 @@ class Femdom(commands.Cog):
 
         if role is None:
           # create it
-          await ctx.defer()
-          role = await ctx.guild.create_role(name="Muted", color=discord.Color.brand_red(),
-                                             position=ctx.guild.me.top_role.position - 1)
+          role = await ctx.guild.create_role(name="Muted", color=discord.Color.brand_red())
           for channel in ctx.guild.channels:
             await channel.set_permissions(role, speak=False, send_messages=False)
+
+        if role in member.roles:
+          em = discord.Embed(title='They are already fullgagged!', description='Do you want to remove the gag?',
+                             color=discord.Color.brand_red())
+          return await ctx.send(embed=em, view=YesNoView(member, action=lambda m: m.remove_roles(role), msg=dict(
+            title='🫡 Gag Removed!',
+            description=f'{member.mention} can now speak!'
+          )))
 
         embed = discord.Embed(title="Behave like a slave, shut up!", color=discord.Color.brand_red())
         embed.description = f"Enough, just don't talk at all! {ctx.author.mention} did a full gag on {member.mention} and closed their mouth for the next 10 minutes."

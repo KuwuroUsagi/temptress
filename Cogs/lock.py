@@ -96,7 +96,7 @@ def who_is(author, member):
     return -1 * ban_data[1]
 
 
-def make_image(sentence, memberid):
+def make_image(sentence, memberid, level=None):
   """
   Saves lines png in ./Image with filename coresponding to member's ID
   returns randomly capitalized string.
@@ -268,7 +268,7 @@ class LockActionButton(discord.ui.Button):
     prison = self.ctx.guild.get_channel(int(database.get_config('prison', self.ctx.guild.id)[0]))
 
     embed = discord.Embed(
-      description=f"{self.ctx.author.mention} received 50🪙 by locking {self.member.mention} in {prison.mention}",
+      description=f"{self.ctx.author.mention} received 50<a:pinkcoin:968277243946233906> by locking {self.member.mention} in {prison.mention}",
       color=0x9479ED)
     await it.message.edit(embed=embed, view=None)
     await it.response.defer()
@@ -380,10 +380,10 @@ class Lock(commands.Cog):
 
     if str(database.get_config('prisoner', message.guild.id)[0]) in [str(role.id) for role in message.author.roles]:
       data = database.get_prisoner(message.author.id, message.guild.id)
-      print('man in prison sent a message', message.content, 'vs', data[4])
+      print(data)
       if message.content.lower() == data[4].lower():
         await message.add_reaction('👌')
-        await message.add_reaction('🪙')
+        await message.add_reaction('<a:pinkcoin:968277243946233906>')
         sentence = make_image(message.content, message.author.id).replace('\n', ' ')
         sentence = sentence.replace('  ', ' ')
         database.update_lock(message.author.id, sentence, message.guild.id)

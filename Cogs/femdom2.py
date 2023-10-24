@@ -5,7 +5,7 @@ import database
 import discord
 from discord import ButtonStyle
 from discord.ext import commands
-
+from Cogs.femdom import YesNoView
 
 def who_is(author, member):
   """
@@ -142,15 +142,14 @@ class ChastityButton(discord.ui.Button):
     if self.key == 'lock':
       embed = discord.Embed(description=f"{self.member.mention} can't access NSFW Channels in this server.",
                             color=0xFF2030)
-      await self.action.chastity(False)
-
-      database.update_slaveDB(self.member.id, 'muff', False, self.ctx.guild.id)
+      await self.action.chastity(access=False)
+      database.update_slaveDB(self.member.id, 'chastity', True, self.ctx.guild.id)
     elif self.key == 'unlock':
       embed = discord.Embed(description=f"{self.member.mention} can access NSFW Channels in this server.",
                             color=0x08FF08)
-      await self.action.chastity(True)
+      await self.action.chastity(access=True)
 
-      database.update_slaveDB(self.member.id, 'muff', True, self.ctx.guild.id)
+      database.update_slaveDB(self.member.id, 'chastity', False, self.ctx.guild.id)
 
     # await it.channel.send('🫡')
 
@@ -163,7 +162,10 @@ class ChastityView(discord.ui.View):
     self.ctx = ctx
     super().__init__(timeout=90)
 
-    dsbl = database.get_slave_from_DB(member.id, ctx.guild.id)[0][6]
+    dbrsp = database.get_slave_from_DB(member.id, ctx.guild.id)
+    print(f'getSlave({member}, {ctx.guild}): chastity={dbrsp[0][6]}')
+
+    dsbl = dbrsp[0][6]
 
     self.add_item(
       ChastityButton(style=ButtonStyle.red, label='Chastity Lock', emoji='🔒', key='lock', disabled=dsbl, ctx=ctx,
@@ -248,9 +250,9 @@ class Action:
 
   async def react(self, y_n):
     if y_n == 'yes' or y_n == 'y':
-      await self.ctx.message.add_reaction(emoji='👌')
+      await self.ctx.message.add_reaction('👌')
     elif y_n == 'no' or y_n == 'n':
-      await self.ctx.message.add_reaction(emoji='🙅‍♀️')
+      await self.ctx.message.add_reaction('🙅‍♀️')
 
   async def chastity(self, access, temp=False):
     channels = await self.ctx.guild.fetch_channels()
@@ -258,16 +260,16 @@ class Action:
       if channel.is_nsfw():
         if access:
           await channel.set_permissions(self.member, overwrite=None)
-          database.update_slaveDB(self.member.id, 'chastity', True, self.ctx.guild.id)
+          # database.update_slaveDB(self.member.id, 'chastity', True, self.ctx.guild.id)
         else:
           await channel.set_permissions(self.member, view_channel=False)
-          database.update_slaveDB(self.member.id, 'chastity', False, self.ctx.guild.id)
+          # database.update_slaveDB(self.member.id, 'chastity', False, self.ctx.guild.id)
     if temp:
       await asyncio.sleep(1 * 60 * 60)
       for channel in channels:
         if channel.is_nsfw():
           await channel.set_permissions(self.member, overwrite=None)
-          database.update_slaveDB(self.member.id, 'chastity', True, self.ctx.guild.id)
+          # database.update_slaveDB(self.member.id, 'chastity', True, self.ctx.guild.id)
 
   async def muff(self, access):
     channels = await self.ctx.guild.fetch_channels()
@@ -281,6 +283,8 @@ class Action:
           database.update_slaveDB(self.member.id, 'muff', True, self.ctx.guild.id)
 
   async def blind(self):
+    self.bot.blinded_users[self.ctx.guild.id] = self.bot.blinded_users.get(self.ctx.guild.id, []) + [self.member.id]
+
     channels = await self.ctx.guild.fetch_channels()
     for channel in channels:
       await channel.set_permissions(self.member, view_channel=False, send_messages=False)
@@ -543,6 +547,22 @@ class Femdom2(commands.Cog):
         embed = discord.Embed(title='Are you sure that you wanna do this?',
                               description=f"{member.mention} will not be able to see any channels in this server for 5 mins.",
                               color=0xF2A2C0)
+
+        if member.id in self.bot.blinded_users.get(ctx.guild.id, []):
+          em = discord.Embed(title='They are already blindfolded!',
+                             description=f"{member.mention} is already blindfolded, do you want to undo the blind?",
+                             color=discord.Color.brand_red())
+
+          async def unblind(mem):
+            channels = await mem.guild.fetch_channels()
+            for channel in channels:
+              await channel.set_permissions(mem, overwrite=None)
+
+          return await ctx.send(embed=em, view=YesNoView(member, action=unblind, msg=dict(
+            title='Blindfold removed!',
+            description=f'{member.mention} can now see!'
+          )))
+
         await ctx.send(embed=embed, view=BlindView(action, member, ctx))
         return
 

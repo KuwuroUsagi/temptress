@@ -42,11 +42,11 @@ class RpsView(discord.ui.View):
       m = f"💥 {aut} and {mem} both chose {self.author_choice}. **It's a TIE** {em_map[self.author_choice] * 3} 💥"
 
     elif (mod_map[self.member_choice] + 1) % 3 == mod_map[self.author_choice] % 3:
-      m = f"{aut} won! **{self.bet}** 🪙\n{self.author_choice}, *smashes* {self.member_choice} 🍃🍃 {em_map[self.author_choice]} >>> {em_map[self.member_choice]}"
+      m = f"{aut} won! **{self.bet}** <a:pinkcoin:968277243946233906>\n{self.author_choice}, *smashes* {self.member_choice} 🍃🍃 {em_map[self.author_choice]} >>> {em_map[self.member_choice]}"
       database.add_money(self.ctx.author.id, self.ctx.guild.id, self.bet, 0)
       database.remove_money(self.member.id, self.ctx.guild.id, self.bet, 0)
     else:
-      m = f"{mem} won! **{self.bet}** 🪙\n{self.member_choice}, *smashes* {self.author_choice} 🍃🍃 {em_map[self.member_choice]} >>> {em_map[self.author_choice]}"
+      m = f"{mem} won! **{self.bet}** <a:pinkcoin:968277243946233906>\n{self.member_choice}, *smashes* {self.author_choice} 🍃🍃 {em_map[self.member_choice]} >>> {em_map[self.author_choice]}"
       database.add_money(self.member.id, self.ctx.guild.id, self.bet, 0)
       database.remove_money(self.ctx.author.id, self.ctx.guild.id, self.bet, 0)
 
@@ -109,14 +109,14 @@ class Gambling(commands.Cog):
     ban_data = database.is_botban(ctx.author.id)
     if ban_data is None:
       if bet < 10:
-        await ctx.reply(f"🧏‍♀️ You need to bet at least 10 🪙")
+        await ctx.reply(f"🧏‍♀️ You need to bet at least 10 <a:pinkcoin:968277243946233906>")
       elif choice.lower() not in ['head', 'tail', 'h', 't', 'heads', 'tails']:
         await ctx.reply(f"🧏‍♀️ usage: **`/coinflip <head|tail> <bet>`**")
       else:
         coins = database.get_money(ctx.author.id, ctx.guild.id)[2]
         if bet > coins:
           await ctx.reply(
-            f"🧏‍♀️ really?, you are broke you only have {coins} 🪙")
+            f"🧏‍♀️ really?, you are broke you only have {coins} <a:pinkcoin:968277243946233906>")
           return
         database.remove_money(ctx.author.id, ctx.guild.id, bet, 0)
         await asyncio.sleep(2)
@@ -170,17 +170,17 @@ class Gambling(commands.Cog):
 
     if bet < 10:
       embed = discord.Embed(
-        description=f"🧏‍♀️ You need to bet at least 10 🪙",
+        description=f"🧏‍♀️ You need to bet at least 10 <a:pinkcoin:968277243946233906>",
         color=0xF2A2C0)
       await ctx.send(embed=embed)
     elif bet > author_coin:
       embed = discord.Embed(
-        description=f"{ctx.author.mention} really?, 🧏‍♀️ You only have {author_coin} 🪙",
+        description=f"{ctx.author.mention} really?, 🧏‍♀️ You only have {author_coin} <a:pinkcoin:968277243946233906>",
         color=0xF2A2C0)
       await ctx.send(embed=embed)
     elif bet > member_coin:
       embed = discord.Embed(
-        description=f"🧏‍♀️, {member.mention} only have {member_coin} 🪙",
+        description=f"🧏‍♀️, {member.mention} only have {member_coin} <a:pinkcoin:968277243946233906>",
         color=0xF2A2C0)
       await ctx.send(embed=embed)
     else:

@@ -181,7 +181,7 @@ class ServerConfig(commands.Cog):
     t_mem = 0
 
     for guild in self.bot.guilds:
-      t_mem = t_mem + guild.member_count
+      t_mem = t_mem + (guild.member_count or 0)
 
     if NSFW == [0]:
       NSFW = f"> {ctx.guild.default_role}"
