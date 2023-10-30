@@ -7,36 +7,28 @@ import asyncio
 import configparser
 import json
 import os
+import random
+import time
+import traceback
 import typing
+from typing import Union
 
 import discord
 from discord import ButtonStyle
 from discord.ext import commands
 from dotenv import load_dotenv
-import asyncio
-import os
-from typing import Union
-import traceback
-import discord
-from discord.ext import commands
-from dotenv import load_dotenv
 from revChatGPT.V1 import AsyncChatbot
 from revChatGPT.V3 import Chatbot
 
-
-
 load_dotenv()
 
-from discord import Message
-
-from asgiref.sync import sync_to_async
 from EdgeGPT.EdgeGPT import ConversationStyle
 from asgiref.sync import sync_to_async
 import help_embed as hell
 
 
-async def official_handle_response(message, client) -> str:
-  return await sync_to_async(client.chatbot.ask)(message)
+async def official_handle_response(message, client, user_id) -> str:
+  return await sync_to_async(client.chatbot.ask)(message, convo_id=str(user_id))
 
 
 async def unofficial_handle_response(message, client) -> str:
@@ -86,7 +78,6 @@ async def send_split_message(self, response: str, message: discord.Interaction):
     await message.followup.send(response, ephemeral=message.user.id in self.privates)
 
 
-
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -111,12 +102,19 @@ class TemptressBot(commands.Bot):
     if os.path.exists("custom_personas.json"):
       with open("custom_personas.json", "r") as f:
         self.custom_personas = json.load(f)
-        print(self.custom_personas)
 
     self.current_channel = None
     self.activity = discord.Activity(type=discord.ActivityType.listening, name="/chat | /help")
 
     self.blinded_users = {}
+
+    self.prison_roles = {}
+
+    self.command_uses = {"guilds": {}, "users": {}}
+    self.last_ad = {}
+    if os.path.exists('command_uses.json'):
+      with open('command_uses.json', 'r') as f:
+        self.command_uses = json.load(f)
 
     self.privates = []
     self.is_replying_all = os.getenv("REPLYING_ALL")
@@ -166,8 +164,7 @@ class TemptressBot(commands.Bot):
       if filename.endswith('.py'):
         await bot.load_extension(f"Cogs.{filename[:-3]}")
 
-    # await bot.load_extension('jishaku')
-
+    #await bot.load_extension('jishaku')
 
     print(f"{bot.user} is ready!")
 
@@ -178,6 +175,45 @@ class TemptressBot(commands.Bot):
     await bot.change_presence(
       activity=discord.Activity(type=discord.ActivityType.playing, name="with your mind.")
     )
+
+  def update_bot_stats(self, section: str, consumer, add_count=1):
+    """Update the bot's stats"""
+    section, consumer = str(section), str(consumer)
+
+    if consumer not in self.command_uses[section]:
+      self.command_uses[section][consumer] = add_count
+    else:
+      self.command_uses[section][consumer] += add_count
+
+    with open('command_uses.json', 'w') as f:
+      json.dump(self.command_uses, f, indent=2)
+
+  async def on_app_command_completion(self, it: discord.Interaction, command):
+    """On app command completion, use this to increase command usage"""
+    self.update_bot_stats('guilds', it.guild_id)
+    self.update_bot_stats('users', it.user.id)
+    print('added to count', self.command_uses)
+
+    now = time.time()
+    print(self.last_ad)
+    if self.command_uses['users'][str(it.user.id)] % 20 == 0 and (now - self.last_ad.get(it.user.id, 0)) > 900:
+      # obviously dont send ads to the owner :p
+      if it.user.id == self.owner_id:
+        return
+
+      # send ad!
+      print("sending ad")
+      em = discord.Embed(
+        title='Support Mistress Valentina 💗',
+        color=random.choice([0x9980FA, 0xED4C67, 0x9b59b6, 0xfd79a8, 0xe84393]),
+        description="**<:Domme:1167057873990336512> Unleash Your Darkest Desires**\n Mistress Valentina's Pleasure Realm awaits your contribution. By supporting my Ko-fi page, you gain access to a treasure trove of explicit content, tantalizing stories, and personalized rewards.\n\n**Your donations ensure that I can continue to dominate, push boundaries, and fulfill your deepest, most secret fantasies**. Donate today and surrender to the allure of Mistress Valentina!",
+        url="https://ko-fi.com/kyrian"
+      )
+      em.set_thumbnail(url=self.user.display_avatar.url)
+      em.add_field(name='Donate Here:', value='https://ko-fi.com/kyrian')
+
+      await it.followup.send(embed=em)
+      self.last_ad[it.user.id] = now
 
   def get_chatbot_model(self, prompt=None) -> Union[AsyncChatbot, Chatbot]:
     if not prompt:
@@ -210,14 +246,12 @@ class TemptressBot(commands.Bot):
     await self.message_queue.put((it, user_message))
 
   async def send_message(self, message, user_message):
-    if self.is_replying_all == "False":
-      author = message.user.id
-    else:
-      author = message.author.id
+    author = message.user.id
+
     try:
       response = (f'> **{user_message}** - <@{str(author)}> \n\n')
       if self.chat_model == "OFFICIAL":
-        response = f"{response}{await official_handle_response(user_message, self)}"
+        response = f"{response}{await official_handle_response(f'(MY NAME IS {message.user.name}, keep that in mind.) ' + user_message, self, user_id=author)}"
       elif self.chat_model == "UNOFFICIAL":
         response = f"{response}{await unofficial_handle_response(user_message, self)}"
       elif self.chat_model == "Bard":
@@ -262,6 +296,10 @@ class HelpButton(discord.ui.Button):
   async def callback(self, interaction: discord.Interaction):
     [setattr(button, 'disabled', False) for button in self.view.children]
     next(btn for btn in self.view.children if btn.label == self.label).disabled = True
+
+    self.embed.set_footer(text=f"💗 Show your love to me by Donating here - https://ko-fi.com/kyrian",
+                          icon_url=bot.user.display_avatar.url)
+
     await interaction.response.edit_message(embed=self.embed, view=self.view)
 
 
@@ -283,6 +321,20 @@ class HelpView(discord.ui.View):
       disabled = label == current
       self.add_item(HelpButton(embed=embed, label=label, style=style, disabled=disabled))
 
+@bot.tree.command()
+async def donate(it: discord.Interaction):
+  """Donate to Miss Valentina 💐"""
+  em = discord.Embed(
+    title='Support Mistress Valentina 💗',
+    color=random.choice([0x9980FA, 0xED4C67, 0x9b59b6, 0xfd79a8, 0xe84393]),
+    description="**<:Domme:1167057873990336512> Unleash Your Darkest Desires**\n Mistress Valentina's Pleasure Realm awaits your contribution. By supporting my Ko-fi page, you gain access to a treasure trove of explicit content, tantalizing stories, and personalized rewards.\n\n**Your donations ensure that I can continue to dominate, push boundaries, and fulfill your deepest, most secret fantasies**. Donate today and surrender to the allure of Mistress Valentina!",
+    url="https://ko-fi.com/kyrian"
+  )
+  em.set_thumbnail(url=bot.user.display_avatar.url)
+  em.add_field(name='Donate Here:', value='https://ko-fi.com/kyrian')
+
+  await it.response.send_message(embed=em, ephemeral=True)
+  bot.last_ad[it.user.id] = time.time()
 
 @bot.tree.command()
 async def help(
@@ -290,7 +342,10 @@ async def help(
     category: typing.Literal["Main", "Domme only", "Games", "Lock", "NSFW", "Admin"] = "Main",
 ):
   """Temptress Help Command"""
-  await it.response.send_message(embed=help_buttons[category][0], ephemeral=True, view=HelpView(current=category))
+  em = help_buttons[category][0]
+  em.set_footer(text=f"💗 Show your love to me by Donating here - https://ko-fi.com/kyrian",
+                icon_url=bot.user.display_avatar.url)
+  await it.response.send_message(embed=em, ephemeral=True, view=HelpView(current=category))
 
 
 # @bot.event

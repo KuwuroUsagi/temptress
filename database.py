@@ -116,8 +116,6 @@ def is_config(guild):
     return False
   if [0] == get_config('slave', guild):
     return False
-  if [0] == get_config('locker', guild):
-    return False
   if [0] == get_config('prisoner', guild):
     return False
   if [0] == get_config('prison', guild):
@@ -429,9 +427,9 @@ def insert_remove_blacklist(member, guild):
 
 
 def insert_escape(member, guild, safe_time, type):
-  with con:
-    cur.execute("INSERT INTO Escape (memberid, guildid, timeint, type) VALUES (%s, %s, %s, %s)",
+  with con:    cur.execute("INSERT INTO Escape (memberid, guildid, timeint, type) VALUES (%s, %s, %s, %s)",
                 (member, guild, int(str(time() + (safe_time * 60 * 60))[:10]), type))
+
 
 
 def is_escaped(member, guild):

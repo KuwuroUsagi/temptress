@@ -11,9 +11,9 @@ def who_is(author, member):
   """
   returns int depends on relationship between author and member.
 
-  2       author and member is the same person + has locker role
+  2       author and member is the same person + has domme/switch role
 
-  202     both author and member have locker role
+  202     both author and member have domme/switch role
 
   200     member is owned by author
 
@@ -21,55 +21,83 @@ def who_is(author, member):
 
   >300    discord id of member's owner
 
-  222     member does not have locker or slave role and author has locker role
+  222     member does not have domme/switch or slave role and author has domme/switch role
 
   1       author and member is the same person + has slave role
 
   101     both author and member have slave role
 
-  102     author has slave role and member has locker role
+  102     author has slave role and member has domme/switch role
 
-  111     member does not have locker or slave role and author has slave role
+  103     member is a switch, author is a slave
 
-  0       author does not have both slave and locker role
+  111     member does not have domme/switch or slave role and author has slave role
+
+  0       author does not have both slave and domme/switch role
 
   -1      member is bot banned
 
   <-1     unixtime till author is banned
   """
+  member_has_role = lambda rid: str(rid) in [str(role.id) for role in member.roles]
+  author_has_role = lambda rid: str(rid) in [str(role.id) for role in author.roles]
+
+  domme = database.get_config('domme', member.guild.id)[0]
+  sub = database.get_config('slave', member.guild.id)[0]
+  switch = database.get_config('switch', member.guild.id)[0]
+
+  print(f"""{author_has_role(domme)=} | {author_has_role(sub)=} | {author_has_role(switch)=}
+  {member_has_role(domme)=} | {member_has_role(sub)=} | {member_has_role(switch)=}""")
+
+  # banned
   ban_data = database.is_botban(author.id)
-  if ban_data is None:
-    if database.is_botban(member.id) is None:
-      if set(database.get_config('domme', member.guild.id)) & set([str(role.id) for role in author.roles]):
-        if author.id == member.id:
-          return 2
-        if set(database.get_config('domme', member.guild.id)) & set([str(role.id) for role in member.roles]):
-          return 202
-        elif set(database.get_config('slave', member.guild.id)) & set([str(role.id) for role in member.roles]):
-          ownerid = database.get_owner(member.id, member.guild.id)
-          if ownerid == author.id:
-            return 200
-          elif ownerid == 0:
-            return 201
-          elif ownerid > 300:
-            return ownerid
-        else:
-          return 222
-      elif set(database.get_config('slave', member.guild.id)) & set([str(role.id) for role in author.roles]):
-        if author.id == member.id:
-          return 1
-        if set(database.get_config('slave', member.guild.id)) & set([str(role.id) for role in member.roles]):
-          return 101
-        if set(database.get_config('domme', member.guild.id)) & set([str(role.id) for role in member.roles]):
-          return 102
-        else:
-          return 111
-      else:
-        return 0
-    else:
-      return -1
-  else:
+
+  if ban_data is not None:
     return -1 * ban_data[1]
+
+  if database.is_botban(member.id) is not None:
+    return -1
+
+  # relationship
+
+  if author_has_role(domme) or author_has_role(switch):  # author is domme / switch
+    if author.id == member.id:
+      return 2  # allowed to do the action but not on yourself
+
+    if member_has_role(domme):
+      return 202  # allowed to do but not on another domme
+
+    if member_has_role(sub) or member_has_role(switch):
+      ownerid = database.get_owner(member.id, member.guild.id)
+
+      if ownerid == author.id:
+        return 200  # member is owned by author
+      elif ownerid == 0:
+        return 201  # member is unowned by author
+      elif ownerid > 300:
+        return ownerid  # member is owned by someone else
+
+    return 222  # member has no controlling roles slave/switch/domme and author has domme/switch
+
+  elif author_has_role(sub):
+    if author.id == member.id:
+      return 1  # not allowed to do the action, and obviously not on yourself
+
+    if member_has_role(switch):
+      return random.choice([101, 102])  # member is a switch
+
+    if member_has_role(sub):
+      return 101  # both are slave
+
+    if member_has_role(domme):
+      return 102  # member is a domme, author is a slave
+
+
+    else:
+
+      return 111  # member has no controlling roles slave/switch/domme and author has slave
+
+  return 0  # author has no controlling roles slave/switch/domme
 
 
 class BlindButton(discord.ui.Button):
@@ -622,6 +650,8 @@ class Femdom2(commands.Cog):
                             color=0xFF2030)
       await ctx.send(embed=embed)
 
+    raise error
+
   @muffs.error
   async def on_muff_error(self, ctx, error):
     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(
@@ -630,19 +660,25 @@ class Femdom2(commands.Cog):
                             color=0xFF2030)
       await ctx.send(embed=embed)
 
+    raise error
+
   @blind.error
   async def on_blind_error(self, ctx, error):
     if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument) or isinstance(
         error, commands.MemberNotFound):
       embed = discord.Embed(description=f"Usage:\n> **`/blind @mention`** ",
                             color=0xFF2030)
+      await ctx.send(embed=embed)
+
+
     elif isinstance(error, commands.errors.CommandOnCooldown):
       embed = discord.Embed(title="Blindfold Cooldown is 4h",
                             description="{} you need to wait {:,.1f} minutes to blindfold a slave again.".format(
                               ctx.author.mention, (error.retry_after // 60) + 1),
                             color=0xFF2030)
-    await ctx.send(embed=embed)
+      await ctx.send(embed=embed)
 
+    raise error
 
 async def setup(bot):
   await bot.add_cog(Femdom2(bot))

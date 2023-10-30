@@ -2,7 +2,7 @@
 """
 commands    |   description
 ----------------------------
-lock        |   member will locker role can lock members with slave role
+lock        |   member will domme/switch role can lock members with slave role
 unlock      |   admins and the member who locked the slave can unlock the locked slave from prison
 escape      |   if the prisoner has gem then they can use it to escape the prison without lines and get 6h of lockproof
 
@@ -35,9 +35,9 @@ def who_is(author, member):
   """
   returns int depends on relationship between author and member.
 
-  2       author and member is the same person + has locker role
+  2       author and member is the same person + has domme/switch role
 
-  202     both author and member have locker role
+  202     both author and member have domme/switch role
 
   200     member is owned by author
 
@@ -45,55 +45,83 @@ def who_is(author, member):
 
   >300    discord id of member's owner
 
-  222     member does not have locker or slave role and author has locker role
+  222     member does not have domme/switch or slave role and author has domme/switch role
 
   1       author and member is the same person + has slave role
 
   101     both author and member have slave role
 
-  102     author has slave role and member has locker role
+  102     author has slave role and member has domme/switch role
 
-  111     member does not have locker or slave role and author has slave role
+  103     member is a switch, author is a slave
 
-  0       author does not have both slave and locker role
+  111     member does not have domme/switch or slave role and author has slave role
+
+  0       author does not have both slave and domme/switch role
 
   -1      member is bot banned
 
   <-1     unixtime till author is banned
   """
+  member_has_role = lambda rid: str(rid) in [str(role.id) for role in member.roles]
+  author_has_role = lambda rid: str(rid) in [str(role.id) for role in author.roles]
+
+  domme = database.get_config('domme', member.guild.id)[0]
+  sub = database.get_config('slave', member.guild.id)[0]
+  switch = database.get_config('switch', member.guild.id)[0]
+
+  print(f"""{author_has_role(domme)=} | {author_has_role(sub)=} | {author_has_role(switch)=}
+  {member_has_role(domme)=} | {member_has_role(sub)=} | {member_has_role(switch)=}""")
+
+  # banned
   ban_data = database.is_botban(author.id)
-  if ban_data is None:
-    if database.is_botban(member.id) is None:
-      if set(database.get_config('locker', member.guild.id)) & set([str(role.id) for role in author.roles]):
-        if author.id == member.id:
-          return 2
-        if set(database.get_config('locker', member.guild.id)) & set([str(role.id) for role in member.roles]):
-          return 202
-        elif set(database.get_config('slave', member.guild.id)) & set([str(role.id) for role in member.roles]):
-          ownerid = database.get_owner(member.id, member.guild.id)
-          if ownerid == author.id:
-            return 200
-          elif ownerid == 0:
-            return 201
-          elif ownerid > 300:
-            return ownerid
-        else:
-          return 222
-      elif set(database.get_config('slave', member.guild.id)) & set([str(role.id) for role in author.roles]):
-        if author.id == member.id:
-          return 1
-        if set(database.get_config('slave', member.guild.id)) & set([str(role.id) for role in member.roles]):
-          return 101
-        if set(database.get_config('locker', member.guild.id)) & set([str(role.id) for role in member.roles]):
-          return 102
-        else:
-          return 111
-      else:
-        return 0
-    else:
-      return -1
-  else:
+
+  if ban_data is not None:
     return -1 * ban_data[1]
+
+  if database.is_botban(member.id) is not None:
+    return -1
+
+  # relationship
+
+  if author_has_role(domme) or author_has_role(switch):  # author is domme / switch
+    if author.id == member.id:
+      return 2  # allowed to do the action but not on yourself
+
+    if member_has_role(domme):
+      return 202  # allowed to do but not on another domme
+
+    if member_has_role(sub) or member_has_role(switch):
+      ownerid = database.get_owner(member.id, member.guild.id)
+
+      if ownerid == author.id:
+        return 200  # member is owned by author
+      elif ownerid == 0:
+        return 201  # member is unowned by author
+      elif ownerid > 300:
+        return ownerid  # member is owned by someone else
+
+    return 222  # member has no controlling roles slave/switch/domme and author has domme/switch
+
+  elif author_has_role(sub):
+    if author.id == member.id:
+      return 1  # not allowed to do the action, and obviously not on yourself
+
+    if member_has_role(switch):
+      return random.choice([101, 102])  # member is a switch
+
+    if member_has_role(sub):
+      return 101  # both are slave
+
+    if member_has_role(domme):
+      return 102  # member is a domme, author is a slave
+
+
+    else:
+
+      return 111  # member has no controlling roles slave/switch/domme and author has slave
+
+  return 0  # author has no controlling roles slave/switch/domme
 
 
 def make_image(sentence, memberid, level=None):
@@ -238,9 +266,16 @@ class LockActionButton(discord.ui.Button):
     embed = discord.Embed(description=f"I am locking {self.member.mention} ⏱️", color=0xFF2030)
     await it.message.edit(embed=embed)
 
-    for role in self.member.roles:
-      if role != self.ctx.guild.default_role and role != self.ctx.guild.premium_subscriber_role:
-        await self.member.remove_roles(role)
+    switch = self.ctx.guild.get_role(int(database.get_config('switch', self.ctx.guild.id)[0]))
+    sub = self.ctx.guild.get_role(int(database.get_config('slave', self.ctx.guild.id)[0]))
+
+    if sub in self.member.roles:
+      await self.member.remove_roles(sub)
+      self.ctx.bot.prison_roles[self.member.id] = 'slave'
+
+    if switch in self.member.roles:
+      await self.member.remove_roles(switch)
+      self.ctx.bot.prison_roles[self.member.id] = 'switch'
 
     if self.member_is == 200:
       database.remove_money(self.ctx.author.id, self.ctx.guild.id, 0, 0)
@@ -268,7 +303,7 @@ class LockActionButton(discord.ui.Button):
     prison = self.ctx.guild.get_channel(int(database.get_config('prison', self.ctx.guild.id)[0]))
 
     embed = discord.Embed(
-      description=f"{self.ctx.author.mention} received 50<a:pinkcoin:968277243946233906> by locking {self.member.mention} in {prison.mention}",
+      description=f"{self.ctx.author.mention} received 50 <a:pinkcoin:1167061163515858954> by locking {self.member.mention} in {prison.mention}",
       color=0x9479ED)
     await it.message.edit(embed=embed, view=None)
     await it.response.defer()
@@ -383,17 +418,18 @@ class Lock(commands.Cog):
       print(data)
       if message.content.lower() == data[4].lower():
         await message.add_reaction('👌')
-        await message.add_reaction('<a:pinkcoin:968277243946233906>')
+        await message.add_reaction('<a:pinkcoin:1167061163515858954>')
         sentence = make_image(message.content, message.author.id).replace('\n', ' ')
         sentence = sentence.replace('  ', ' ')
         database.update_lock(message.author.id, sentence, message.guild.id)
         if data[3] == 1:
+          member = message.author
           prisoner = message.guild.get_role(int(database.get_config('prisoner', message.guild.id)[0]))
           await message.author.remove_roles(prisoner)
           await message.reply(
             f"{message.author.mention} you are now released from {message.channel.mention} for being a good boy and writing the lines.")
           database.insert_escape(message.author.id, message.guild.id, 0.2, 'cooldown')
-          await member.add_roles(ctx.guild.get_role(int(database.get_config('slave', member.guild.id)[0])))
+          await member.add_roles(member.guild.get_role(int(database.get_config(self.bot.prison_roles[message.author.id], member.guild.id)[0])))
 
           return
         prison = message.guild.get_channel(int(database.get_config('prison', message.guild.id)[0]))
@@ -513,14 +549,16 @@ class Lock(commands.Cog):
 
     elif member_is == 222 or member_is == 111:  # when mentioned member does't have slave or domme role
       embed = discord.Embed(description=f"{member.mention} should have any of the following roles \n"
-                                        f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
-                                        f"{self.list_roles(database.get_config('slave', member.guild.id))}",
+                                        f"{self.list_roles(database.get_config('domme', member.guild.id))}\n"
+                                        f"{self.list_roles(database.get_config('switch', member.guild.id))}\n"
+                                        f"{self.list_roles(database.get_config('slave', member.guild.id))}\n",
                             color=0xF2A2C0)
       await ctx.send(embed=embed)
 
     elif member_is == 0:  # when the author doesn't have domme or slave role.
       embed = discord.Embed(description=f"{ctx.author.mention}, you should have any of the following roles \n"
-                                        f"{self.list_roles(database.get_config('locker', member.guild.id))}\n"
+                                        f"{self.list_roles(database.get_config('domme', member.guild.id))}\n"
+                                        f"{self.list_roles(database.get_config('switch', member.guild.id))}\n"
                                         f"{self.list_roles(database.get_config('slave', member.guild.id))}",
                             color=0xF2A2C0)
       await ctx.send(embed=embed)

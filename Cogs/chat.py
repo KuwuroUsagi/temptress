@@ -38,7 +38,10 @@ class Chat(commands.Cog):
             await ctx.reply(f'This channel is not NSFW, I only chat in NSFW channels to be safe.')
             return
 
-          if set(database.get_config('domme', message.guild.id)) & set([str(role.id) for role in message.author.roles]):
+          has_role = lambda rid: str(rid) in [str(role.id) for role in message.author.roles]
+          domme = database.get_config('domme', message.author.guild.id)[0]
+          switch = database.get_config('switch', message.author.guild.id)[0]
+          if has_role(domme) or has_role(switch):
             gender = 'f'
           else:
             gender = 'm'

@@ -4,7 +4,7 @@ import database
 import discord
 from discord.ext import commands
 from discord.ext import menus
-from pyurbandict import UrbanDict
+# from pyurbandict import UrbanDict
 
 class Menu(menus.MenuPages):
   async def send_initial_message(self, ctx, channel):
@@ -48,7 +48,8 @@ class Misc(commands.Cog):
         color=0xF2A2C0)
       return await ctx.send(embed=embed)
 
-    results = UrbanDict(word).search()
+    # results = UrbanDict(word).search()
+    results = None
 
     if not results:
       em = discord.Embed(

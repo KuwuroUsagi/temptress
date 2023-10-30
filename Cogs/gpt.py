@@ -147,7 +147,7 @@ class Cmds(commands.Cog):
 
     elif persona == "standard":
       if self.bot.chat_model == "OFFICIAL":
-        self.bot.chatbot.reset()
+        self.bot.chatbot.reset(convo_id=str(it.user.id))
       elif self.bot.chat_model == "UNOFFICIAL":
         self.bot.chatbot.reset_chat()
       elif self.bot.chat_model == "Bard":

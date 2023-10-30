@@ -49,26 +49,32 @@ class ServerConfig(commands.Cog):
 
     embeds = dict(
       setup_embed_domme=discord.Embed(
-        title='Setting Me Up.. (1/4)',
+        title='Setting Me Up.. (1/6)',
         description=f"Mention Domme role/s in the server, \nI will consider members with those roles as Domme.\n> "
                     "*I will wait 1 minute for you to mention the Domme role/s.*",
         color=0xBF99A0
       ),
 
       setup_embed_slave=discord.Embed(
-        title='Setting Me Up.. (2/4)',
+        title='Setting Me Up.. (2/6)',
         description=f"Mention Sub role/s in the server,\nI will consider members with those roles as Subs.\n> "
                     "*I will wait 1 minute for you to mention the Sub role/s.*",
         color=0x591B32
       ),
-      setup_embed_locker=discord.Embed(
-        title='Setting Me Up.. (3/4)',
-        description=f"Mention the lock roles, so only Members with that role can lock Subs in prison."
+      setup_embed_switch=discord.Embed(
+        title='Setting Me Up.. (4/6)',
+        description=f"Mention the switch roles, I will consider members with those roles as both Subs and Domme."
                     f"\n> *I will wait 1 minute for you to mention the Role/s*",
         color=0x591B32
       ),
+      setup_embed_reactionroles_channel=discord.Embed(
+        title='Setting Me Up.. (5/6)',
+        description=f"Mention a channel to put the role choosing message in (something like #get-roles).\n> "
+                    "*I will wait 1 minute for you to mention a channel,*\n> *or type anything so I will make a new get roles channel.*",
+        color=0xF2A2C0
+      ),
       setup_embed_prison=discord.Embed(
-        title='Setting Me Up.. (4/4)',
+        title='Setting Me Up.. (6/6)',
         description=f"Mention a channel to lock Subs for punishments.\n> "
                     "*I will wait 1 minute for you to mention a channel,*\n> *or type anything so I will make a new prison channel.*",
         color=0xF2A2C0
@@ -95,7 +101,7 @@ class ServerConfig(commands.Cog):
     setup_roles = {}
     prison_channel = None
 
-    for i, stage in enumerate(['domme', 'slave', 'locker', 'prison']):
+    for i, stage in enumerate(['domme', 'slave', 'switch', 'reactionroles_channel', 'prison']):
       em = embeds[f'setup_embed_{stage}']
 
       if not m:
@@ -108,15 +114,63 @@ class ServerConfig(commands.Cog):
       except asyncio.TimeoutError:
         return await m.edit(embed=setup_embed_timeout)
 
-      if stage == 'prison':
+      if stage == 'reactionroles_channel':
         channel = resp.channel_mentions
 
         if not channel or not isinstance(channel[0], discord.TextChannel):
-          database.insert_config(stage, it.guild.id, str(prison_channel.id))
+          rr_channel = await ctx.guild.create_text_channel(
+            'get-roles',
+            overwrites={
+              ctx.guild.default_role: discord.PermissionOverwrite(
+                read_messages=True,
+                send_messages=False
+              ),
+              ctx.guild.me: discord.PermissionOverwrite(
+                send_messages=True
+              )
+            })
+          database.insert_config(stage, it.guild.id, str(rr_channel.id))
+        else:
+          database.insert_config(stage, it.guild.id, str(channel[0].id))
+          rr_channel = channel[0]
+
+        DOMME_REACTION, SUB_REACTION, SWITCH_REACTION = '<:Domme:1167057873990336512>', '<:Sub:1155850020541710489>', '🔀'
+
+        em = discord.Embed(
+          title='Which side are you?',
+          description=f"""
+          If you are a Domme choose {DOMME_REACTION}: \n
+          If you are a Sub choose: {SUB_REACTION} \n
+          If you are a Switch choose: {SWITCH_REACTION} \n
+          """.strip(),
+          color=discord.Color.orange()
+        )
+
+        em.set_footer(text=f"{self.bot.user.name} | Donate here - https://ko-fi.com/kyrian",
+                      icon_url=self.bot.user.display_avatar.url)
+
+        rrm = await rr_channel.send(embed=em)
+
+        for r in (DOMME_REACTION, SUB_REACTION, SWITCH_REACTION):
+          await rrm.add_reaction(r)
+
+        #  TODO REACTION ROLES
+        database.insert_config("reactionroles_message", it.guild.id, str(rrm.id))
+        database.insert_config("reactionroles_reactions", it.guild.id,
+                               f"{DOMME_REACTION},{SUB_REACTION},{SWITCH_REACTION}")
+
+
+
+      elif stage == 'prison':
+        channel = resp.channel_mentions
+
+        if not channel or not isinstance(channel[0], discord.TextChannel):
           prison_channel = await ctx.guild.create_text_channel('prison')
+          database.insert_config(stage, it.guild.id, str(prison_channel.id))
         else:
           database.insert_config(stage, it.guild.id, str(channel[0].id))
           prison_channel = channel[0]
+
       else:
         roles = resp.role_mentions
 
@@ -138,8 +192,10 @@ class ServerConfig(commands.Cog):
       > {" ".join(r.mention for r in setup_roles['domme'])}
       Subs in the server are the members with the following roles:
       > {" ".join(r.mention for r in setup_roles['slave'])}
-      Members with following roles can lock sub in {prison_channel.mention}:
-      > {" ".join(r.mention for r in setup_roles['locker'])}
+      Switches in the server are members with the following roles:
+      > {" ".join(r.mention for r in setup_roles['switch'])}
+      The channel where members can choose their roles:
+      > {rr_channel.mention}
       The channel where Dommes can torture and punish subs:
       > {prison_channel.mention}
       
@@ -176,7 +232,6 @@ class ServerConfig(commands.Cog):
     slave = database.get_config('slave', ctx.guild.id)
     NSFW = database.get_config('NSFW', ctx.guild.id)
     chat = database.get_config('chat', ctx.guild.id)
-    locker = database.get_config('locker', ctx.guild.id)
 
     t_mem = 0
 
@@ -193,7 +248,6 @@ class ServerConfig(commands.Cog):
                                  description=f"**I am controling {t_mem} members.**\n\n"
                                              f"Domme roles:\n{self.list_roles(domme)}\n"
                                              f"Sub roles:\n{self.list_roles(slave)}\n"
-                                             f"Dommes who are strong to lock subs in <#{prison[0]}>:\n{self.list_roles(locker)}\n"
                                              f"NSFW command access is given to:\n{self.list_roles(NSFW)}\n"
                                              f"Members who have permission to talk to me:\n{self.list_roles(chat)}\n\n"
                                              f"**Dommes can torture subs in <#{prison[0]}>**\n"
@@ -327,6 +381,95 @@ class ServerConfig(commands.Cog):
                     f"\n**`/blacklist`** to see the list of blacklisted members.",
         color=0xFF2030)
       await ctx.send(embed=embed)
+
+  @commands.Cog.listener()
+  async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
+    """
+    For reaction roles
+    """
+
+    if not database.is_config(payload.guild_id):
+      return
+
+    if payload.message_id != int(database.get_config('reactionroles_message', payload.guild_id)[0]):
+      return
+
+    if payload.user_id == self.bot.user.id:
+      return
+
+    DOMME_REACTION, SUB_REACTION, SWITCH_REACTION = database.get_config('reactionroles_reactions',
+                                                                                       payload.guild_id)
+
+    reaction_role = {
+      DOMME_REACTION: database.get_config('domme', payload.guild_id)[0],
+      SUB_REACTION: database.get_config('slave', payload.guild_id)[0],
+      SWITCH_REACTION: database.get_config('switch', payload.guild_id)[0]
+    }
+
+    guild = self.bot.get_guild(payload.guild_id)
+    mem = (payload.member or guild.get_member(payload.user_id))
+
+    # print('ADD REACTION')
+    # print(f'{payload.emoji} {payload.user_id} {payload.member} {mem} {mem.roles}')
+    # print(reaction_role.get(str(payload.emoji)))
+    # print('---------------')
+
+    if role := reaction_role.get(str(payload.emoji)):
+      role_id = int(role.split(',')[0])
+      role = guild.get_role(role_id)
+
+      has_role = lambda rid: rid in [r.id for r in mem.roles]
+
+      to_remove = []
+
+      if has_role(int(reaction_role[DOMME_REACTION])) and role_id != int(reaction_role[DOMME_REACTION]):
+        to_remove.append(int(reaction_role[DOMME_REACTION]))
+      if has_role(int(reaction_role[SUB_REACTION])) and role_id != int(reaction_role[SUB_REACTION]):
+        to_remove.append(int(reaction_role[SUB_REACTION]))
+      if has_role(int(reaction_role[SWITCH_REACTION])) and role_id != int(reaction_role[SWITCH_REACTION]):
+        to_remove.append(int(reaction_role[SWITCH_REACTION]))
+
+      await mem.remove_roles(*[discord.Object(id=r) for r in to_remove])
+
+      if not has_role(role_id):
+        await mem.add_roles(role)
+
+  @commands.Cog.listener()
+  async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent):
+    """
+    For reaction roles
+    """
+
+    if not database.is_config(payload.guild_id):
+      return
+
+    if payload.message_id != int(database.get_config('reactionroles_message', payload.guild_id)[0]):
+      return
+
+    if payload.user_id == self.bot.user.id:
+      return
+
+    DOMME_REACTION, SUB_REACTION, SWITCH_REACTION = \
+      database.get_config('reactionroles_reactions', payload.guild_id)
+
+    reaction_role = {
+      DOMME_REACTION: database.get_config('domme', payload.guild_id)[0],
+      SUB_REACTION: database.get_config('slave', payload.guild_id)[0],
+      SWITCH_REACTION: database.get_config('switch', payload.guild_id)[0]
+    }
+
+    guild = self.bot.get_guild(payload.guild_id)
+    mem = (payload.member or guild.get_member(payload.user_id))
+
+    # print('REMOVE REACTION')
+    # print(f'{payload.emoji} {payload.user_id} {payload.member} {mem} {mem.roles}')
+    # print(reaction_role.get(str(payload.emoji)))
+    # print('---------------')
+
+    if role := reaction_role.get(str(payload.emoji)):
+      role_id = int(role.split(',')[0])
+      role = guild.get_role(role_id)
+      await mem.remove_roles(role)
 
 
 async def setup(bot):
