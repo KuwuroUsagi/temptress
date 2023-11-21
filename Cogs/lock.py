@@ -30,99 +30,7 @@ from PIL import Image, ImageDraw, ImageFont
 from discord import ButtonStyle
 from discord.ext import commands, tasks
 
-
-def who_is(author, member):
-  """
-  returns int depends on relationship between author and member.
-
-  2       author and member is the same person + has domme/switch role
-
-  202     both author and member have domme/switch role
-
-  200     member is owned by author
-
-  201     member is unowned by author
-
-  >300    discord id of member's owner
-
-  222     member does not have domme/switch or slave role and author has domme/switch role
-
-  1       author and member is the same person + has slave role
-
-  101     both author and member have slave role
-
-  102     author has slave role and member has domme/switch role
-
-  103     member is a switch, author is a slave
-
-  111     member does not have domme/switch or slave role and author has slave role
-
-  0       author does not have both slave and domme/switch role
-
-  -1      member is bot banned
-
-  <-1     unixtime till author is banned
-  """
-  member_has_role = lambda rid: str(rid) in [str(role.id) for role in member.roles]
-  author_has_role = lambda rid: str(rid) in [str(role.id) for role in author.roles]
-
-  domme = database.get_config('domme', member.guild.id)[0]
-  sub = database.get_config('slave', member.guild.id)[0]
-  switch = database.get_config('switch', member.guild.id)[0]
-
-  print(f"""{author_has_role(domme)=} | {author_has_role(sub)=} | {author_has_role(switch)=}
-  {member_has_role(domme)=} | {member_has_role(sub)=} | {member_has_role(switch)=}""")
-
-  # banned
-  ban_data = database.is_botban(author.id)
-
-  if ban_data is not None:
-    return -1 * ban_data[1]
-
-  if database.is_botban(member.id) is not None:
-    return -1
-
-  # relationship
-
-  if author_has_role(domme) or author_has_role(switch):  # author is domme / switch
-    if author.id == member.id:
-      return 2  # allowed to do the action but not on yourself
-
-    if member_has_role(domme):
-      return 202  # allowed to do but not on another domme
-
-    if member_has_role(sub) or member_has_role(switch):
-      ownerid = database.get_owner(member.id, member.guild.id)
-
-      if ownerid == author.id:
-        return 200  # member is owned by author
-      elif ownerid == 0:
-        return 201  # member is unowned by author
-      elif ownerid > 300:
-        return ownerid  # member is owned by someone else
-
-    return 222  # member has no controlling roles slave/switch/domme and author has domme/switch
-
-  elif author_has_role(sub):
-    if author.id == member.id:
-      return 1  # not allowed to do the action, and obviously not on yourself
-
-    if member_has_role(switch):
-      return random.choice([101, 102])  # member is a switch
-
-    if member_has_role(sub):
-      return 101  # both are slave
-
-    if member_has_role(domme):
-      return 102  # member is a domme, author is a slave
-
-
-    else:
-
-      return 111  # member has no controlling roles slave/switch/domme and author has slave
-
-  return 0  # author has no controlling roles slave/switch/domme
-
+from Utils.relationship import who_is
 
 def make_image(sentence, memberid, level=None):
   """
@@ -183,6 +91,8 @@ class LockActionButton(discord.ui.Button):
     self.member_is = member_is
     self.sentence = kw.pop('sentence', None)
 
+    self.custom_lock_times = None
+
     super().__init__(**kw)
 
   async def first_stage(self, it: discord.Interaction):
@@ -236,10 +146,19 @@ class LockActionButton(discord.ui.Button):
       LockActionButton(self.ctx, self.member, self.member_is, sentence=sentence, key="hard", style=ButtonStyle.red,
                        label="Hard", emoji='💀'))
 
+    self.view.add_item(
+      LockActionButton(self.ctx, self.member, self.member_is, sentence=sentence, key="customlines", style=ButtonStyle.gray,
+                       label="Custom Times", emoji='🔢'))
+
     em = discord.Embed(title='Which level of torture do you prefer?', color=0x9479ED)
 
-    await it.message.delete()
-    await it.response.send_message(embed=em, view=self.view)
+    # await it.message.edit(content='\u200b', embed=None, view=None)
+    try:
+      await it.response.defer()
+    except Exception as e:
+      pass
+    await it.message.edit(embed=em, view=self.view)
+
 
   async def second_stage(self, it: discord.Interaction):
     if self.key == 'easy':
@@ -248,6 +167,30 @@ class LockActionButton(discord.ui.Button):
       num = random.randint(3, 5)
     elif self.key == 'hard':
       num = random.randint(7, 10)
+    elif self.key == 'customlines':
+      em = discord.Embed(title='How many times should they say it?', description='type a reasonable number', color=0x9479ED)
+      print('hii')
+      await it.message.edit(embed=em, view=None)
+
+      num = None
+      try:
+        check = lambda m: it.user.id == m.author.id and m.channel.id == it.channel.id
+        m = await self.ctx.bot.wait_for('message', timeout=120, check=check)
+
+        try:
+          num = int(m.content)
+        except ValueError:
+          embed = discord.Embed(title='Invalid Number',
+                                description=f'{self.ctx.author.mention} failed to lock {self.member.mention}',
+                                color=0xFF2030)
+          return await it.message.edit(embed=embed)
+
+        await m.delete()
+      except TimeoutError:
+        em = discord.Embed(title='Time is over the slave escaped from prison', color=0x9479ED)
+        return await it.message.edit(embed=em)
+
+
 
     roles = "".join([str(role.id) for role in self.member.roles][1:])
 
@@ -306,7 +249,6 @@ class LockActionButton(discord.ui.Button):
       description=f"{self.ctx.author.mention} received 50 <a:pinkcoin:1167061163515858954> by locking {self.member.mention} in {prison.mention}",
       color=0x9479ED)
     await it.message.edit(embed=embed, view=None)
-    await it.response.defer()
 
     await prison.send(
       f"{self.member.mention} you have to write 👇 {num} times to be free or you have to wait 2h or use **`/escape`** to be free from prison. ||(it is case sensitive)||")
@@ -322,7 +264,7 @@ class LockActionButton(discord.ui.Button):
   async def callback(self, it: discord.Interaction):
     if self.key in ['praise', 'degrade', 'custom']:
       await self.first_stage(it)
-    elif self.key in ['easy', 'medium', 'hard']:
+    elif self.key in ['easy', 'medium', 'hard', 'customlines']:
       await self.second_stage(it)
 
 

@@ -14,99 +14,7 @@ import unicodedata
 from discord import ButtonStyle
 from discord.ext import commands
 
-
-def who_is(author, member):
-  """
-  returns int depends on relationship between author and member.
-
-  2       author and member is the same person + has domme/switch role
-
-  202     both author and member have domme/switch role
-
-  200     member is owned by author
-
-  201     member is unowned by author
-
-  >300    discord id of member's owner
-
-  222     member does not have domme/switch or slave role and author has domme/switch role
-
-  1       author and member is the same person + has slave role
-
-  101     both author and member have slave role
-
-  102     author has slave role and member has domme/switch role
-
-  103     member is a switch, author is a slave
-
-  111     member does not have domme/switch or slave role and author has slave role
-
-  0       author does not have both slave and domme/switch role
-
-  -1      member is bot banned
-
-  <-1     unixtime till author is banned
-  """
-  member_has_role = lambda rid: str(rid) in [str(role.id) for role in member.roles]
-  author_has_role = lambda rid: str(rid) in [str(role.id) for role in author.roles]
-
-  domme = database.get_config('domme', member.guild.id)[0]
-  sub = database.get_config('slave', member.guild.id)[0]
-  switch = database.get_config('switch', member.guild.id)[0]
-
-  print(f"""{author_has_role(domme)=} | {author_has_role(sub)=} | {author_has_role(switch)=}
-  {member_has_role(domme)=} | {member_has_role(sub)=} | {member_has_role(switch)=}""")
-
-  # banned
-  ban_data = database.is_botban(author.id)
-
-  if ban_data is not None:
-    return -1 * ban_data[1]
-
-  if database.is_botban(member.id) is not None:
-    return -1
-
-  # relationship
-
-  if author_has_role(domme) or author_has_role(switch):  # author is domme / switch
-    if author.id == member.id:
-      return 2  # allowed to do the action but not on yourself
-
-    if member_has_role(domme):
-      return 202  # allowed to do but not on another domme
-
-    if member_has_role(sub) or member_has_role(switch):
-      ownerid = database.get_owner(member.id, member.guild.id)
-
-      if ownerid == author.id:
-        return 200  # member is owned by author
-      elif ownerid == 0:
-        return 201  # member is unowned by author
-      elif ownerid > 300:
-        return ownerid  # member is owned by someone else
-
-    return 222  # member has no controlling roles slave/switch/domme and author has domme/switch
-
-  elif author_has_role(sub):
-    if author.id == member.id:
-      return 1  # not allowed to do the action, and obviously not on yourself
-
-    if member_has_role(switch):
-      return random.choice([101, 102])  # member is a switch
-
-    if member_has_role(sub):
-      return 101  # both are slave
-
-    if member_has_role(domme):
-      return 102  # member is a domme, author is a slave
-
-
-    else:
-
-      return 111  # member has no controlling roles slave/switch/domme and author has slave
-
-  return 0  # author has no controlling roles slave/switch/domme
-
+from Utils.relationship import who_is
 
 class YesNoView(discord.ui.View):
   def __init__(self, member: discord.Member, action, msg: dict):
@@ -517,10 +425,7 @@ class Action:
       if owner == 0:
         owner = f"Owned by no one, a poor lonely soul"
       else:
-        if member.id == 104373103802466304:  # Kuro Usagi ID
-          owner = f"Owned by <@{owner}>"
-        else:
-          owner = f"Owned by <@{owner}>"
+        owner = f"Owned by " + ", ".join([f"<@{o}>" for o in owner])
       data = database.get_slave_from_DB(member.id, member.guild.id)[0]
       gag = data[2]
       if gag == 'kitty':
@@ -864,9 +769,10 @@ class Punishment:
     if any([bad_word in string for bad_word in self.badwords]):
       await self.message.delete()
       life = database.get_slave_from_DB(self.author.id, self.author.guild.id)[0][8]
+      if life > 2: life = 2
       if life == 1:
         database.update_slaveDB(self.author.id, 'life', 10, self.author.guild.id)
-        database.update_slaveDB(self.author.id, 'gag', self.author.guild.id)
+        database.update_slaveDB(self.author.id, 'gag', 'on', self.author.guild.id)
         embed = discord.Embed(title='Gag the brats',
                               description=f"{self.author.mention} you are gagged till your owner ungags you.",
                               color=0xF2A2C0)
@@ -882,7 +788,7 @@ class Punishment:
         database.update_slaveDB(self.author.id, 'life', life - 1, self.author.guild.id)
         embed = discord.Embed(title="Nope",
                               description=f"{self.mention} can't say that word little one! Better watch that mouth!, you lost 1 life."
-                                          f"\n\n\n**life**\n> {'<:fullheart:968298305178202205>' * (life - 1)}{'<:emptyheart:968298304855224403>' * (11 - life)}",
+                                          f"\n\n\n**life**\n> {'❤️' * (life - 1)}{'🖤' * (11 - life)}",
                               colour=0xF2A2C0)
         await self.channel.send(embed=embed, delete_after=5)
 
@@ -1014,15 +920,19 @@ class Femdom(commands.Cog):
       embed = discord.Embed(description=messages.get('on_temptress', "You can't run this command on me! 😤"),
                             color=0xF2A2C0)
       await ctx.send(embed=embed)
+      print('bot')
       return False
 
     if member.bot:  # owning a random bot
       embed = discord.Embed(description=f"{member.mention} is too strong for you to own!", color=0xF2A2C0)
       await ctx.send(embed=embed)
+      print('bot')
       return False
 
     # relationship
+    print('whois')
     member_is = who_is(ctx.author, member)
+    print(f'The relationship is: {member_is}')
 
     if member_is in [222, 111]:
       msg = f"{member.mention} should have any of the following roles \n{self.list_roles(database.get_config('domme', member.guild.id))}\n{self.list_roles(database.get_config('slave', member.guild.id))}"
@@ -1035,7 +945,11 @@ class Femdom(commands.Cog):
         "Bot ban",
         f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till <t:{member_is * -1}:F>")
     else:
-      msg = messages.get(">300" if member_is > 300 else str(member_is))
+      if member_is > 300:
+        return True
+
+      msg = messages.get(str(member_is))
+
 
     if msg is not None:
       if callable(msg):
@@ -1066,7 +980,6 @@ class Femdom(commands.Cog):
         "1": lambda: f"{ctx.author.mention}, you are a slave, you are not worthy of owning anyone or anything in your whole life! You are not even worthy to own your own life!",
         "202": lambda: f"Only slaves can be owned by dommes and since {member.mention} is a domme you can’t own them.",
         "200": lambda: ("Hmmm", f"{ctx.author.mention} You already own him, {member.mention} is already your pet"),
-        ">300": lambda: f"{member.mention}, is owned by another Domme, <@{member_is}>.",
         "101": lambda: f"🤣You foolish {ctx.author.mention} ahahahahha. You think you can own a sub when you are a slave?!, Ahahahaha don't be so brazen.",
         "102": lambda: ("You shall no do such thing.",
                         f'{ctx.author.mention} , you are a slave, you are not worthy of owning anyone or anything in your whole life! Especially not a Domme, how could you even consider trying something so foolish!! {member.mention} I think someone needs to learn a lesson!!!'),
@@ -1075,6 +988,7 @@ class Femdom(commands.Cog):
     ))
 
     if not should_continue:
+      print(f'I do not continue, ')
       return
 
     # only 201 is valid
@@ -1086,6 +1000,7 @@ class Femdom(commands.Cog):
   @general_checks()
   async def disown(self, ctx, member: discord.Member):
     """this removes the mentioned user as a sub of the Domme using this command."""
+    print('disown')
     should_continue = await self.proper_checks(ctx, member, messages=dict(
       on_temptress="😢 why are you trying to disown me, am I not a good girl.",
       on_bot=f"{member.mention} is a bot not your slut to disown!",
@@ -1129,7 +1044,7 @@ class Femdom(commands.Cog):
                      f"Domme can gag you.",
         "202": lambda: f"I am sorry {ctx.author.mention}, but I can't do such a thing. It's unbearable to see "
                        f"a Domme being gagged.",
-        ">300": lambda: f"I am sorry {member.mention} is owned by <@{member_is}>, it's their property.",
+        ">300": lambda: f"I am sorry {member.mention} is owned by somebody else, it's their property.",
         "101": lambda: f"You foolish slave. You think you can gag when you are a slave, {ctx.author.mention}! "
                        f"how Pathetic!!!\n I need to tell this joke to Deity, they will love it.",
         "102": lambda: f'{ctx.author.mention}, you are a slave, you are not as powerful as a domme and you '
@@ -1154,7 +1069,10 @@ class Femdom(commands.Cog):
     await ctx.send(embed=embed, view=GagView(action, gag))
 
     if member_is == 201:
+      print("Taking money!")
       database.remove_money(ctx.author.id, ctx.guild.id, 0, 10)
+    else:
+      print("Not taking money!")
 
   @commands.hybrid_command()
   @commands.guild_only()
@@ -1269,7 +1187,7 @@ class Femdom(commands.Cog):
 
       elif member_is > 300:  # Domme gag on other domme's owned slave
         embed = discord.Embed(title='Nah',
-                              description=f"I am sorry {member.mention} is owned by <@{member_is}>, it's their property.",
+                              description=f"I am sorry {member.mention} is owned by somebody else, it's their property.",
                               color=0xFF2030)
 
       elif member_is == 101:  # Slave kitty gag on Slave
@@ -1361,7 +1279,7 @@ class Femdom(commands.Cog):
 
       elif member_is > 300:  # Domme adding badword for other domme's owned slave
         embed = discord.Embed(title='Nah',
-                              description=f"I am sorry {member.mention} is owned by <@{member_is}> it's their property.",
+                              description=f"I am sorry {member.mention} is owned by somebody else it's their property.",
                               color=0xFF2030)
 
       elif member_is == 101:  # Slave adding badword on Slave
@@ -1443,7 +1361,7 @@ class Femdom(commands.Cog):
 
       elif member_is > 300:  # Domme removing badword on other domme's owned slave
         embed = discord.Embed(title='Nah',
-                              description=f"{member.mention} is owned by <@{member_is}> it's their property.",
+                              description=f"{member.mention} is owned by somebody else it's their property.",
                               color=0xFF2030)
 
       elif member_is == 101:  # Slave removing badword on Slave
@@ -1524,7 +1442,7 @@ class Femdom(commands.Cog):
 
       elif member_is > 300:  # Domme clearing badwords on other domme's owned slave
         embed = discord.Embed(title='Nah',
-                              description=f"{member.mention} is owned by <@{member_is}> it'stheirproperty.",
+                              description=f"{member.mention} is owned by somebody else it'stheirproperty.",
                               color=0xFF2030)
 
       elif member_is == 101:  # Slave clearing badwords on Slave
@@ -1601,7 +1519,7 @@ class Femdom(commands.Cog):
 
       elif member_is > 300:  # Domme nickname on other domme's owned slave
         embed = discord.Embed(title='Nah',
-                              description=f"{member.mention} is owned by <@{member_is}> it'stheirproperty.",
+                              description=f"{member.mention} is owned by somebody else it'stheirproperty.",
                               color=0xFF2030)
 
       elif member_is == 101:  # Slave nickname on Slave
@@ -1732,7 +1650,7 @@ class Femdom(commands.Cog):
 
       elif member_is > 300:  # Domme emoji allow on other domme's owned slave
         embed = discord.Embed(title='Nah',
-                              description=f"{member.mention} is owned by <@{member_is}> it'stheirproperty.",
+                              description=f"{member.mention} is owned by somebody else it'stheirproperty.",
                               color=0xFF2030)
 
       elif member_is == 101:  # Slave emoji allow on Slave
@@ -1817,7 +1735,7 @@ class Femdom(commands.Cog):
 
       elif member_is > 300:  # Domme tie on other domme's owned slave
         embed = discord.Embed(title='Nah',
-                              description=f"{member.mention} is owned by <@{member_is}> it'stheirproperty.",
+                              description=f"{member.mention} is owned by somebody else it'stheirproperty.",
                               color=0xFF2030)
 
       elif member_is == 101:  # Slave tie on Slave
@@ -1900,7 +1818,7 @@ class Femdom(commands.Cog):
 
       elif member_is > 300:  # Domme untie on other domme's owned slave
         embed = discord.Embed(title='Nah',
-                              description=f"{member.mention} is owned by <@{member_is}> it'stheirproperty.",
+                              description=f"{member.mention} is owned by somebody else it'stheirproperty.",
                               color=0xFF2030)
 
       elif member_is == 101:  # Slave untie on Slave
@@ -2028,6 +1946,8 @@ class Femdom(commands.Cog):
       embed = discord.Embed(description=f"Usage:\n**`/own @mention`**",
                             color=0xFF2030)
       await ctx.send(embed=embed)
+    else:
+      raise
 
   @disown.error
   async def on_disown_error(self, ctx, error):
@@ -2036,6 +1956,8 @@ class Femdom(commands.Cog):
       embed = discord.Embed(description=f"Usage:\n**`/disown @mention`**",
                             color=0xFF2030)
       await ctx.send(embed=embed)
+    else:
+      raise
 
   @gag.error
   async def on_gag_error(self, ctx, error):
@@ -2043,7 +1965,7 @@ class Femdom(commands.Cog):
         error, commands.MemberNotFound):
       embed = discord.Embed(description=f"Usage:\n**`/gag @mention`**",
                             color=0xFF2030)
-      await ctx.send(embed=embed)
+      return await ctx.send(embed=embed)
 
     raise error
 
@@ -2054,7 +1976,7 @@ class Femdom(commands.Cog):
       embed = discord.Embed(description=f"Usage:\n**`/badword @mention <bad words>`**"
                                         f"\n> aliases = `word`, `addbadword`, `words`, `badwords`, `addbadwords`",
                             color=0xFF2030)
-      await ctx.send(embed=embed)
+      return await ctx.send(embed=embed)
 
     raise error
 
