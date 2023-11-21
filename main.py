@@ -20,6 +20,12 @@ from dotenv import load_dotenv
 from revChatGPT.V1 import AsyncChatbot
 from revChatGPT.V3 import Chatbot
 
+
+DONATORS = [
+297961554673008641,
+200042084709826560,
+]
+
 load_dotenv()
 
 from EdgeGPT.EdgeGPT import ConversationStyle
@@ -198,7 +204,7 @@ class TemptressBot(commands.Bot):
     print(self.last_ad)
     if self.command_uses['users'][str(it.user.id)] % 20 == 0 and (now - self.last_ad.get(it.user.id, 0)) > 900:
       # obviously dont send ads to the owner :p
-      if it.user.id == self.owner_id:
+      if it.user.id == self.owner_id or it.user.id in DONATORS:
         return
 
       # send ad!
