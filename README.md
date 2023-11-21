@@ -1,29 +1,29 @@
-# Temptress <br> (Femdom Discord Bot)
+# Miss Valentina <br> (Femdom Discord Bot)
 
 ___
 
-Temptress is a fork of Seductress, a Discord bot coded in Python
+Miss Valentina is a fork of Seductress, a Discord bot coded in Python
 with [Discord.py](https://discordpy.readthedocs.io/en/master/api.html "Docs") library.
 Mainly NSFW bot with intention to be used in nsfw servers, Bringing BDSM features to Discord especially in Femdom
 Communities. Commands are desined to simulate gagging Subs, Punishments, and locking in chastity.
 
-Temptress will help Dommes to gag Submissive pets and force them to obey, behave, beg and say "Yes Mistress!"
+Miss Valentina will help Dommes to gag Submissive pets and force them to obey, behave, beg and say "Yes Mistress!"
 She will punish and gag them till they break and will rebuild them. Commands are Ideal for following communities: *
 *BDSM, Femdom, pet-play, chastity.**
 
 ## Getting Started🚀
 
-> Bot prefix is **`t.`**
+> Bot prefix is **/`**
 
 1. Invite the bot to server.(Removed invite, as the bot is depreceated and needs a rewrite)<br>
 2. Use the Command **`t.setup`** in the server to start initializing. *(required Administrative Permission.)*
 
 > Note: Domme roles and Sub roles should be made in the server before initializing the Bot.
 
-3. For support join the Discord: https://discord.gg/4bQguQW4eG  (ie. Removing an owner from someone or resetting a
+3. For support join the Discord: https://discord.gg/q52ePfPM (ie. Removing an owner from someone or resetting a
    currency to an amount etc.)
 4. If you enjoy the bot and want to see updates and improvements please consider contributing either via a pull request
-   or donating for getting developers to work on Temptress! https://ko-fi.com/kyrian
+   or donating for getting developers to work on Miss Valentina! https://ko-fi.com/kyrian
 
 ___
 
@@ -137,13 +137,13 @@ ___
 
 ### Chat
 
-- Temptress can talk with you, if you wanna talk with temptress use 2 dots/period as prefix of the sentence.
+- Miss Valentina can talk with you, if you wanna talk with Miss Valentina use 2 dots/period as prefix of the sentence.
     - example 1 : ```..hi baby girl how are you?```
     - example 2 : ```..what is your fantasy?```
 
 ### Actions
 
-- Members can *hug, kiss, cuddle, pat, poke, spank, slap* use the following commands
+- Members can *hug, kiss, cuddle, pa/ poke, spank, slap* use the following commands
   respectively `t.hug @mention`, `t.kiss @mention`, `t.cuddle @mention`, `t.pat @mention`, `t.poke @mention`, `t.spank @mention`, `t.slap @mention`.
 
 ### Stats
