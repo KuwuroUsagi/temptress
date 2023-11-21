@@ -225,8 +225,9 @@ def get_slave_from_DB(member, guild):
 def get_owner(member, guild):
   cur.execute("""SELECT ownerid FROM Ownership WHERE slaveid = %s AND guildid = %s""", (member, guild))
   ownerid = cur.fetchall()
+  print(ownerid)
   try:
-    return ownerid[0][0]
+    return [o[0] for o in ownerid]
   except IndexError:
     return 0
 

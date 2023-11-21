@@ -96,6 +96,6 @@ games = Embed(title='Games',
               description=  # f"> **`/chess @mention`** this command will challenges the mentioned member"
               # f"\n> **`/resign`** to resign playing chess and accept your defeat"
               f"\n> **`/coinflip <head|tail> <bet amount>`** gamble and earn coins by flipping coins"
-              f"\n> **`/roulete <bet amount> <space>`** gamble and coins by playing roulete"
+              # f"\n> **`/roulete <bet amount> <space>`** gamble and coins by playing roulete"
               f"\n> **`/rps @mention <bet amount>`** play rock paper scissors and steal coins from them.",
               color=0x9479ED)
