@@ -200,6 +200,7 @@ class Chess(commands.Cog):
         database.delete_chess_game(ctx.author.id, ctx.guild.id)
 
         if ctx.channel.is_nsfw():
+
           if set(database.get_config('domme', ctx.guild.id)) & set([str(role.id) for role in winner.roles]) and set(
               database.get_config('slave', ctx.guild.id)) & set([str(role.id) for role in losser.roles]):
             embed = discord.Embed(title='Queen always wins',
