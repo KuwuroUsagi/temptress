@@ -1,83 +1,76 @@
 #!/bin/python3
-import discord
-import asyncio
+
 import database
-import requests
-import os
+import discord
 from discord.ext import commands
-from discord_components import *
+from discord.ext import menus
+# from pyurbandict import UrbanDict
+
+class Menu(menus.MenuPages):
+  async def send_initial_message(self, ctx, channel):
+    page = await self._source.get_page(0)
+    kwargs = await self._get_kwargs_from_page(page)
+    return await ctx.send(**kwargs)
+
+class MySource(menus.ListPageSource):
+  def __init__(self, data, definition):
+    self.definition = definition
+    super().__init__(data, per_page=3)
+
+  async def format_page(self, menu, entries):
+    offset = menu.current_page * self.per_page
+
+    em = discord.Embed(title=f'Urban - {self.definition}', color=discord.Color.purple())
+    em.set_footer(text=f'Page {menu.current_page + 1}/{self.get_max_pages()}')
+
+    for i, v in enumerate(entries, start=offset):
+      print(v)
+      em.add_field(name=f'{v.definition[:250]}...' if len(v.definition) > 250 else v.definition,
+                   value=f'{v.example}\n\n> **{v.thumbs_up} 👍** －O－ **{v.thumbs_down} 👎**', inline=False)
+
+    return em
 
 
 class Misc(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-        DiscordComponents(bot)        
+  def __init__(self, bot):
+    self.bot = bot
 
-    @commands.command()
-    @commands.guild_only()
-    async def define(self, ctx, *, word):
-        if ctx.author.bot:
-            return
-        ban_data = database.is_botban(ctx.author.id)
-        if ban_data is None:
-            url = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
-            querystring = {"term": word}
-            headers = {'x-rapidapi-host': "mashape-community-urban-dictionary.p.rapidapi.com",
-                    'x-rapidapi-key': os.environ["RAPID_API"]}
-            response = requests.request("GET", url, headers=headers, params=querystring).json()['list']
-            if len(response) == 0:
-                embed = discord.Embed(description=f'<:cry:968287446217400320>  I can\'t find the definition of the word **`{word}`**',
-                                      color=0xFF2030)
-                await ctx.send(embed=embed)
-            else:
-                def make_embed(page):
-                    embed=discord.Embed(description=f"{response[page]['definition']}\n\nExample:\n> {response[page]['example']}\n\nVotes:\n> <a:upvote:968292752813068298> {response[page]['thumbs_up']}              <a:downvote:968293083982729247> {response[page]['thumbs_down']}",
-                                        color=0xF2A2C0)
-                    embed.set_footer(text=f"{page + 1}/{len(response)}", icon_url=self.bot.user.avatar_url)
-                    embed.set_author(name=word.upper(), url=response[page]['permalink'])
-                    return embed
-                
-                page_no = 0
-                m = await ctx.send(embed=make_embed(page_no), components=[[Button(style=ButtonStyle.blue, label="Previous results", disabled=page_no==0),
-                                                                        Button(style=ButtonStyle.blue, label='Next results', disabled=page_no==len(response)-1)]])
+  @commands.hybrid_command()
+  @commands.guild_only()
+  async def define(self, ctx, *, word):
+    """this command will show the definition of the word from urban dictionary."""
+    if ctx.author.bot:
+      return
 
-                while True:
-                    def check(res):
-                        return ctx.author == res.user and res.channel == ctx.channel and res.message.id == m.id
-                    try:
-                        click = await self.bot.wait_for('button_click', timeout=90, check=check)
-                        await click.respond(type=6)
-                        if click.component.label == 'Next results':
-                            page_no += 1
-                            await m.edit(embed=make_embed(page_no), components=[[Button(style=ButtonStyle.blue, label="Previous results", disabled=page_no==0),
-                                                                                Button(style=ButtonStyle.blue, label='Next results', disabled=page_no==len(response)-1)]])
-                        elif click.component.label == 'Previous results':
-                            page_no -= 1
-                            await m.edit(embed=make_embed(page_no), components=[[Button(style=ButtonStyle.blue, label="Previous results", disabled=page_no==0),
-                                                                                Button(style=ButtonStyle.blue, label='Next results', disabled=page_no==len(response)-1)]])
-                    except asyncio.TimeoutError:
-                        await m.edit(embed=make_embed(page_no), components=[])
-        else:
-            embed=discord.Embed(description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till {ban_data[1]}",
-                                color=0xF2A2C0)
-            await ctx.send(embed=embed)
+    if (bd := database.is_botban(ctx.author.id)):
+      embed = discord.Embed(
+        description=f"{ctx.author.mention} you are banned from using {self.bot.user.mention} till {ban_data[1]}",
+        color=0xF2A2C0)
+      return await ctx.send(embed=embed)
+
+    # results = UrbanDict(word).search()
+    results = None
+
+    if not results:
+      em = discord.Embed(
+        description=f'😢 I can\'t find the definition of the word **`{word}`**',
+        color=0xFF2030
+      )
+      await ctx.send(embed=em)
+
+    pages = Menu(source=MySource(results, word), clear_reactions_after=True)
+    await pages.start(ctx)
+    return
+
+  @define.error
+  async def on_define_error(self, ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument):
+      embed = discord.Embed(description=f"Usage:\n> **`/define <word>`** ",
+                            color=0xFF2030)
+      return await ctx.send(embed=embed)
+
+    raise error
 
 
-    ##############################################################################
-    
-    #                                                                            #
-    #                                                                            #
-    #                                  ERRORS                                    #
-    #                                                                            #
-    #                                                                            #
-    ##############################################################################
-    
-    @define.error
-    async def on_define_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument):
-            embed = discord.Embed(description=f"Usage:\n> **`t.define <word>`** ",
-                                  color=0xFF2030)
-        await ctx.send(embed=embed)
-        
-def setup(bot):
-    bot.add_cog(Misc(bot))
+async def setup(bot):
+  await bot.add_cog(Misc(bot))
